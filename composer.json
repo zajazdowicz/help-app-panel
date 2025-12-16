@@ -7,17 +7,19 @@
         "php": ">=8.2",
         "ext-ctype": "*",
         "ext-iconv": "*",
+        "doctrine/doctrine-bundle": "^2.11",
+        "doctrine/doctrine-migrations-bundle": "^3.3",
+        "doctrine/orm": "^2.18",
         "symfony/console": "7.2.*",
         "symfony/dotenv": "7.2.*",
         "symfony/flex": "^2",
+        "symfony/form": "^7.4",
         "symfony/framework-bundle": "7.2.*",
         "symfony/runtime": "7.2.*",
         "symfony/security-bundle": "7.2.*",
         "symfony/twig-bundle": "7.2.*",
-        "symfony/yaml": "7.2.*",
-        "doctrine/doctrine-bundle": "^2.11",
-        "doctrine/orm": "^2.18",
-        "doctrine/doctrine-migrations-bundle": "^3.3"
+        "symfony/validator": "^7.4",
+        "symfony/yaml": "7.2.*"
     },
     "require-dev": {
         "symfony/debug-bundle": "7.0.*",
