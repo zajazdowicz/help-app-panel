@@ -22,9 +22,9 @@ security:
             form_login:
                 login_path: app_login
                 check_path: app_login
-                username_parameter: _username
-                password_parameter: _password
-                enable_csrf: true
+                username_parameter: email
+                password_parameter: password
+                enable_csrf: false
                 default_target_path: app_home
             logout:
                 path: app_logout
