@@ -18,7 +18,11 @@
                             </h6>
                             <p class="card-text">
                                 {% set desc = dream.description|default('') %}
-                                {{ desc|length > 100 ? desc|slice(0, 100) ~ '…' : desc }}
+                                {% if desc|length > 100 %}
+                                    {{ desc|slice(0, 100) }}…
+                                {% else %}
+                                    {{ desc }}
+                                {% endif %}
                             </p>
                             <ul class="list-unstyled small">
                                 <li><strong>Status:</strong> {{ dream.status }}</li>

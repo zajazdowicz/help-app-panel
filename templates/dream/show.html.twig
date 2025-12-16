@@ -1,0 +1,32 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ dream.productTitle }}{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <h1>{{ dream.productTitle }}</h1>
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Szczegóły marzenia</h5>
+                    <ul class="list-unstyled">
+                        <li><strong>Dziecko:</strong> {{ dream.child ? dream.child.firstName : 'Nieznane' }}</li>
+                        <li><strong>Status:</strong> {{ dream.status }}</li>
+                        <li><strong>Cena produktu:</strong> {{ dream.productPrice }} zł</li>
+                        <li><strong>Kategoria:</strong> {{ dream.productCategory }}</li>
+                        <li><strong>Potrzebna ilość:</strong> {{ dream.quantityNeeded }}</li>
+                        <li><strong>Zebrano:</strong> {{ dream.quantityFulfilled }}</li>
+                        <li><strong>Pozostało:</strong> {{ dream.remainingQuantity }}</li>
+                        <li><strong>Pilne:</strong> {% if dream.isUrgent %}Tak{% else %}Nie{% endif %}</li>
+                    </ul>
+                    <p><strong>Opis:</strong> {{ dream.description|default('Brak opisu') }}</p>
+                    <p><strong>Link do produktu:</strong> <a href="{{ dream.productUrl }}" target="_blank">{{ dream.productUrl }}</a></p>
+                    <p><strong>Data utworzenia:</strong> {{ dream.createdAt|date('d.m.Y H:i') }}</p>
+                </div>
+            </div>
+            <a href="{{ path('app_dream_index') }}" class="btn btn-secondary mt-3">Powrót do listy</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
