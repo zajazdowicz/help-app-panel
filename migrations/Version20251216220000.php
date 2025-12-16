@@ -23,10 +23,22 @@ final class Version20251216220000 extends AbstractMigration
         $table = $schema->getTable('users');
         if (!$table->hasColumn('username')) {
             $this->addSql('ALTER TABLE users ADD username VARCHAR(180) NOT NULL');
+        }
+        // Check if unique index already exists
+        $indexes = $table->getIndexes();
+        $idxExists = false;
+        foreach ($indexes as $index) {
+            if ($index->getColumns() === ['username'] && $index->isUnique()) {
+                $idxExists = true;
+                break;
+            }
+        }
+        if (!$idxExists) {
             $this->addSql('CREATE UNIQUE INDEX UNIQ_1483A5E9F85E0677 ON users (username)');
         }
 
         // Mark Version20251216183356 as executed to avoid duplicate table creation
+        // Use INSERT IGNORE to avoid duplicate entry error
         $this->addSql("INSERT IGNORE INTO doctrine_migration_versions (version, executed_at, execution_time) VALUES ('DoctrineMigrations\\\\Version20251216183356', NOW(), 0)");
     }
 
