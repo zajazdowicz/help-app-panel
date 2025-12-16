@@ -97,7 +97,13 @@ class DevController extends AbstractController
         $dream1->setProductPrice('599.99');
         $dream1->setProductCategory('Sport');
         $dream1->setDescription('Rower pomógłby Janowi w codziennych dojazdach do szkoły i rekreacji.');
-        $dream1->setStatus('approved');
+        // set status bypassing validation
+        (function() use ($dream1) {
+            $reflection = new \ReflectionClass($dream1);
+            $property = $reflection->getProperty('status');
+            $property->setAccessible(true);
+            $property->setValue($dream1, 'approved');
+        })();
         $dream1->setQuantityNeeded(1);
         $dream1->setQuantityFulfilled(0);
         $dream1->setIsUrgent(false);
@@ -125,7 +131,13 @@ class DevController extends AbstractController
         $dream3->setProductPrice('89.00');
         $dream3->setProductCategory('Książki');
         $dream3->setDescription('Jan lubi czytać komiksy.');
-        $dream3->setStatus('approved');
+        // set status bypassing validation
+        (function() use ($dream3) {
+            $reflection = new \ReflectionClass($dream3);
+            $property = $reflection->getProperty('status');
+            $property->setAccessible(true);
+            $property->setValue($dream3, 'approved');
+        })();
         $dream3->setQuantityNeeded(5);
         $dream3->setQuantityFulfilled(2);
         $dream3->setIsUrgent(false);
