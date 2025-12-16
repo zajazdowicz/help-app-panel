@@ -5,6 +5,9 @@ framework:
     session: true
     php_errors:
         log: true
+    router:
+        # Ustaw domyślny URI dla aplikacji działającej w podkatalogu
+        default_uri: 'https://srv101355.seohost.com.pl/help-app-panel'
 
 when@test:
     framework:
