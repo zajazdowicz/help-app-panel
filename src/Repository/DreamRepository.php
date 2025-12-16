@@ -20,7 +20,7 @@ class DreamRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('d')
             ->andWhere('d.status = :status')
-            ->setParameter('status', Dream::STATUS_VERIFIED)
+            ->setParameter('status', 'approved')
             ->orderBy('d.createdAt', 'DESC')
             ->getQuery()
             ->getResult();

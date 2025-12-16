@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Dream;
 use App\Entity\Orphanage;
+use App\Repository\DreamRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
