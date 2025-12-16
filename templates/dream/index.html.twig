@@ -1,0 +1,48 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Lista marzeń{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <h1 class="mb-4">Publiczna lista marzeń</h1>
+
+    {% if dreams|length > 0 %}
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+            {% for dream in dreams %}
+                <div class="col">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ dream.productTitle }}</h5>
+                            <h6 class="card-subtitle mb-2 text-muted">
+                                Dziecko: {{ dream.child.firstName ?? 'Nieznane' }}
+                            </h6>
+                            <p class="card-text">
+                                {{ dream.description|length > 100 ? dream.description|slice(0, 100) ~ '…' : dream.description }}
+                            </p>
+                            <ul class="list-unstyled small">
+                                <li><strong>Status:</strong> {{ dream.status }}</li>
+                                <li><strong>Cena:</strong> {{ dream.productPrice }} zł</li>
+                                <li><strong>Potrzebna ilość:</strong> {{ dream.quantityNeeded }}</li>
+                                <li><strong>Zebrano:</strong> {{ dream.quantityFulfilled }}</li>
+                                <li><strong>Pozostało:</strong> {{ dream.remainingQuantity }}</li>
+                                <li class="mt-2">
+                                    {% if dream.isUrgent %}
+                                        <span class="badge bg-danger">Pilne</span>
+                                    {% endif %}
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="card-footer bg-transparent">
+                            <a href="{{ path('app_dream_show', {id: dream.id}) }}" class="btn btn-primary btn-sm">Zobacz szczegóły</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-info">
+            Aktualnie nie ma żadnych marzeń do wyświetlenia.
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
