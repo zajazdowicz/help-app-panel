@@ -12,6 +12,7 @@ controllers:
         path: ../src/Controller/
         namespace: App\Controller
     type: attribute
+    prefix: /help-app-panel
 
 # Możesz też zdefiniować ręczne trasy tutaj, na przykład:
 # app_home:

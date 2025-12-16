@@ -5,6 +5,10 @@ framework:
     session: true
     php_errors:
         log: true
+    router:
+        # Ustaw bazowy URL dla aplikacji działającej w podkatalogu
+        request_context:
+            base_url: /help-app-panel
 
 when@test:
     framework:
