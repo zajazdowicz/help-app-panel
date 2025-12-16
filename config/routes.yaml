@@ -9,3 +9,13 @@
 
 controllers:
     resource: routing.controllers
+controllers:
+    resource:
+        path: ../src/Controller/
+        namespace: App\Controller
+    type: attribute
+
+# Możesz też zdefiniować ręczne trasy tutaj, na przykład:
+# app_home:
+#     path: /
+#     controller: App\Controller\HomeController::index
