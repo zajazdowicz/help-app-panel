@@ -150,7 +150,13 @@ class DevController extends AbstractController
         $fulfillment1->setDonorEmail('anon@example.com');
         $fulfillment1->setDonorNickname('Anonim');
         $fulfillment1->setIsAnonymous(true);
-        $fulfillment1->setStatus('completed');
+        // set status bypassing validation
+        (function() use ($fulfillment1) {
+            $reflection = new \ReflectionClass($fulfillment1);
+            $property = $reflection->getProperty('status');
+            $property->setAccessible(true);
+            $property->setValue($fulfillment1, 'completed');
+        })();
         $fulfillment1->setQuantityFulfilled(2);
         $this->entityManager->persist($fulfillment1);
 
@@ -160,7 +166,13 @@ class DevController extends AbstractController
         $fulfillment2->setDonorEmail('jan.kowalski@example.com');
         $fulfillment2->setDonorNickname('Janek');
         $fulfillment2->setIsAnonymous(false);
-        $fulfillment2->setStatus('pending');
+        // set status bypassing validation
+        (function() use ($fulfillment2) {
+            $reflection = new \ReflectionClass($fulfillment2);
+            $property = $reflection->getProperty('status');
+            $property->setAccessible(true);
+            $property->setValue($fulfillment2, 'pending');
+        })();
         $fulfillment2->setQuantityFulfilled(1);
         $this->entityManager->persist($fulfillment2);
 

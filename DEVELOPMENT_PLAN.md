@@ -188,7 +188,7 @@ Do szybkiego przetestowania aplikacji w środowisku deweloperskim (`APP_ENV=dev`
 - **Darowizny**:
   - Dwie darowizny dla komiksów (jedna zakończona, druga w trakcie)
 
-**Uwaga**: Ze względu na ograniczenia walidacji encji `Dream`, status `approved` został ustawiony z pominięciem settera (przez refleksję). W produkcyjnym kodzie należy dostosować metodę `setStatus()` w encji `Dream` tak, aby akceptowała wartość `approved`.
+**Uwaga**: Ze względu na ograniczenia walidacji encji `Dream` i `DreamFulfillment`, statusy `approved`, `completed` oraz `pending` zostały ustawione z pominięciem setterów (przez refleksję). W produkcyjnym kodzie należy dostosować metody `setStatus()` w tych encjach tak, aby akceptowały odpowiednie wartości.
 
 Trasa `/dev/fill-data` działa wyłącznie w środowisku deweloperskim i nie wymaga autoryzacji – jej wywołanie natychmiast wstawia powyższe dane do bazy. Po uruchomieniu możesz zalogować się na dowolne z podanych kont i przeglądać listę marzeń oraz ich szczegóły.
 
