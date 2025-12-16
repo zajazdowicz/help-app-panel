@@ -164,10 +164,38 @@ Ten dokument opisuje aktualny stan aplikacji, brakujące funkcjonalności, plan 
 
 ---
 
-## 5. Notatki
+## 5. Dane testowe
+
+Do szybkiego przetestowania aplikacji w środowisku deweloperskim (`APP_ENV=dev`) dostępna jest trasa `/dev/fill-data`, która wypełnia bazę przykładowymi rekordami:
+
+- **Użytkownicy** (hasło dla wszystkich: `password123`):
+  - Administrator: `admin@example.com` (ROLE_ADMIN)
+  - Dyrektor domu dziecka: `director@example.com` (ROLE_DIRECTOR)
+  - Zwykły użytkownik: `user@example.com` (ROLE_USER)
+
+- **Dom dziecka**:
+  - „Dom Dziecka w Warszawie” (zweryfikowany, z przypisanym dyrektorem)
+
+- **Dzieci**:
+  - Jan (10 lat)
+  - Anna (14 lat)
+
+- **Marzenia**:
+  1. Rower górski (status: `approved`, cena 599,99 zł, kategoria Sport)
+  2. Zestaw malarski (status: `pending`, pilne, cena 129,50 zł)
+  3. Komiksy (status: `approved`, potrzebna ilość: 5, zebrano: 2)
+
+- **Darowizny**:
+  - Dwie darowizny dla komiksów (jedna zakończona, druga w trakcie)
+
+Trasa `/dev/fill-data` działa wyłącznie w środowisku deweloperskim i nie wymaga autoryzacji – jej wywołanie natychmiast wstawia powyższe dane do bazy. Po uruchomieniu możesz zalogować się na dowolne z podanych kont i przeglądać listę marzeń oraz ich szczegóły.
+
+---
+
+## 6. Notatki
 
 - **Data rozpoczęcia planu**: 2025-12-16
-- **Ostatnia aktualizacja**: 2025-12-16 (aktualizacja po wymaganiach biznesowych)
+- **Ostatnia aktualizacja**: 2025-12-16 (dodano dane testowe)
 - **Wersja aplikacji**: w rozwoju
 
 ---

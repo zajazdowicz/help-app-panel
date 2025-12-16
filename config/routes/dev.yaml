@@ -1,0 +1,4 @@
+dev_fill_data:
+    path: /dev/fill-data
+    controller: App\Controller\DevController::fillData
+    condition: "'dev' === '%kernel.environment%'"
