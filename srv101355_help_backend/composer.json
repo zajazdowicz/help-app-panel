@@ -32,7 +32,7 @@
             "php": "8.2.0"
         },
         "audit": {
-            "ignore": ["PKSA-d1rr-z8zb-qnm7"]
+            "block-insecure": false
         }
     },
     "autoload": {
