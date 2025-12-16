@@ -15,63 +15,22 @@ use Symfony\Component\Routing\Attribute\Route;
 class DreamController extends AbstractController
 {
     #[Route('/', name: 'app_dream_index')]
-    public function index(Request $request, EntityManagerInterface $entityManager): Response
+    public function index(Request $request, DreamRepository $dreamRepository): Response
     {
-        $sort = $request->query->get('sort', 'created_desc');
-        $category = $request->query->get('category');
-        $region = $request->query->get('region');
-        $urgent = $request->query->get('urgent');
-        $minPrice = $request->query->get('minPrice');
-        $maxPrice = $request->query->get('maxPrice');
+        $filters = [
+            'sort'     => $request->query->get('sort', 'created_desc'),
+            'category' => $request->query->get('category'),
+            'region'   => $request->query->get('region'),
+            'urgent'   => $request->query->get('urgent'),
+            'minPrice' => $request->query->get('minPrice'),
+            'maxPrice' => $request->query->get('maxPrice'),
+        ];
+
         $page = $request->query->getInt('page', 1);
         $limit = 9;
         $offset = ($page - 1) * $limit;
 
-        $repository = $entityManager->getRepository(Dream::class);
-        $qb = $repository->createQueryBuilder('d')
-            ->leftJoin('d.orphanage', 'o')
-            ->leftJoin('d.child', 'c')
-            ->andWhere('d.status = :status')
-            ->setParameter('status', 'approved');
-
-        // filters
-        if ($category) {
-            $qb->andWhere('d.productCategory = :category')
-                ->setParameter('category', $category);
-        }
-        if ($region) {
-            $qb->andWhere('o.region = :region')
-                ->setParameter('region', $region);
-        }
-        if ($urgent !== null) {
-            $qb->andWhere('d.isUrgent = :urgent')
-                ->setParameter('urgent', (bool)$urgent);
-        }
-        if (is_numeric($minPrice)) {
-            $qb->andWhere('d.productPrice >= :minPrice')
-                ->setParameter('minPrice', (float)$minPrice);
-        }
-        if (is_numeric($maxPrice)) {
-            $qb->andWhere('d.productPrice <= :maxPrice')
-                ->setParameter('maxPrice', (float)$maxPrice);
-        }
-
-        // sorting
-        switch ($sort) {
-            case 'price_asc':
-                $qb->orderBy('d.productPrice', 'ASC');
-                break;
-            case 'price_desc':
-                $qb->orderBy('d.productPrice', 'DESC');
-                break;
-            case 'created_asc':
-                $qb->orderBy('d.createdAt', 'ASC');
-                break;
-            default:
-                $qb->orderBy('d.createdAt', 'DESC');
-        }
-
-        // pagination
+        $qb = $dreamRepository->getDreamsWithFiltersQueryBuilder($filters);
         $qb->setFirstResult($offset)->setMaxResults($limit);
         $dreams = $qb->getQuery()->getResult();
 
@@ -86,37 +45,22 @@ class DreamController extends AbstractController
         $total = $countQb->getQuery()->getSingleScalarResult();
         $pages = ceil($total / $limit);
 
-        // distinct categories for filter selects
-        $categoryResult = $repository->createQueryBuilder('d')
-            ->select('DISTINCT d.productCategory')
-            ->getQuery()
-            ->getResult(Query::HYDRATE_SCALAR_COLUMN);
-        $categoryList = array_filter($categoryResult, function ($val) {
-            return $val !== null;
-        });
-
-        // distinct regions for filter selects
-        $regionResult = $entityManager->getRepository(Orphanage::class)
-            ->createQueryBuilder('o')
-            ->select('DISTINCT o.region')
-            ->getQuery()
-            ->getResult(Query::HYDRATE_SCALAR_COLUMN);
-        $regionList = array_filter($regionResult, function ($val) {
-            return $val !== null;
-        });
+        $categoryList = $dreamRepository->getDistinctCategories();
+        $regionList   = $dreamRepository->getDistinctRegions();
 
         return $this->render('dream/index.html.twig', [
-            'dreams' => $dreams,
-            'currentPage' => $page,
-            'pages' => $pages,
-            'sort' => $sort,
-            'category' => $category,
-            'region' => $region,
-            'urgent' => $urgent,
-            'minPrice' => $minPrice,
-            'maxPrice' => $maxPrice,
+            'dreams'       => $dreams,
+            'currentPage'  => $page,
+            'pages'        => $pages,
+            'sort'         => $filters['sort'],
+            'category'     => $filters['category'],
+            'region'       => $filters['region'],
+            'urgent'       => $filters['urgent'],
+            'minPrice'     => $filters['minPrice'],
+            'maxPrice'     => $filters['maxPrice'],
             'categoryList' => $categoryList,
-            'regionList' => $regionList,
+            'regionList'   => $regionList,
+            'total'        => $total,
         ]);
     }
 
