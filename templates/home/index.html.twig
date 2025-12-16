@@ -7,11 +7,32 @@
         body { font-family: Arial, sans-serif; text-align: center; padding: 50px; }
         h1 { color: #333; }
         p { color: #666; }
+        .nav { margin-bottom: 30px; }
+        .nav a { margin: 0 10px; text-decoration: none; color: #007bff; }
+        .nav a:hover { text-decoration: underline; }
+        .user-info { margin-top: 20px; font-style: italic; }
     </style>
 </head>
 <body>
+    <div class="nav">
+        <a href="{{ path('app_home') }}">Strona główna</a>
+        {% if app.user %}
+            <a href="{{ path('app_logout') }}">Wyloguj</a>
+            <div class="user-info">
+                Zalogowany jako: <strong>{{ app.user.email }}</strong>
+            </div>
+        {% else %}
+            <a href="{{ path('app_login') }}">Zaloguj</a>
+            <a href="{{ path('app_register') }}">Zarejestruj</a>
+        {% endif %}
+    </div>
+
     <h1>{{ message }}</h1>
     <p>To jest przykładowa strona główna aplikacji Symfony.</p>
     <p>Sprawdź, czy routing działa poprawnie.</p>
+
+    {% if app.user %}
+        <p>Masz rolę: {{ app.user.roles|join(', ') }}</p>
+    {% endif %}
 </body>
 </html>
