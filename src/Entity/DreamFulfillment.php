@@ -6,6 +6,7 @@ use App\Repository\DreamFulfillmentRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use App\Entity\User;
 
 #[ORM\Entity(repositoryClass: DreamFulfillmentRepository::class)]
 #[ORM\Table(name: 'dream_fulfillments')]
