@@ -1,38 +1,23 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <title>HelpDreams</title>
-    <style>
-        body { font-family: Arial, sans-serif; text-align: center; padding: 50px; }
-        h1 { color: #333; }
-        p { color: #666; }
-        .nav { margin-bottom: 30px; }
-        .nav a { margin: 0 10px; text-decoration: none; color: #007bff; }
-        .nav a:hover { text-decoration: underline; }
-        .user-info { margin-top: 20px; font-style: italic; }
-    </style>
-</head>
-<body>
-    <div class="nav">
-        <a href="{{ path('app_home') }}">Strona główna</a>
+{% extends 'base.html.twig' %}
+
+{% block title %}HelpDreams - Strona główna{% endblock %}
+
+{% block body %}
+    <div class="text-center py-5">
+        <h1 class="display-4">{{ message }}</h1>
+        <p class="lead">To jest przykładowa strona główna aplikacji Symfony.</p>
+        <p class="text-muted">Sprawdź, czy routing działa poprawnie.</p>
+
         {% if app.user %}
-            <a href="{{ path('app_logout') }}">Wyloguj</a>
-            <div class="user-info">
-                Zalogowany jako: <strong>{{ app.user.email }}</strong>
+            <div class="mt-4">
+                <p class="fs-5">Zalogowany jako: <strong>{{ app.user.email }}</strong></p>
+                <p class="text-muted">Twoje role: <code>{{ app.user.roles|join(', ') }}</code></p>
             </div>
         {% else %}
-            <a href="{{ path('app_login') }}">Zaloguj</a>
-            <a href="{{ path('app_register') }}">Zarejestruj</a>
+            <div class="mt-5">
+                <a href="{{ path('app_register') }}" class="btn btn-primary btn-lg me-3">Zarejestruj się</a>
+                <a href="{{ path('app_login') }}" class="btn btn-outline-primary btn-lg">Zaloguj</a>
+            </div>
         {% endif %}
     </div>
-
-    <h1>{{ message }}</h1>
-    <p>To jest przykładowa strona główna aplikacji Symfony.</p>
-    <p>Sprawdź, czy routing działa poprawnie.</p>
-
-    {% if app.user %}
-        <p>Masz rolę: {{ app.user.roles|join(', ') }}</p>
-    {% endif %}
-</body>
-</html>
+{% endblock %}
