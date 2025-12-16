@@ -72,6 +72,17 @@ Ten dokument opisuje aktualny stan aplikacji, brakujące funkcjonalności, plan 
 ### 2.7. Testy
 - Brak testów jednostkowych i funkcjonalnych.
 
+### 2.8. Nowe wymagania biznesowe (Zamieszczanie i realizacja marzeń)
+- **Formularz dodawania marzeń** przez dyrekcję domu dziecka z polami: link do produktu, cena, ilość potrzebna, dane dziecka (imię, wiek, opis do 100 znaków), dane placówki (adres, email, telefon – niepubliczne).
+- **Weryfikacja przed publikacją** – domyślny status `pending`, wymagane zatwierdzenie przez admina lub dyrektora innego domu (mechanizm akceptacji).
+- **Oznaczanie marzenia jako „w realizacji”** – automatyczne po złożeniu pierwszej darowizny lub ręczne przez dyrektora.
+- **Częściowe spełnianie** – możliwość zadeklarowania ilości, którą darczyńca chce pokryć (pozostała ilość jest aktualizowana).
+- **Potwierdzenie spełnienia** – po dostarczeniu prezentu dziecko/dyrekcja może dodać zdjęcie lub wiadomość podziękowania (wykorzystanie istniejących pól `childPhotoUrl` i `childMessage` w DreamFulfillment).
+- **Sortowanie i filtrowanie** w publicznej liście: cena (rosnąco/malejąco), kategoria, region (poprzez dane placówki), status pilności.
+- **Przekierowanie do sklepu** – po kliknięciu „Chcę pomóc” użytkownik widzi dane adresowe placówki oraz imię dziecka, aby mógł skopiować do zamówienia w zewnętrznym sklepie.
+- **Statystyki wartości przekazanych darów** – suma `productPrice * quantityFulfilled` dla spełnionych marzeń; widżet ujawniany po przekroczeniu progu (np. 2000 zł).
+- **Obsługa reklam** – dedykowane miejsce w szablonie na banery Google Ads lub sponsorów.
+
 ---
 
 ## 3. Plan implementacji (kolejność priorytetowa)
@@ -117,6 +128,11 @@ Ten dokument opisuje aktualny stan aplikacji, brakujące funkcjonalności, plan 
 1. **Stworzenie testów jednostkowych** dla encji i repozytoriów.
 2. **Testy funkcjonalne** dla kontrolerów.
 
+### Faza 8 – Wdrożenie i optymalizacja
+1. **Konfiguracja środowiska produkcyjnego** (cache, środowisko `prod`).
+2. **Monitoring** (logi, błędy).
+3. **Ewentualna integracja z usługami reklamowymi** (Google AdSense).
+
 ---
 
 ## 4. Uwagi bezpieczeństwa (audyt)
@@ -151,7 +167,7 @@ Ten dokument opisuje aktualny stan aplikacji, brakujące funkcjonalności, plan 
 ## 5. Notatki
 
 - **Data rozpoczęcia planu**: 2025-12-16
-- **Ostatnia aktualizacja**: 2025-12-16 (utworzenie)
+- **Ostatnia aktualizacja**: 2025-12-16 (aktualizacja po wymaganiach biznesowych)
 - **Wersja aplikacji**: w rozwoju
 
 ---

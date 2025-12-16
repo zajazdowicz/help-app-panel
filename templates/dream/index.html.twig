@@ -6,6 +6,61 @@
 <div class="container mt-4">
     <h1 class="mb-4">Publiczna lista marzeń</h1>
 
+    {# Filters and sorting #}
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="get" action="{{ path('app_dream_index') }}" class="row g-3">
+                <div class="col-md-3">
+                    <label for="sort" class="form-label">Sortuj według</label>
+                    <select class="form-select" id="sort" name="sort">
+                        <option value="created_desc" {% if sort == 'created_desc' %}selected{% endif %}>Najnowsze</option>
+                        <option value="created_asc" {% if sort == 'created_asc' %}selected{% endif %}>Najstarsze</option>
+                        <option value="price_asc" {% if sort == 'price_asc' %}selected{% endif %}>Cena rosnąco</option>
+                        <option value="price_desc" {% if sort == 'price_desc' %}selected{% endif %}>Cena malejąco</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="category" class="form-label">Kategoria</label>
+                    <select class="form-select" id="category" name="category">
+                        <option value="">Wszystkie</option>
+                        {% for cat in categoryList|default([])|filter(cat => cat != null) %}
+                            <option value="{{ cat }}" {% if category == cat %}selected{% endif %}>{{ cat }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="region" class="form-label">Region</label>
+                    <select class="form-select" id="region" name="region">
+                        <option value="">Wszystkie</option>
+                        {% for reg in regionList|default([])|filter(reg => reg != null) %}
+                            <option value="{{ reg }}" {% if region == reg %}selected{% endif %}>{{ reg }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="urgent" class="form-label">Pilne</label>
+                    <select class="form-select" id="urgent" name="urgent">
+                        <option value="">Wszystkie</option>
+                        <option value="1" {% if urgent == '1' %}selected{% endif %}>Tak</option>
+                        <option value="0" {% if urgent == '0' %}selected{% endif %}>Nie</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="minPrice" class="form-label">Cena minimalna (zł)</label>
+                    <input type="number" class="form-control" id="minPrice" name="minPrice" value="{{ minPrice }}" step="0.01" min="0">
+                </div>
+                <div class="col-md-3">
+                    <label for="maxPrice" class="form-label">Cena maksymalna (zł)</label>
+                    <input type="number" class="form-control" id="maxPrice" name="maxPrice" value="{{ maxPrice }}" step="0.01" min="0">
+                </div>
+                <div class="col-md-12">
+                    <button type="submit" class="btn btn-primary">Filtruj</button>
+                    <a href="{{ path('app_dream_index') }}" class="btn btn-outline-secondary">Wyczyść</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
     {% if dreams|length > 0 %}
         <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
             {% for dream in dreams %}
@@ -44,9 +99,45 @@
                 </div>
             {% endfor %}
         </div>
+
+        {# Pagination #}
+        {% if pages > 1 %}
+            <nav aria-label="Paginacja" class="mt-4">
+                <ul class="pagination justify-content-center">
+                    {% if currentPage > 1 %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ path('app_dream_index', app.request.query.all|merge({'page': currentPage - 1})) }}">&laquo; Poprzednia</a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled">
+                            <span class="page-link">&laquo; Poprzednia</span>
+                        </li>
+                    {% endif %}
+
+                    {% for i in 1..pages %}
+                        {% if i == currentPage %}
+                            <li class="page-item active"><span class="page-link">{{ i }}</span></li>
+                        {% else %}
+                            <li class="page-item"><a class="page-link" href="{{ path('app_dream_index', app.request.query.all|merge({'page': i})) }}">{{ i }}</a></li>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if currentPage < pages %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ path('app_dream_index', app.request.query.all|merge({'page': currentPage + 1})) }}">Następna &raquo;</a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled">
+                            <span class="page-link">Następna &raquo;</span>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        {% endif %}
+
     {% else %}
         <div class="alert alert-info">
-            Aktualnie nie ma żadnych marzeń do wyświetlenia.
+            Brak marzeń spełniających wybrane kryteria.
         </div>
     {% endif %}
 </div>
