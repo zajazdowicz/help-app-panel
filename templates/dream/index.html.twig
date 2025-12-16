@@ -14,10 +14,11 @@
                         <div class="card-body">
                             <h5 class="card-title">{{ dream.productTitle }}</h5>
                             <h6 class="card-subtitle mb-2 text-muted">
-                                Dziecko: {{ dream.child.firstName ?? 'Nieznane' }}
+                                Dziecko: {{ dream.child ? dream.child.firstName : 'Nieznane' }}
                             </h6>
                             <p class="card-text">
-                                {{ dream.description|length > 100 ? dream.description|slice(0, 100) ~ '…' : dream.description }}
+                                {% set desc = dream.description|default('') %}
+                                {{ desc|length > 100 ? desc|slice(0, 100) ~ '…' : desc }}
                             </p>
                             <ul class="list-unstyled small">
                                 <li><strong>Status:</strong> {{ dream.status }}</li>
