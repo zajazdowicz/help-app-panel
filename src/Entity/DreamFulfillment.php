@@ -44,6 +44,10 @@ class DreamFulfillment
     #[Assert\Length(max: 255)]
     private ?string $donorEmail = null;
 
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id', nullable: true, onDelete: 'SET NULL')]
+    private ?User $user = null;
+
     #[ORM\Column(length: 100, nullable: true)]
     #[Assert\Length(max: 100)]
     private ?string $donorNickname = null;
@@ -112,6 +116,18 @@ class DreamFulfillment
     public function setDonorEmail(?string $donorEmail): static
     {
         $this->donorEmail = $donorEmail;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): static
+    {
+        $this->user = $user;
 
         return $this;
     }
