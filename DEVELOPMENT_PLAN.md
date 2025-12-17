@@ -242,7 +242,51 @@ Ten dokument opisuje aktualny stan aplikacji, brakujące funkcjonalności, plan 
    - Sprawdzenie, czy komunikaty błędów są wyświetlane odpowiednio (np. próba dodania dziecka bez weryfikacji domu dziecka).
    - Sprawdzenie, czy uprawnienia działają (brak dostępu do nieautoryzowanych ścieżek).
 
-### Faza 11 – Optymalizacja i skalowanie
+### Faza 11 – System kolejek i powiadomień
+1. **Cel systemu**:
+   - Automatyczne wysyłanie powiadomień email do odpowiednich użytkowników w reakcji na zdarzenia w systemie.
+   - Przechowywanie powiadomień w panelu użytkownika (np. „Masz nową darowiznę”, „Twój dom dziecka został zweryfikowany”).
+   - Asynchroniczne przetwarzanie wiadomości za pomocą kolejek (Symfony Messenger) w celu uniknięcia blokowania interfejsu.
+
+2. **Wymagane powiadomienia**:
+   - **Dla dyrektora**:
+     - Nowa darowizna dla marzenia z jego domu dziecka (email + powiadomienie w panelu).
+     - Zmiana statusu marzenia (np. weryfikacja przez admina, oznaczenie jako „w realizacji”).
+     - Prośba o dodanie podziękowania po zrealizowaniu darowizny.
+   - **Dla administratora**:
+     - Nowy dom dziecka oczekujący na weryfikację.
+     - Nowe marzenie oczekujące na weryfikację.
+     - Nowy użytkownik z rolą dyrektora.
+   - **Dla darczyńcy (jeśli podał email)**:
+     - Potwierdzenie złożenia darowizny.
+     - Informacja o zmianie statusu darowizny (np. „prezent dostarczony”).
+     - Podziękowanie od dziecka (gdy dyrektor doda zdjęcie/wiadomość).
+   - **Dla użytkownika (rejestracja)**:
+     - Powitalny email po rejestracji.
+     - Prośba o weryfikację konta (jeśli dodamy tę funkcjonalność).
+
+3. **Implementacja**:
+   - **Symfony Messenger** – konfiguracja transportu (sync dla dev, async dla prod z użyciem Doctrine lub RabbitMQ).
+   - **Encja Notification** – przechowująca powiadomienia w bazie danych (odbiorca, typ, tytuł, treść, odczytane, data).
+   - **Event Subscribers** – nasłuchiwanie zdarzeń (np. `DreamFulfillmentCreatedEvent`, `OrphanageVerifiedEvent`) i wysyłanie wiadomości do kolejki.
+   - **Handler wiadomości** – przetwarzanie wiadomości z kolejki: wysyłanie emaili (via Symfony Mailer) oraz zapisywanie powiadomień w bazie.
+   - **Panel powiadomień** – endpoint API lub strona w panelu użytkownika/dyrektora/admina z listą nieprzeczytanych powiadomień oraz możliwością oznaczenia jako przeczytane.
+
+4. **Kroki implementacyjne**:
+   - Instalacja i konfiguracja Symfony Messenger, Symfony Mailer.
+   - Stworzenie encji `Notification` i migracji.
+   - Utworzenie klas zdarzeń (events) dla kluczowych akcji.
+   - Utworzenie subscriberów, które będą publikować wiadomości do kolejki.
+   - Utworzenie handlerów, które będą wysyłać emaile i zapisywać powiadomienia.
+   - Dodanie widoku powiadomień w panelach użytkowników.
+   - Testy asynchronicznego wysyłania w środowisku deweloperskim i produkcyjnym.
+
+5. **Bezpieczeństwo i wydajność**:
+   - Upewnienie się, że dane użytkowników (emaile) nie są wyciekane do nieuprawnionych osób.
+   - Ograniczenie częstotliwości wysyłanych powiadomień, aby nie spamować użytkowników.
+   - Monitorowanie kolejki pod kątem zaległych wiadomości.
+
+### Faza 12 – Optymalizacja i skalowanie
 1. **Konfiguracja środowiska produkcyjnego** (cache, środowisko `prod`).
 2. **Monitoring** (logi, błędy).
 3. **Ewentualna integracja z usługami reklamowymi** (Google AdSense).
@@ -284,7 +328,13 @@ Ten dokument opisuje aktualny stan aplikacji, brakujące funkcjonalności, plan 
 - W panelu dyrektora Super Admin może przeglądać listy dzieci i marzeń, ale nie może dodawać/edycji bez przypisanego domu dziecka (brak encji `Orphanage` powiązanej z użytkownikiem).
 - Logika kontrolerów dyrektora została zaktualizowana, aby uwzględniać ten przypadek i wyświetlać odpowiednie komunikaty.
 
-### 4.8. Hasła
+### 4.8. System powiadomień
+- Powiadomienia email są wysyłane asynchronicznie za pomocą Symfony Messenger, co zapobiega blokowaniu interfejsu użytkownika.
+- Adresy email odbiorców są weryfikowane przed wysłaniem (istnienie użytkownika, zgoda na komunikację).
+- W panelu użytkownika przechowywana jest historia powiadomień, do której dostęp ma tylko zalogowany użytkownik.
+- Należy zapewnić możliwość rezygnacji z powiadomień email (opcja w ustawieniach konta).
+
+### 4.9. Hasła
 - Używany jest `UserPasswordHasherInterface` z algorytmem bcrypt (domyślnie w Symfony).
 - Należy wymusić minimalną siłę hasła podczas rejestracji.
 
@@ -323,7 +373,7 @@ Trasa `/dev/fill-data` działa wyłącznie w środowisku deweloperskim i nie wym
 ## 6. Notatki
 
 - **Data rozpoczęcia planu**: 2025-12-16
-- **Ostatnia aktualizacja**: 2025-12-17 (dodanie testów end‑to‑end całego flow aplikacji)
+- **Ostatnia aktualizacja**: 2025-12-17 (dodanie planu systemu kolejek i powiadomień)
 - **Wersja aplikacji**: w rozwoju
 - **Ostatnia migracja bazy danych**: Version20251217130000
 
