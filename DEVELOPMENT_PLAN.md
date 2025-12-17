@@ -106,10 +106,13 @@ Ten dokument opisuje aktualny stan aplikacji, brakujące funkcjonalności, plan 
 3. ✅ **Obsługa zapisu** wraz z aktualizacją `Dream::quantityFulfilled`.
 4. ✅ **Szablon** `templates/dream_fulfillment/fulfill.html.twig`.
 
-### Faza 4 – Panel dyrektora (ROLE_DIRECTOR)
-1. **Stworzenie ChildController** (CRUD dla dzieci, dostęp tylko dla director swojego domu dziecka).
-2. **Stworzenie DreamController akcje `new`, `edit`, `delete`** (z ograniczeniem do własnego orphanage).
-3. **Szablony** dla zarządzania dziećmi i marzeniami.
+### Faza 4 – Panel dyrektora (ROLE_DIRECTOR) – ✅ UKOŃCZONA
+1. ✅ **Stworzenie ChildController** (CRUD dla dzieci, dostęp tylko dla director swojego domu dziecka).
+2. ✅ **Stworzenie DreamController akcje `new`, `edit`, `delete`** (z ograniczeniem do własnego orphanage).
+3. ✅ **Szablony** dla zarządzania dzieci (index, new, edit) i marzeń (new, edit).
+4. ✅ **Formularze** ChildType i DreamType (z ograniczeniem dzieci do własnego domu dziecka).
+5. ✅ **Link w navbarze** do panelu dyrektora.
+6. ✅ **Integracja z bazą danych** – formularz DreamType automatycznie filtruje dzieci należące do domu dziecka dyrektora.
 
 ### Faza 5 – Panel administratora (ROLE_ADMIN) – ✅ UKOŃCZONA
 1. ✅ **Utworzenie AdminController** z akcjami:

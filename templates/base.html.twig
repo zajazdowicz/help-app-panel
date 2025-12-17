@@ -35,7 +35,7 @@
                     {% endif %}
                     {% if is_granted('ROLE_DIRECTOR') %}
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Panel dyrektora</a>
+                            <a class="nav-link" href="{{ path('director_child_index') }}">Panel dyrektora</a>
                         </li>
                     {% endif %}
                 </ul>

@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edytuj dziecko - Panel dyrektora{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <h1>Edytuj dziecko: {{ child.firstName }}</h1>
+            <a href="{{ path('director_child_index') }}" class="btn btn-secondary mb-3">Powrót do listy</a>
+            
+            {{ form_start(form) }}
+                {{ form_row(form.firstName) }}
+                {{ form_row(form.age) }}
+                {{ form_row(form.description) }}
+                {{ form_row(form.isVerified) }}
+                
+                <button type="submit" class="btn btn-primary">Zapisz zmiany</button>
+            {{ form_end(form) }}
+        </div>
+    </div>
+</div>
+{% endblock %}

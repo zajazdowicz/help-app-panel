@@ -1,0 +1,45 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Dzieci - Panel dyrektora{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <div class="row mb-4">
+        <div class="col">
+            <h1>Dzieci w domu dziecka: {{ orphanage.name }}</h1>
+            <a href="{{ path('director_child_new') }}" class="btn btn-primary">Dodaj nowe dziecko</a>
+            <a href="{{ path('app_home') }}" class="btn btn-secondary">Powrót do strony głównej</a>
+        </div>
+    </div>
+
+    {% if children|length > 0 %}
+        <div class="row">
+            {% for child in children %}
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ child.firstName }}</h5>
+                            <p class="card-text">
+                                <strong>Wiek:</strong> {{ child.age }}<br>
+                                <strong>Opis:</strong> {{ child.description|slice(0, 100) }}{% if child.description|length > 100 %}...{% endif %}<br>
+                                <strong>Zweryfikowane:</strong> {{ child.isVerified ? 'Tak' : 'Nie' }}
+                            </p>
+                            <div class="d-flex justify-content-between">
+                                <a href="{{ path('director_child_edit', {'id': child.id}) }}" class="btn btn-sm btn-outline-primary">Edytuj</a>
+                                <form method="post" action="{{ path('director_child_delete', {'id': child.id}) }}" onsubmit="return confirm('Czy na pewno chcesz usunąć to dziecko?');">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ child.id) }}">
+                                    <button class="btn btn-sm btn-outline-danger">Usuń</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-info">
+            Nie ma jeszcze dzieci w tym domu dziecka. Dodaj pierwsze dziecko.
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
