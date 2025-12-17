@@ -1,23 +1,124 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}HelpDreams - Strona główna{% endblock %}
+{% block title %}HelpDreams – Spełniamy marzenia dzieci z domów dziecka{% endblock %}
 
 {% block body %}
-    <div class="text-center py-5">
-        <h1 class="display-4">{{ message }}</h1>
-        <p class="lead">To jest przykładowa strona główna aplikacji Symfony.</p>
-        <p class="text-muted">Sprawdź, czy routing działa poprawnie.</p>
-
-        {% if app.user %}
-            <div class="mt-4">
-                <p class="fs-5">Zalogowany jako: <strong>{{ app.user.email }}</strong></p>
-                <p class="text-muted">Twoje role: <code>{{ app.user.roles|join(', ') }}</code></p>
+<div class="container">
+    <!-- Hero Section -->
+    <div class="row align-items-center py-5">
+        <div class="col-lg-6">
+            <h1 class="display-4 fw-bold mb-4">Pomagamy spełniać dziecięce marzenia</h1>
+            <p class="lead mb-4">
+                HelpDreams to platforma, która łączy darczyńców z domami dziecka. 
+                Dzięki Tobie dzieci mogą otrzymać wymarzony prezent, który sprawi im radość i da nadzieję na lepsze jutro.
+            </p>
+            <div class="d-flex flex-wrap gap-3">
+                <a href="{{ path('app_dream_index') }}" class="btn btn-primary btn-lg">Przeglądaj marzenia</a>
+                {% if not app.user %}
+                    <a href="{{ path('app_register') }}" class="btn btn-outline-primary btn-lg">Dołącz do nas</a>
+                {% endif %}
             </div>
-        {% else %}
-            <div class="mt-5">
-                <a href="{{ path('app_register') }}" class="btn btn-primary btn-lg me-3">Zarejestruj się</a>
-                <a href="{{ path('app_login') }}" class="btn btn-outline-primary btn-lg">Zaloguj</a>
-            </div>
-        {% endif %}
+        </div>
+        <div class="col-lg-6 text-center">
+            <img src="https://images.unsplash.com/photo-1516627145497-ae6958efddb7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" 
+                 alt="Dzieci się bawią" class="img-fluid rounded shadow" style="max-height: 400px;">
+        </div>
     </div>
+
+    <!-- Stats Section -->
+    <div class="row py-5 bg-light rounded-3 mb-5">
+        <div class="col-md-4 text-center">
+            <h2 class="display-3 fw-bold text-primary">{{ stats.dreams|default(0) }}</h2>
+            <p class="fs-5">aktywnych marzeń</p>
+        </div>
+        <div class="col-md-4 text-center">
+            <h2 class="display-3 fw-bold text-success">{{ stats.orphanages|default(0) }}</h2>
+            <p class="fs-5">domów dziecka</p>
+        </div>
+        <div class="col-md-4 text-center">
+            <h2 class="display-3 fw-bold text-warning">{{ stats.fulfillments|default(0) }}</h2>
+            <p class="fs-5">spełnionych darowizn</p>
+        </div>
+    </div>
+
+    <!-- Recent Dreams -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <h2 class="mb-4">Najnowsze marzenia czekające na pomoc</h2>
+            {% if recentDreams|length > 0 %}
+                <div class="row">
+                    {% for dream in recentDreams %}
+                        <div class="col-md-4 mb-4">
+                            <div class="card h-100 shadow-sm">
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ dream.productTitle }}</h5>
+                                    <p class="card-text">
+                                        <strong>Dziecko:</strong> {{ dream.child.firstName }} ({{ dream.child.age }} lat)<br>
+                                        <strong>Dom dziecka:</strong> {{ dream.orphanage.name }}<br>
+                                        <strong>Cena:</strong> {{ dream.productPrice }} zł<br>
+                                        <strong>Pozostało:</strong> {{ dream.remainingQuantity }} szt.
+                                    </p>
+                                    <div class="mt-auto">
+                                        <a href="{{ path('app_dream_show', {id: dream.id}) }}" class="btn btn-outline-primary">Zobacz szczegóły</a>
+                                    </div>
+                                </div>
+                                {% if dream.isUrgent %}
+                                    <div class="card-footer bg-warning text-dark">
+                                        <strong>⚠️ Pilne!</strong>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+                <div class="text-center mt-4">
+                    <a href="{{ path('app_dream_index') }}" class="btn btn-primary btn-lg">Zobacz wszystkie marzenia</a>
+                </div>
+            {% else %}
+                <div class="alert alert-info">
+                    Na razie nie ma dodanych marzeń. Bądź pierwszym, który doda marzenie!
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- How It Works -->
+    <div class="row py-5">
+        <div class="col-12 text-center mb-4">
+            <h2>Jak to działa?</h2>
+            <p class="lead">Wystarczą trzy proste kroki, aby spełnić czyjeś marzenie.</p>
+        </div>
+        <div class="col-md-4 text-center">
+            <div class="p-4 bg-white rounded shadow-sm h-100">
+                <div class="fs-1 mb-3">1️⃣</div>
+                <h4>Przeglądaj marzenia</h4>
+                <p>Wybierz marzenie, które chcesz wspomóc. Możesz filtrować według kategorii, regionu lub pilności.</p>
+            </div>
+        </div>
+        <div class="col-md-4 text-center">
+            <div class="p-4 bg-white rounded shadow-sm h-100">
+                <div class="fs-1 mb-3">2️⃣</div>
+                <h4>Złóż darowiznę</h4>
+                <p>Wypełnij prosty formularz i zdecyduj, ile sztuk chcesz podarować. Możesz pozostać anonimowy.</p>
+            </div>
+        </div>
+        <div class="col-md-4 text-center">
+            <div class="p-4 bg-white rounded shadow-sm h-100">
+                <div class="fs-1 mb-3">3️⃣</div>
+                <h4>Obserwuj radość</h4>
+                <p>Po dostarczeniu prezentu dziecko lub dyrekcja może dodać podziękowanie i zdjęcie.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Call to Action -->
+    <div class="row py-5 bg-primary text-white rounded-3">
+        <div class="col-12 text-center">
+            <h2 class="display-5 fw-bold mb-4">Dołącz do naszej społeczności</h2>
+            <p class="fs-5 mb-4">Razem możemy zmieniać świat, jedno marzenie na raz.</p>
+            <a href="{{ path('app_register') }}" class="btn btn-light btn-lg me-3">Zarejestruj się</a>
+            <a href="{{ path('app_dream_index') }}" class="btn btn-outline-light btn-lg">Przeglądaj marzenia</a>
+        </div>
+    </div>
+</div>
 {% endblock %}
