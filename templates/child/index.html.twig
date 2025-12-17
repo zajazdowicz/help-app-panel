@@ -1,37 +1,45 @@
-{% extends 'base.html.twig' %}
+{% extends 'director/base.html.twig' %}
 
 {% block title %}Dzieci - Panel dyrektora{% endblock %}
 
-{% block body %}
-<div class="container mt-4">
-    <div class="row mb-4">
-        <div class="col">
-            <h1>Dzieci w domu dziecka: {{ orphanage.name }}</h1>
-            <a href="{{ path('director_child_new') }}" class="btn btn-primary">Dodaj nowe dziecko</a>
-            <a href="{{ path('director_dream_new') }}" class="btn btn-success">Dodaj nowe marzenie</a>
-            <a href="{{ path('director_dream_list') }}" class="btn btn-info">Moje marzenia ({{ orphanage.name }})</a>
-            <a href="{{ path('app_dream_index') }}" class="btn btn-outline-info">Przeglądaj wszystkie marzenia</a>
-            <a href="{{ path('app_home') }}" class="btn btn-secondary">Powrót do strony głównej</a>
+{% block director_body %}
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0">Dzieci w domu dziecka</h1>
+        <div>
+            <a href="{{ path('director_child_new') }}" class="btn btn-primary">
+                <i class="bi bi-person-plus me-1"></i> Dodaj dziecko
+            </a>
         </div>
     </div>
 
     {% if children|length > 0 %}
         <div class="row">
             {% for child in children %}
-                <div class="col-md-4 mb-4">
-                    <div class="card">
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card h-100 shadow-sm">
                         <div class="card-body">
                             <h5 class="card-title">{{ child.firstName }}</h5>
-                            <p class="card-text">
-                                <strong>Wiek:</strong> {{ child.age }}<br>
-                                <strong>Opis:</strong> {{ child.description|slice(0, 100) }}{% if child.description|length > 100 %}...{% endif %}<br>
-                                <strong>Zweryfikowane:</strong> {{ child.isVerified ? 'Tak' : 'Nie' }}
-                            </p>
+                            <div class="card-text mb-3">
+                                <div><strong>Wiek:</strong> {{ child.age }} lat</div>
+                                <div><strong>Opis:</strong> {{ child.description|slice(0, 100) }}{% if child.description|length > 100 %}...{% endif %}</div>
+                                <div>
+                                    <strong>Zweryfikowane:</strong>
+                                    {% if child.isVerified %}
+                                        <span class="badge bg-success">Tak</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary">Nie</span>
+                                    {% endif %}
+                                </div>
+                            </div>
                             <div class="d-flex justify-content-between">
-                                <a href="{{ path('director_child_edit', {'id': child.id}) }}" class="btn btn-sm btn-outline-primary">Edytuj</a>
+                                <a href="{{ path('director_child_edit', {'id': child.id}) }}" class="btn btn-sm btn-outline-primary">
+                                    <i class="bi bi-pencil"></i> Edytuj
+                                </a>
                                 <form method="post" action="{{ path('director_child_delete', {'id': child.id}) }}" onsubmit="return confirm('Czy na pewno chcesz usunąć to dziecko?');">
                                     <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ child.id) }}">
-                                    <button class="btn btn-sm btn-outline-danger">Usuń</button>
+                                    <button class="btn btn-sm btn-outline-danger">
+                                        <i class="bi bi-trash"></i> Usuń
+                                    </button>
                                 </form>
                             </div>
                         </div>
@@ -41,8 +49,9 @@
         </div>
     {% else %}
         <div class="alert alert-info">
-            Nie ma jeszcze dzieci w tym domu dziecka. Dodaj pierwsze dziecko.
+            <i class="bi bi-info-circle me-2"></i>
+            Nie ma jeszcze dzieci w tym domu dziecka.
+            <a href="{{ path('director_child_new') }}" class="alert-link">Dodaj pierwsze dziecko</a>.
         </div>
     {% endif %}
-</div>
 {% endblock %}

@@ -1,31 +1,50 @@
-{% extends 'base.html.twig' %}
+{% extends 'director/base.html.twig' %}
 
 {% block title %}Edytuj marzenie - Panel dyrektora{% endblock %}
 
-{% block body %}
-<div class="container mt-4">
-    <div class="row">
-        <div class="col-md-8 offset-md-2">
-            <h1>Edytuj marzenie: {{ dream.productTitle }}</h1>
-            {% if is_granted('ROLE_DIRECTOR') and app.user.orphanage and dream.orphanage.id == app.user.orphanage.id %}
-                <a href="{{ path('director_dream_list') }}" class="btn btn-secondary mb-3">Powrót do moich marzeń</a>
-            {% else %}
-                <a href="{{ path('app_dream_show', {'id': dream.id}) }}" class="btn btn-secondary mb-3">Powrót do szczegółów</a>
-            {% endif %}
-            
+{% block director_body %}
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0">Edytuj marzenie: {{ dream.productTitle|slice(0, 50) }}{% if dream.productTitle|length > 50 %}...{% endif %}</h1>
+        <a href="{{ path('director_dream_list') }}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Powrót do listy
+        </a>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
             {{ form_start(form) }}
-                {{ form_row(form.productTitle) }}
-                {{ form_row(form.productUrl) }}
-                {{ form_row(form.productPrice) }}
-                {{ form_row(form.productCategory) }}
+                <div class="row">
+                    <div class="col-md-6">
+                        {{ form_row(form.productTitle) }}
+                    </div>
+                    <div class="col-md-6">
+                        {{ form_row(form.productCategory) }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        {{ form_row(form.productUrl) }}
+                    </div>
+                    <div class="col-md-6">
+                        {{ form_row(form.productPrice) }}
+                    </div>
+                </div>
                 {{ form_row(form.description) }}
-                {{ form_row(form.quantityNeeded) }}
-                {{ form_row(form.isUrgent) }}
+                <div class="row">
+                    <div class="col-md-6">
+                        {{ form_row(form.quantityNeeded) }}
+                    </div>
+                    <div class="col-md-6">
+                        {{ form_row(form.isUrgent) }}
+                    </div>
+                </div>
                 {{ form_row(form.child) }}
-                
-                <button type="submit" class="btn btn-primary">Zapisz zmiany</button>
+                <div class="d-flex justify-content-end mt-4">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-lg"></i> Zapisz zmiany
+                    </button>
+                </div>
             {{ form_end(form) }}
         </div>
     </div>
-</div>
 {% endblock %}

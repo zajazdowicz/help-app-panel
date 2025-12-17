@@ -1,28 +1,25 @@
-{% extends 'base.html.twig' %}
+{% extends 'director/base.html.twig' %}
 
 {% block title %}Moje marzenia - Panel dyrektora{% endblock %}
 
-{% block body %}
-<div class="container mt-4">
-    <div class="row mb-4">
-        <div class="col">
-            <h1>Marzenia w domu dziecka: {{ orphanage.name }}</h1>
-            <div class="mb-3">
-                <a href="{{ path('director_child_index') }}" class="btn btn-secondary">Panel dzieci</a>
-                <a href="{{ path('director_dream_new') }}" class="btn btn-success">Dodaj nowe marzenie</a>
-                <a href="{{ path('app_dream_index') }}" class="btn btn-outline-primary">Przeglądaj wszystkie marzenia</a>
-            </div>
-            
-            <div class="card mb-4">
-                <div class="card-body">
-                    <h5 class="card-title">Filtruj według statusu</h5>
-                    <div class="btn-group" role="group">
-                        <a href="{{ path('director_dream_list') }}" class="btn btn-outline-secondary {% if currentStatus is null %}active{% endif %}">Wszystkie</a>
-                        {% for label, value in statusChoices %}
-                            <a href="{{ path('director_dream_list', {status: value}) }}" class="btn btn-outline-secondary {% if currentStatus == value %}active{% endif %}">{{ label }}</a>
-                        {% endfor %}
-                    </div>
-                </div>
+{% block director_body %}
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0">Marzenia w domu dziecka</h1>
+        <div>
+            <a href="{{ path('director_dream_new') }}" class="btn btn-success">
+                <i class="bi bi-plus-circle me-1"></i> Dodaj marzenie
+            </a>
+        </div>
+    </div>
+
+    <div class="card mb-4 shadow-sm">
+        <div class="card-body">
+            <h5 class="card-title mb-3">Filtruj według statusu</h5>
+            <div class="btn-group flex-wrap" role="group">
+                <a href="{{ path('director_dream_list') }}" class="btn btn-outline-secondary {% if currentStatus is null %}active{% endif %}">Wszystkie</a>
+                {% for label, value in statusChoices %}
+                    <a href="{{ path('director_dream_list', {status: value}) }}" class="btn btn-outline-secondary {% if currentStatus == value %}active{% endif %}">{{ label }}</a>
+                {% endfor %}
             </div>
         </div>
     </div>
@@ -30,38 +27,53 @@
     {% if dreams|length > 0 %}
         <div class="row">
             {% for dream in dreams %}
-                <div class="col-md-6 mb-4">
-                    <div class="card h-100">
-                        <div class="card-body">
-                            <h5 class="card-title">{{ dream.productTitle }}</h5>
-                            <h6 class="card-subtitle mb-2 text-muted">Dziecko: {{ dream.child.firstName }}</h6>
-                            <p class="card-text">
-                                <strong>Status:</strong> 
-                                {% if dream.status == 'pending' %}
-                                    <span class="badge bg-secondary">Oczekujące</span>
-                                {% elseif dream.status == 'verified' %}
-                                    <span class="badge bg-primary">Zweryfikowane</span>
-                                {% elseif dream.status == 'in_progress' %}
-                                    <span class="badge bg-warning">W realizacji</span>
-                                {% elseif dream.status == 'fulfilled' %}
-                                    <span class="badge bg-success">Zrealizowane</span>
-                                {% elseif dream.status == 'cancelled' %}
-                                    <span class="badge bg-danger">Anulowane</span>
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body d-flex flex-column">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <h5 class="card-title mb-0">{{ dream.productTitle|slice(0, 40) }}{% if dream.productTitle|length > 40 %}...{% endif %}</h5>
+                                {% if dream.isUrgent %}
+                                    <span class="badge bg-warning">Pilne</span>
                                 {% endif %}
-                                <br>
-                                <strong>Cena:</strong> {{ dream.productPrice }} zł<br>
-                                <strong>Potrzebna ilość:</strong> {{ dream.quantityNeeded }}<br>
-                                <strong>Zebrano:</strong> {{ dream.quantityFulfilled }}<br>
-                                <strong>Pozostało:</strong> {{ dream.remainingQuantity }}<br>
-                                <strong>Pilne:</strong> {% if dream.isUrgent %}Tak{% else %}Nie{% endif %}<br>
-                                <strong>Data dodania:</strong> {{ dream.createdAt|date('d.m.Y H:i') }}
-                            </p>
-                            <div class="mt-3">
-                                <a href="{{ path('app_dream_show', {id: dream.id}) }}" class="btn btn-sm btn-outline-primary">Szczegóły</a>
-                                <a href="{{ path('director_dream_edit', {id: dream.id}) }}" class="btn btn-sm btn-outline-warning">Edytuj</a>
+                            </div>
+                            <h6 class="card-subtitle mb-3 text-muted">
+                                <i class="bi bi-person"></i> {{ dream.child.firstName }}
+                            </h6>
+                            <div class="card-text mb-3 flex-grow-1">
+                                <div class="mb-2">
+                                    <strong>Status:</strong>
+                                    {% if dream.status == 'pending' %}
+                                        <span class="badge bg-secondary">Oczekujące</span>
+                                    {% elseif dream.status == 'verified' %}
+                                        <span class="badge bg-primary">Zweryfikowane</span>
+                                    {% elseif dream.status == 'in_progress' %}
+                                        <span class="badge bg-warning">W realizacji</span>
+                                    {% elseif dream.status == 'fulfilled' %}
+                                        <span class="badge bg-success">Zrealizowane</span>
+                                    {% elseif dream.status == 'cancelled' %}
+                                        <span class="badge bg-danger">Anulowane</span>
+                                    {% endif %}
+                                </div>
+                                <div><strong>Cena:</strong> {{ dream.productPrice }} zł</div>
+                                <div><strong>Potrzebna ilość:</strong> {{ dream.quantityNeeded }}</div>
+                                <div><strong>Zebrano:</strong> {{ dream.quantityFulfilled }}</div>
+                                <div><strong>Pozostało:</strong> {{ dream.remainingQuantity }}</div>
+                                <div class="mt-2 text-muted small">
+                                    <i class="bi bi-calendar"></i> {{ dream.createdAt|date('d.m.Y H:i') }}
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <a href="{{ path('app_dream_show', {id: dream.id}) }}" class="btn btn-sm btn-outline-primary">
+                                    <i class="bi bi-eye"></i> Szczegóły
+                                </a>
+                                <a href="{{ path('director_dream_edit', {id: dream.id}) }}" class="btn btn-sm btn-outline-warning">
+                                    <i class="bi bi-pencil"></i> Edytuj
+                                </a>
                                 <form method="post" action="{{ path('director_dream_delete', {id: dream.id}) }}" style="display:inline;" onsubmit="return confirm('Czy na pewno chcesz usunąć to marzenie?');">
                                     <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ dream.id) }}">
-                                    <button type="submit" class="btn btn-sm btn-outline-danger">Usuń</button>
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">
+                                        <i class="bi bi-trash"></i> Usuń
+                                    </button>
                                 </form>
                             </div>
                         </div>
@@ -71,12 +83,13 @@
         </div>
     {% else %}
         <div class="alert alert-info">
+            <i class="bi bi-info-circle me-2"></i>
             {% if currentStatus %}
                 Nie ma marzeń ze statusem "{{ statusChoices|filter((v,k) => v == currentStatus)|keys|first }}".
             {% else %}
-                Nie ma jeszcze marzeń w tym domu dziecka. Dodaj pierwsze marzenie.
+                Nie ma jeszcze marzeń w tym domu dziecka.
+                <a href="{{ path('director_dream_new') }}" class="alert-link">Dodaj pierwsze marzenie</a>.
             {% endif %}
         </div>
     {% endif %}
-</div>
 {% endblock %}
