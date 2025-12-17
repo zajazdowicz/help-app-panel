@@ -18,8 +18,10 @@ class DreamFulfillment
     public const STATUS_DELIVERED = 'delivered';
     public const STATUS_CONFIRMED = 'confirmed';
     public const STATUS_CANCELLED = 'cancelled';
+    public const STATUS_PENDING = 'pending';
 
     public const STATUS_CHOICES = [
+        'Oczekujące' => self::STATUS_PENDING,
         'Zarezerwowane' => self::STATUS_RESERVED,
         'Zamówione' => self::STATUS_ORDERED,
         'Dostarczone' => self::STATUS_DELIVERED,
@@ -62,6 +64,9 @@ class DreamFulfillment
     #[ORM\Column]
     #[Assert\Positive]
     private int $quantityFulfilled = 1;
+
+    #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2, nullable: true)]
+    private ?string $amount = null;
 
     #[ORM\Column(length: 500, nullable: true)]
     #[Assert\Length(max: 500)]
@@ -204,6 +209,18 @@ class DreamFulfillment
     public function setChildMessage(?string $childMessage): static
     {
         $this->childMessage = $childMessage;
+
+        return $this;
+    }
+
+    public function getAmount(): ?string
+    {
+        return $this->amount;
+    }
+
+    public function setAmount(?string $amount): static
+    {
+        $this->amount = $amount;
 
         return $this;
     }
