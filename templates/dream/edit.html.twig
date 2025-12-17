@@ -6,7 +6,7 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1 class="h3 mb-0">Edytuj marzenie: {{ dream.productTitle|slice(0, 50) }}{% if dream.productTitle|length > 50 %}...{% endif %}</h1>
         <a href="{{ path('director_dream_list') }}" class="btn btn-outline-secondary">
-            <i class="bi bi-arrow-left"></i> Powrót do listy
+            <i class="bi bi-arrow-left"></i> Powrót do naszych marzeń
         </a>
     </div>
 
@@ -18,7 +18,7 @@
                         {{ form_row(form.productTitle) }}
                     </div>
                     <div class="col-md-6">
-                        {{ form_row(form.productCategory) }}
+                        {{ form_row(form.category) }}
                     </div>
                 </div>
                 <div class="row">
