@@ -61,7 +61,7 @@ class DreamFulfillmentController extends AbstractController
         ]);
     }
 
-    #[Route('/fulfillment/{id}/edit-thanks', name: 'app_dream_fulfillment_edit_thanks', methods: ['GET', 'POST'])]
+    #[Route('/fulfillment/{fulfillment}/edit-thanks', name: 'app_dream_fulfillment_edit_thanks', methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_DIRECTOR')]
     public function editThanks(Request $request, DreamFulfillment $fulfillment, EntityManagerInterface $entityManager): Response
     {
