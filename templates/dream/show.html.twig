@@ -19,20 +19,47 @@
                         <li><strong>Zebrano:</strong> {{ dream.quantityFulfilled }}</li>
                         <li><strong>Pozostało:</strong> {{ dream.remainingQuantity }}</li>
                         <li><strong>Pilne:</strong> {% if dream.isUrgent %}Tak{% else %}Nie{% endif %}</li>
+                        <li><strong>Dom dziecka:</strong> {{ dream.orphanage.name }}</li>
                     </ul>
                     <p><strong>Opis:</strong> {{ dream.description|default('Brak opisu') }}</p>
                     <p><strong>Link do produktu:</strong> <a href="{{ dream.productUrl }}" target="_blank">{{ dream.productUrl }}</a></p>
                     <p><strong>Data utworzenia:</strong> {{ dream.createdAt|date('d.m.Y H:i') }}</p>
                 </div>
             </div>
-            {% if not dream.isFullyFulfilled %}
-                <a href="{{ path('app_dream_fulfillment', {id: dream.id}) }}" class="btn btn-success mt-3 me-2">
-                    <span class="me-1">🎁</span> Chcę pomóc!
-                </a>
-            {% else %}
-                <button class="btn btn-secondary mt-3 me-2" disabled>Marzenie spełnione!</button>
+            
+            <div class="mt-3">
+                {% if not dream.isFullyFulfilled %}
+                    <a href="{{ path('app_dream_fulfillment', {id: dream.id}) }}" class="btn btn-success me-2">
+                        <span class="me-1">🎁</span> Chcę pomóc!
+                    </a>
+                {% else %}
+                    <button class="btn btn-secondary me-2" disabled>Marzenie spełnione!</button>
+                {% endif %}
+                
+                {# Przyciski dla dyrektora, jeśli marzenie należy do jego domu dziecka #}
+                {% if is_granted('ROLE_DIRECTOR') and app.user.orphanage and dream.orphanage.id == app.user.orphanage.id %}
+                    <a href="{{ path('director_dream_edit', {id: dream.id}) }}" class="btn btn-primary me-2">
+                        <span class="me-1">✏️</span> Edytuj marzenie
+                    </a>
+                    <form method="post" action="{{ path('director_dream_delete', {id: dream.id}) }}" style="display:inline;" onsubmit="return confirm('Czy na pewno chcesz usunąć to marzenie?');">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ dream.id) }}">
+                        <button type="submit" class="btn btn-danger">
+                            <span class="me-1">🗑️</span> Usuń marzenie
+                        </button>
+                    </form>
+                {% endif %}
+                
+                <a href="{{ path('app_dream_index') }}" class="btn btn-outline-secondary">Powrót do listy</a>
+            </div>
+            
+            {# Link do dodawania nowego marzenia dla dyrektora #}
+            {% if is_granted('ROLE_DIRECTOR') and app.user.orphanage %}
+                <div class="mt-4">
+                    <a href="{{ path('director_dream_new') }}" class="btn btn-outline-primary">
+                        <span class="me-1">➕</span> Dodaj nowe marzenie
+                    </a>
+                </div>
             {% endif %}
-            <a href="{{ path('app_dream_index') }}" class="btn btn-outline-secondary mt-3">Powrót do listy</a>
         </div>
     </div>
 </div>

@@ -25,8 +25,9 @@ class DreamFulfillmentController extends AbstractController
         $fulfillment = new DreamFulfillment();
         $fulfillment->setDream($dream);
         // If user is logged in, associate them
-        if ($this->getUser()) {
-            $fulfillment->setUser($this->getUser());
+        $currentUser = $this->getUser();
+        if ($currentUser) {
+            $fulfillment->setUser($currentUser);
         }
 
         $form = $this->createForm(DreamFulfillmentType::class, $fulfillment);
@@ -36,9 +37,9 @@ class DreamFulfillmentController extends AbstractController
             // Default status
             $fulfillment->setStatus(DreamFulfillment::STATUS_PENDING);
             
-            // If user is logged in, associate them
-            if ($this->getUser()) {
-                $fulfillment->setUser($this->getUser());
+            // Ensure user is still associated (in case form changed something)
+            if ($currentUser && !$fulfillment->getUser()) {
+                $fulfillment->setUser($currentUser);
             }
             
             $entityManager->persist($fulfillment);

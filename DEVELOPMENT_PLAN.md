@@ -113,6 +113,9 @@ Ten dokument opisuje aktualny stan aplikacji, brakujące funkcjonalności, plan 
 4. ✅ **Formularze** ChildType i DreamType (z ograniczeniem dzieci do własnego domu dziecka).
 5. ✅ **Link w navbarze** do panelu dyrektora.
 6. ✅ **Integracja z bazą danych** – formularz DreamType automatycznie filtruje dzieci należące do domu dziecka dyrektora.
+7. ✅ **Przyciski edycji/usuwania marzeń** w widoku szczegółów marzenia dla dyrektora.
+8. ✅ **Linki do dodawania nowego marzenia** w panelu dyrektora i widoku szczegółów.
+9. ✅ **Logika biznesowa** – dyrektor dodaje marzenia w imieniu dzieci ze swojego domu dziecka, wybierając konkretne dziecko z listy.
 
 ### Faza 5 – Panel administratora (ROLE_ADMIN) – ✅ UKOŃCZONA
 1. ✅ **Utworzenie AdminController** z akcjami:
