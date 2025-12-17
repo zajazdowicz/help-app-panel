@@ -24,7 +24,11 @@ class ChildController extends AbstractController
         
         if (!$orphanage) {
             $this->addFlash('warning', 'Nie jesteś przypisany do żadnego domu dziecka.');
-            return $this->redirectToRoute('app_home');
+            return $this->redirectToRoute('director_orphanage_register');
+        }
+        
+        if (!$orphanage->isVerified()) {
+            $this->addFlash('warning', 'Twój dom dziecka nie jest jeszcze zweryfikowany.');
         }
         
         $children = $childRepository->findBy(['orphanage' => $orphanage], ['firstName' => 'ASC']);
@@ -43,7 +47,12 @@ class ChildController extends AbstractController
         
         if (!$orphanage) {
             $this->addFlash('warning', 'Nie jesteś przypisany do żadnego domu dziecka.');
-            return $this->redirectToRoute('app_home');
+            return $this->redirectToRoute('director_orphanage_register');
+        }
+        
+        if (!$orphanage->isVerified()) {
+            $this->addFlash('warning', 'Twój dom dziecka nie jest jeszcze zweryfikowany. Nie możesz dodawać dzieci.');
+            return $this->redirectToRoute('director_orphanage_show');
         }
         
         $child = new Child();
@@ -72,6 +81,16 @@ class ChildController extends AbstractController
         $user = $this->getUser();
         $orphanage = $user->getOrphanage();
         
+        if (!$orphanage) {
+            $this->addFlash('warning', 'Nie jesteś przypisany do żadnego domu dziecka.');
+            return $this->redirectToRoute('director_orphanage_register');
+        }
+        
+        if (!$orphanage->isVerified()) {
+            $this->addFlash('warning', 'Twój dom dziecka nie jest jeszcze zweryfikowany.');
+            return $this->redirectToRoute('director_orphanage_show');
+        }
+        
         // Sprawdź, czy dziecko należy do domu dziecka dyrektora
         if ($child->getOrphanage() !== $orphanage) {
             throw $this->createAccessDeniedException('Nie masz uprawnień do edycji tego dziecka.');
@@ -98,6 +117,16 @@ class ChildController extends AbstractController
     {
         $user = $this->getUser();
         $orphanage = $user->getOrphanage();
+        
+        if (!$orphanage) {
+            $this->addFlash('warning', 'Nie jesteś przypisany do żadnego domu dziecka.');
+            return $this->redirectToRoute('director_orphanage_register');
+        }
+        
+        if (!$orphanage->isVerified()) {
+            $this->addFlash('warning', 'Twój dom dziecka nie jest jeszcze zweryfikowany.');
+            return $this->redirectToRoute('director_orphanage_show');
+        }
         
         // Sprawdź, czy dziecko należy do domu dziecka dyrektora
         if ($child->getOrphanage() !== $orphanage) {
