@@ -20,8 +20,5 @@ services:
             - '../src/Entity/'
             - '../src/Kernel.php'
 
-    # Explicitly configure MailerInterface to be autowired
-    Symfony\Component\Mailer\MailerInterface: '@mailer'
-
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
