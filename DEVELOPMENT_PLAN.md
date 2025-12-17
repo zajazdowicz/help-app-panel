@@ -145,12 +145,31 @@ Ten dokument opisuje aktualny stan aplikacji, brakujące funkcjonalności, plan 
 10. ✅ **Panel dyrektora – edycja podziękowań** – możliwość dodania/edycji zdjęcia i wiadomości dla każdej darowizny.
 11. ✅ **Rejestracja i zarządzanie domami dziecka przez dyrektora** – formularz rejestracji, edycji, weryfikacja przez admina, blokada dodawania dzieci/marzeń przed weryfikacją.
 12. ✅ **Rola Super Admin** – możliwość przypisania użytkownikowi ról ROLE_ADMIN i ROLE_DIRECTOR jednocześnie, pozwalająca na dostęp do panelu admina i dyrektora bez przelogowywania.
-13. 🔄 **Dodanie typu Enum dla statusów** (np. klasa DreamStatus, DreamFulfillmentStatus).
-14. 🔄 **Walidacja formularzy** (Constraints).
-15. 🔄 **Dodanie event subscriberów** do automatycznej aktualizacji pól `updatedAt`.
-16. 🔄 **Zapis logów ważnych operacji**.
+13. 🔄 **Rozróżnienie rejestracji użytkownika (ROLE_USER) i dyrektora (ROLE_DIRECTOR)** – dodanie pola wyboru typu konta w formularzu rejestracji, automatyczne przypisanie odpowiedniej roli.
+14. 🔄 **Dodanie typu Enum dla statusów** (np. klasa DreamStatus, DreamFulfillmentStatus).
+15. 🔄 **Walidacja formularzy** (Constraints).
+16. 🔄 **Dodanie event subscriberów** do automatycznej aktualizacji pól `updatedAt`.
+17. 🔄 **Zapis logów ważnych operacji**.
 
-### Faza 7 – Aktualizacja produkcji i wdrożenie
+### Faza 7 – Rozróżnienie rejestracji użytkownika i dyrektora
+1. **Modyfikacja RegistrationFormType**:
+   - Dodanie pola `accountType` (ChoiceType) z opcjami `user` (zwykły użytkownik) i `director` (dyrektor domu dziecka).
+   - Domyślnie wybrana opcja `user`.
+2. **Aktualizacja RegistrationController::register**:
+   - Odczytywanie wartości `accountType` z formularza.
+   - Przypisanie odpowiedniej roli (`ROLE_USER` lub `ROLE_DIRECTOR`).
+   - Jeśli wybrano `director`, automatyczne utworzenie pustego rekordu `Orphanage` (niezweryfikowanego) i powiązanie z użytkownikiem (opcjonalnie).
+3. **Dostosowanie szablonu rejestracji**:
+   - Wyświetlenie pola wyboru typu konta.
+   - Dodanie krótkiego opisu dla każdej opcji.
+4. **Aktualizacja logiki weryfikacji**:
+   - Dla dyrektora: wymagana późniejsza rejestracja domu dziecka (lub automatyczne utworzenie pustego) i weryfikacja przez admina.
+   - Dla zwykłego użytkownika: brak dodatkowych kroków.
+5. **Testy**:
+   - Przetestowanie rejestracji obu typów kont.
+   - Sprawdzenie, czy role są poprawnie przypisane.
+
+### Faza 8 – Aktualizacja produkcji i wdrożenie
 1. **Procedura aktualizacji środowiska produkcyjnego**:
    - Zapisanie zmian w repozytorium Git.
    - Logowanie na serwer produkcyjny.
@@ -169,20 +188,11 @@ Ten dokument opisuje aktualny stan aplikacji, brakujące funkcjonalności, plan 
    - Sprawdzenie działania głównych ścieżek (strona główna, lista marzeń, logowanie, panele admina/dyrektora).
    - Weryfikacja formularzy (rejestracja, darowizny, dodawanie dzieci/marzeń).
 
-### Faza 8 – Testy
+### Faza 9 – Testy
 1. **Stworzenie testów jednostkowych** dla encji i repozytoriów.
 2. **Testy funkcjonalne** dla kontrolerów.
 
-### Faza 9 – Optymalizacja i skalowanie
-1. **Konfiguracja środowiska produkcyjnego** (cache, środowisko `prod`).
-2. **Monitoring** (logi, błędy).
-3. **Ewentualna integracja z usługami reklamowymi** (Google AdSense).
-
-### Faza 7 – Testy
-1. **Stworzenie testów jednostkowych** dla encji i repozytoriów.
-2. **Testy funkcjonalne** dla kontrolerów.
-
-### Faza 8 – Wdrożenie i optymalizacja
+### Faza 10 – Optymalizacja i skalowanie
 1. **Konfiguracja środowiska produkcyjnego** (cache, środowisko `prod`).
 2. **Monitoring** (logi, błędy).
 3. **Ewentualna integracja z usługami reklamowymi** (Google AdSense).
@@ -212,13 +222,19 @@ Ten dokument opisuje aktualny stan aplikacji, brakujące funkcjonalności, plan 
   - Walidować typy MIME i rozmiary.
   - Przechowywać pliki poza katalogiem publicznym lub użyć bezpiecznej konfiguracji.
 
-### 4.6. Rola Super Admin (Admin + Dyrektor)
+### 4.6. Rejestracja użytkownika vs dyrektora
+- Formularz rejestracji zawiera pole wyboru `accountType` z opcjami `user` (zwykły użytkownik) i `director` (dyrektor domu dziecka).
+- W zależności od wyboru użytkownik otrzymuje odpowiednią rolę: `ROLE_USER` lub `ROLE_DIRECTOR`.
+- Dyrektorzy muszą następnie zarejestrować swój dom dziecka (lub zostaje dla nich automatycznie utworzony niezweryfikowany rekord) i oczekiwać na weryfikację przez administratora.
+- Zwykli użytkownicy nie mają dostępu do panelu dyrektora i nie mogą dodawać dzieci/marzeń.
+
+### 4.7. Rola Super Admin (Admin + Dyrektor)
 - W panelu administratora istnieje opcja "Super Admin", która przypisuje użytkownikowi trzy role: `ROLE_ADMIN`, `ROLE_DIRECTOR` oraz `ROLE_USER`.
 - Użytkownik z tymi rolami ma jednoczesny dostęp do panelu administratora oraz panelu dyrektora bez konieczności przelogowywania.
 - W panelu dyrektora Super Admin może przeglądać listy dzieci i marzeń, ale nie może dodawać/edycji bez przypisanego domu dziecka (brak encji `Orphanage` powiązanej z użytkownikiem).
 - Logika kontrolerów dyrektora została zaktualizowana, aby uwzględniać ten przypadek i wyświetlać odpowiednie komunikaty.
 
-### 4.7. Hasła
+### 4.8. Hasła
 - Używany jest `UserPasswordHasherInterface` z algorytmem bcrypt (domyślnie w Symfony).
 - Należy wymusić minimalną siłę hasła podczas rejestracji.
 
@@ -257,7 +273,7 @@ Trasa `/dev/fill-data` działa wyłącznie w środowisku deweloperskim i nie wym
 ## 6. Notatki
 
 - **Data rozpoczęcia planu**: 2025-12-16
-- **Ostatnia aktualizacja**: 2025-12-17 (dodanie rejestracji domów dziecka, roli Super Admin, procedur wdrożeniowych)
+- **Ostatnia aktualizacja**: 2025-12-17 (dodanie planu rozróżnienia rejestracji użytkownika i dyrektora)
 - **Wersja aplikacji**: w rozwoju
 - **Ostatnia migracja bazy danych**: Version20251217130000
 
