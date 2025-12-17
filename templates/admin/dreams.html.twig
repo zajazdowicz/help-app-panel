@@ -20,6 +20,7 @@
                         <th>Cena</th>
                         <th>Zebrano</th>
                         <th>Pilne</th>
+                        <th>Kategoria</th>
                         <th>Akcje</th>
                     </tr>
                 </thead>
@@ -43,10 +44,10 @@
                                     <span class="badge bg-danger">Anulowane</span>
                                 {% endif %}
                             </td>
-                            <td>{{ dream.category.name }}</td>
                             <td>{{ dream.productPrice }} zł</td>
                             <td>{{ dream.quantityFulfilled }}/{{ dream.quantityNeeded }}</td>
                             <td>{{ dream.isUrgent ? 'Tak' : 'Nie' }}</td>
+                            <td>{{ dream.category.name }}</td>
                             <td>
                                 <a href="{{ path('app_dream_show', {id: dream.id}) }}" class="btn btn-sm btn-info">Szczegóły</a>
                                 <form method="post" action="{{ path('admin_dream_toggle_status', {id: dream.id}) }}" class="d-inline">

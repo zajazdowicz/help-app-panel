@@ -1,0 +1,60 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Kategorie – Panel administracyjny{% endblock %}
+
+{% block admin_body %}
+<div class="container mt-4">
+    <h1>Kategorie</h1>
+    <a href="{{ path('admin_dashboard') }}" class="btn btn-secondary mb-3">Powrót do panelu</a>
+    <a href="{{ path('admin_category_new') }}" class="btn btn-primary mb-3">Dodaj nową kategorię</a>
+    
+    <div class="card">
+        <div class="card-body">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nazwa</th>
+                        <th>Aktywna</th>
+                        <th>Data utworzenia</th>
+                        <th>Akcje</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for category in categories %}
+                        <tr>
+                            <td>{{ category.id }}</td>
+                            <td>{{ category.name }}</td>
+                            <td>
+                                {% if category.isActive %}
+                                    <span class="badge bg-success">Tak</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">Nie</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ category.createdAt|date('d.m.Y H:i') }}</td>
+                            <td>
+                                <a href="{{ path('admin_category_edit', {id: category.id}) }}" class="btn btn-sm btn-warning">Edytuj</a>
+                                <form method="post" action="{{ path('admin_category_toggle', {id: category.id}) }}" class="d-inline">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('toggle' ~ category.id) }}">
+                                    <button type="submit" class="btn btn-sm {% if category.isActive %}btn-secondary{% else %}btn-success{% endif %}">
+                                        {% if category.isActive %}Deaktywuj{% else %}Aktywuj{% endif %}
+                                    </button>
+                                </form>
+                                <form method="post" action="{{ path('admin_category_delete', {id: category.id}) }}" class="d-inline" onsubmit="return confirm('Czy na pewno chcesz usunąć tę kategorię?');">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ category.id) }}">
+                                    <button type="submit" class="btn btn-sm btn-danger">Usuń</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="5" class="text-center">Brak kategorii</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
