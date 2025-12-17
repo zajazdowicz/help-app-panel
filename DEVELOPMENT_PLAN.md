@@ -170,23 +170,116 @@ Ten dokument opisuje aktualny stan aplikacji, brakujące funkcjonalności, plan 
    - Sprawdzenie, czy role są poprawnie przypisane.
 
 ### Faza 8 – Aktualizacja produkcji i wdrożenie
-1. **Procedura aktualizacji środowiska produkcyjnego**:
-   - Zapisanie zmian w repozytorium Git.
-   - Logowanie na serwer produkcyjny.
-   - Pobranie najnowszego kodu (`git pull`).
-   - Instalacja zależności Composer (`composer install --no-dev --optimize-autoloader`).
-   - Uruchomienie migracji bazodanowych (`php bin/console doctrine:migrations:migrate --no-interaction`).
-   - Czyszczenie cache (`php bin/console cache:clear --env=prod --no-debug`).
-   - Uruchomienie kompilacji assetów (jeśli używane) (`npm run build`).
-   - Restart usługi PHP-FPM (jeśli potrzebny) (`sudo systemctl reload php-fpm`).
-2. **Kopia zapasowa bazy danych przed migracjami**:
-   - `mysqldump -u [user] -p [database] > backup_$(date +%Y%m%d_%H%M%S).sql`
-3. **Monitorowanie błędów po wdrożeniu**:
-   - Sprawdzenie logów Symfony (`var/log/prod.log`).
-   - Sprawdzenie logów serwera web (Apache/nginx).
-4. **Testy funkcjonalne po wdrożeniu**:
-   - Sprawdzenie działania głównych ścieżek (strona główna, lista marzeń, logowanie, panele admina/dyrektora).
-   - Weryfikacja formularzy (rejestracja, darowizny, dodawanie dzieci/marzeń).
+
+#### Dane dostępu do serwera produkcyjnego
+- **Host**: h69.seohost.pl
+- **Port SSH**: 57185
+- **Użytkownik**: srv101355
+- **Hasło**: Oat8xtiPmiUj
+- **Ścieżka do aplikacji**: `/home/srv101355/domains/helpdreams.pl/public_panel/` (domyślna lokalizacja dla hostingu SEOhost)
+
+#### Procedura aktualizacji środowiska produkcyjnego
+1. **Zapisanie zmian w repozytorium Git** (na lokalnej maszynie):
+   ```bash
+   git add .
+   git commit -m "Opis zmian"
+   git push origin main
+   ```
+
+2. **Logowanie na serwer produkcyjny**:
+   ```bash
+   sshpass -p 'Oat8xtiPmiUj' ssh srv101355@h69.seohost.pl -p 57185
+   ```
+
+3. **Przejście do katalogu aplikacji** (po zalogowaniu):
+   ```bash
+   cd /home/srv101355/domains/helpdreams.pl/public_panel/
+   ```
+
+4. **Pobranie najnowszego kodu**:
+   ```bash
+   git pull origin main
+   ```
+
+5. **Instalacja zależności Composer** (w trybie produkcyjnym):
+   ```bash
+   composer install --no-dev --optimize-autoloader
+   ```
+
+6. **Uruchomienie migracji bazodanowych**:
+   ```bash
+   php bin/console doctrine:migrations:migrate --no-interaction --env=prod
+   ```
+
+7. **Czyszczenie cache Symfony**:
+   ```bash
+   php bin/console cache:clear --env=prod --no-debug
+   ```
+
+8. **Uruchomienie kompilacji assetów** (jeśli używane):
+   ```bash
+   npm run build
+   ```
+
+9. **Restart usługi PHP-FPM** (jeśli potrzebny):
+   ```bash
+   sudo systemctl reload php-fpm
+   ```
+
+#### Uruchomienie systemu kolejek (Symfony Messenger) na serwerze produkcyjnym
+System kolejek wymaga uruchomienia konsumenta (worker), który będzie stale nasłuchiwał wiadomości w tle. Na hostingu współdzielonym (SEOhost) zaleca się użycie **cron job** do okresowego uruchamiania konsumenta w trybie "messages:consume" z limitem czasu.
+
+1. **Konfiguracja konsumenta w środowisku produkcyjnym**:
+   - Upewnij się, że w `.env.prod` (lub odpowiednich zmiennych środowiskowych) ustawiony jest transport asynchroniczny, np.:
+     ```
+     MESSENGER_TRANSPORT_DSN=doctrine://default?auto_setup=0
+     ```
+
+2. **Uruchomienie konsumenta ręcznie** (do testów):
+   ```bash
+   php bin/console messenger:consume async --time-limit=3600 --env=prod
+   ```
+
+3. **Konfiguracja cron job na serwerze SEOhost**:
+   - Zaloguj się do panelu klienta SEOhost (https://h69.seohost.pl:2083) i przejdź do sekcji **Cron Jobs**.
+   - Dodaj nowe zadanie cron z następującymi parametrami:
+     - **Minuta**: `*/5` (co 5 minut)
+     - **Godzina**: `*`
+     - **Dzień miesiąca**: `*`
+     - **Miesiąc**: `*`
+     - **Dzień tygodnia**: `*`
+     - **Komenda**:
+       ```bash
+       cd /home/srv101355/domains/helpdreams.pl/public_panel && /usr/local/bin/php bin/console messenger:consume async --time-limit=300 --env=prod >> var/log/messenger.log 2>&1
+       ```
+     - Opis: Zadanie będzie uruchamiane co 5 minut i przetwarzało wiadomości przez maksymalnie 300 sekund (5 minut), a logi zostaną zapisane w `var/log/messenger.log`.
+
+4. **Monitorowanie logów konsumenta**:
+   ```bash
+   tail -f var/log/messenger.log
+   ```
+
+#### Kopia zapasowa bazy danych przed migracjami
+Przed uruchomieniem migracji zaleca się wykonanie kopii zapasowej bazy danych:
+```bash
+mysqldump -u srv101355_help_backend -p srv101355_help_backend > backup_$(date +%Y%m%d_%H%M%S).sql
+```
+Hasło do bazy danych znajduje się w zmiennej `DATABASE_URL` w pliku `.env.prod.local`.
+
+#### Monitorowanie błędów po wdrożeniu
+- **Logi Symfony**: `tail -f var/log/prod.log`
+- **Logi serwera web**: `tail -f /home/srv101355/logs/helpdreams.pl.error.log`
+- **Logi konsumenta Messenger**: `tail -f var/log/messenger.log`
+
+#### Testy funkcjonalne po wdrożeniu
+Po wdrożeniu przetestuj kluczowe funkcjonalności:
+1. Strona główna (`https://helpdreams.pl/`)
+2. Lista marzeń (`/dreams`)
+3. Logowanie (`/login`)
+4. Panel administratora (`/admin`)
+5. Panel dyrektora (`/director`)
+6. Formularz darowizny (dla anonimowego użytkownika)
+7. System powiadomień (sprawdź, czy emaile są wysyłane)
 
 ### Faza 9 – Testy
 1. **Stworzenie testów jednostkowych** dla encji i repozytoriów.
@@ -373,7 +466,7 @@ Trasa `/dev/fill-data` działa wyłącznie w środowisku deweloperskim i nie wym
 ## 6. Notatki
 
 - **Data rozpoczęcia planu**: 2025-12-16
-- **Ostatnia aktualizacja**: 2025-12-17 (dodanie planu systemu kolejek i powiadomień)
+- **Ostatnia aktualizacja**: 2025-12-17 (dodanie instrukcji wdrożeniowych i konfiguracji kolejek na serwerze produkcyjnym)
 - **Wersja aplikacji**: w rozwoju
 - **Ostatnia migracja bazy danych**: Version20251217130000
 
