@@ -45,6 +45,15 @@
                 </div>
             </div>
         </div>
+        <div class="col-md-3 mb-4">
+            <div class="card text-white bg-secondary">
+                <div class="card-body">
+                    <h5 class="card-title">Kategorie</h5>
+                    <p class="card-text display-6">{{ stats.categories|default('?') }}</p>
+                    <a href="{{ path('admin_categories') }}" class="text-white">Zarządzaj →</a>
+                </div>
+            </div>
+        </div>
     </div>
     
     <div class="row mt-4">
@@ -56,6 +65,7 @@
                     <a href="{{ path('admin_orphanages') }}" class="btn btn-outline-success me-2">Domy dziecka</a>
                     <a href="{{ path('admin_dreams') }}" class="btn btn-outline-warning me-2">Marzenia</a>
                     <a href="{{ path('admin_fulfillments') }}" class="btn btn-outline-info me-2">Darowizny</a>
+                    <a href="{{ path('admin_categories') }}" class="btn btn-outline-secondary me-2">Kategorie</a>
                 </div>
             </div>
         </div>

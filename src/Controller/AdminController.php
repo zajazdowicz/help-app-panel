@@ -10,6 +10,7 @@ use App\Repository\UserRepository;
 use App\Repository\OrphanageRepository;
 use App\Repository\DreamRepository;
 use App\Repository\DreamFulfillmentRepository;
+use App\Repository\CategoryRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -26,7 +27,8 @@ class AdminController extends AbstractController
         UserRepository $userRepository,
         OrphanageRepository $orphanageRepository,
         DreamRepository $dreamRepository,
-        DreamFulfillmentRepository $fulfillmentRepository
+        DreamFulfillmentRepository $fulfillmentRepository,
+        CategoryRepository $categoryRepository
     ): Response {
         $stats = [
             'users' => $userRepository->count([]),
@@ -35,6 +37,7 @@ class AdminController extends AbstractController
             'dreams' => $dreamRepository->count([]),
             'dreams_pending' => $dreamRepository->count(['status' => 'pending']),
             'fulfillments' => $fulfillmentRepository->count([]),
+            'categories' => $categoryRepository->count([]),
         ];
         
         return $this->render('admin/dashboard.html.twig', [

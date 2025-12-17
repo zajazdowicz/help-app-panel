@@ -23,8 +23,8 @@
                     <label for="category" class="form-label">Kategoria</label>
                     <select class="form-select" id="category" name="category">
                         <option value="">Wszystkie</option>
-                        {% for cat in categoryList|default([])|filter(cat => cat != null) %}
-                            <option value="{{ cat }}" {% if category == cat %}selected{% endif %}>{{ cat }}</option>
+                        {% for catName, catId in categoryList|default([]) %}
+                            <option value="{{ catId }}" {% if category == catId %}selected{% endif %}>{{ catName }}</option>
                         {% endfor %}
                     </select>
                 </div>
