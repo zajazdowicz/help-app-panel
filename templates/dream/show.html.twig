@@ -25,7 +25,14 @@
                     <p><strong>Data utworzenia:</strong> {{ dream.createdAt|date('d.m.Y H:i') }}</p>
                 </div>
             </div>
-            <a href="{{ path('app_dream_index') }}" class="btn btn-secondary mt-3">Powrót do listy</a>
+            {% if not dream.isFullyFulfilled %}
+                <a href="{{ path('app_dream_fulfillment', {id: dream.id}) }}" class="btn btn-success mt-3 me-2">
+                    <span class="me-1">🎁</span> Chcę pomóc!
+                </a>
+            {% else %}
+                <button class="btn btn-secondary mt-3 me-2" disabled>Marzenie spełnione!</button>
+            {% endif %}
+            <a href="{{ path('app_dream_index') }}" class="btn btn-outline-secondary mt-3">Powrót do listy</a>
         </div>
     </div>
 </div>

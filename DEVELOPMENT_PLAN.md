@@ -100,11 +100,11 @@ Ten dokument opisuje aktualny stan aplikacji, brakujące funkcjonalności, plan 
 2. **Rozszerzenie DreamRepository** o metody wyszukiwania z filtrami.
 3. **Szablony** `templates/dream/index.html.twig`, `templates/dream/show.html.twig`.
 
-### Faza 3 – Formularz darowizny
-1. **Utworzenie DreamFulfillmentController** z akcją `public function fulfill(Request $request, Dream $dream): Response`.
-2. **Stworzenie DreamFulfillmentType** (formularz z danymi darczyńcy i ilością).
-3. **Obsługa zapisu** wraz z aktualizacją `Dream::quantityFulfilled`.
-4. **Szablon** `templates/dream_fulfillment/fulfill.html.twig`.
+### Faza 3 – Formularz darowizny 🚧
+1. ✅ **Utworzenie DreamFulfillmentController** z akcją `public function fulfill(Request $request, Dream $dream): Response`.
+2. ✅ **Stworzenie DreamFulfillmentType** (formularz z danymi darczyńcy i ilością).
+3. ⬜ **Obsługa zapisu** wraz z aktualizacją `Dream::quantityFulfilled`.
+4. ⬜ **Szablon** `templates/dream_fulfillment/fulfill.html.twig`.
 
 ### Faza 4 – Panel dyrektora (ROLE_DIRECTOR)
 1. **Stworzenie ChildController** (CRUD dla dzieci, dostęp tylko dla director swojego domu dziecka).

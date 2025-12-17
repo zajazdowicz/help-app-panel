@@ -1,0 +1,48 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Spełnij marzenie – {{ dream.productTitle }}{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <h1 class="mb-4">Spełnij marzenie</h1>
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">{{ dream.productTitle }}</h5>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">{{ dream.description }}</p>
+                    <p><strong>Cena:</strong> {{ dream.productPrice }} zł</p>
+                    <p><strong>Pozostało do spełnienia:</strong> {{ dream.remainingQuantity }} szt.</p>
+                </div>
+            </div>
+
+            <h3 class="mb-3">Wprowadź dane darowizny</h3>
+
+            {{ form_start(form) }}
+                {{ form_row(form.donorName) }}
+                {{ form_row(form.donorEmail) }}
+                {{ form_row(form.donorNickname) }}
+                {{ form_row(form.isAnonymous) }}
+                {{ form_row(form.quantityFulfilled) }}
+                {{ form_row(form.amount) }}
+
+                <button type="submit" class="btn btn-primary btn-lg mt-3">
+                    <span class="me-1">🎁</span> Potwierdzam darowiznę
+                </button>
+            {{ form_end(form) }}
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Informacje</h5>
+                    <p>Twoja darowizna zostanie przypisana do marzenia i widoczna na liście.</p>
+                    <p>Możesz pozostać anonimowy, a twoje dane nie będą publiczne.</p>
+                    <p>Po spełnieniu marzenia dziecko może przesłać podziękowanie.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
