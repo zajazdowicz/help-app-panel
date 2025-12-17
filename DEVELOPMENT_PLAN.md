@@ -140,10 +140,13 @@ Ten dokument opisuje aktualny stan aplikacji, brakujące funkcjonalności, plan 
 5. ✅ **Aktualizacja DreamRepository** – metody getDistinctCategories i getDreamsWithFiltersQueryBuilder obsługują teraz relację z Category.
 6. ✅ **Aktualizacja szablonów** – dream/index.html.twig, admin/dashboard.html.twig, AdminController.
 7. ✅ **Utworzenie CategoryRepository i CategoryType** – brakujące pliki dodane.
-8. 🔄 **Dodanie typu Enum dla statusów** (np. klasa DreamStatus, DreamFulfillmentStatus).
-9. 🔄 **Walidacja formularzy** (Constraints).
-10. 🔄 **Dodanie event subscriberów** do automatycznej aktualizacji pól `updatedAt`.
-11. 🔄 **Zapis logów ważnych operacji**.
+8. ✅ **Sekcja zrealizowanych darowizn** – publiczna lista spełnionych marzeń (`/realized`) z podziękowaniami i darczyńcami.
+9. ✅ **Lista darczyńców w szczegółach marzenia** – wyświetlanie informacji o darczyńcach, zdjęcia i wiadomości.
+10. ✅ **Panel dyrektora – edycja podziękowań** – możliwość dodania/edycji zdjęcia i wiadomości dla każdej darowizny.
+11. 🔄 **Dodanie typu Enum dla statusów** (np. klasa DreamStatus, DreamFulfillmentStatus).
+12. 🔄 **Walidacja formularzy** (Constraints).
+13. 🔄 **Dodanie event subscriberów** do automatycznej aktualizacji pól `updatedAt`.
+14. 🔄 **Zapis logów ważnych operacji**.
 
 ### Faza 6 – Usprawnienia i bezpieczeństwo
 1. **Dodanie typu Enum dla statusów** (np. klasa DreamStatus, DreamFulfillmentStatus).

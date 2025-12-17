@@ -1,0 +1,37 @@
+{% extends 'director/base.html.twig' %}
+
+{% block title %}Edytuj podziękowanie - Panel dyrektora{% endblock %}
+
+{% block director_body %}
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0">Edytuj podziękowanie dla darowizny</h1>
+        <a href="{{ path('app_dream_show', {id: dream.id}) }}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Powrót do marzenia
+        </a>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <p class="text-muted mb-4">
+                Marzenie: <strong>{{ dream.productTitle }}</strong><br>
+                Darczyńca: 
+                {% if fulfillment.isAnonymous %}
+                    Anonimowy
+                {% else %}
+                    {{ fulfillment.donorName|default(fulfillment.user ? fulfillment.user.email : 'Darczyńca') }}
+                {% endif %}
+                ({{ fulfillment.quantityFulfilled }} szt.)
+            </p>
+
+            {{ form_start(form) }}
+                {{ form_row(form.childPhotoUrl) }}
+                {{ form_row(form.childMessage) }}
+                <div class="d-flex justify-content-end mt-4">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-lg"></i> Zapisz zmiany
+                    </button>
+                </div>
+            {{ form_end(form) }}
+        </div>
+    </div>
+{% endblock %}

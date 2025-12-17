@@ -69,6 +69,55 @@
                 </div>
             </div>
         </div>
+        {# Sekcja darczyńców #}
+        {% if dream.fulfillments|length > 0 %}
+            <div class="row mt-5">
+                <div class="col-12">
+                    <h3 class="mb-4">Darczyńcy tego marzenia</h3>
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                {% for fulfillment in dream.fulfillments %}
+                                    <div class="col-md-6 col-lg-4 mb-4">
+                                        <div class="card h-100 shadow-sm">
+                                            <div class="card-body">
+                                                <h5 class="card-title">
+                                                    {% if fulfillment.isAnonymous %}
+                                                        <i class="bi bi-person-fill"></i> Anonimowy darczyńca
+                                                    {% else %}
+                                                        <i class="bi bi-person-fill"></i> {{ fulfillment.donorName|default(fulfillment.user ? fulfillment.user.email : 'Darczyńca') }}
+                                                    {% endif %}
+                                                </h5>
+                                                <p class="card-text">
+                                                    <strong>Data darowizny:</strong> {{ fulfillment.createdAt|date('d.m.Y H:i') }}<br>
+                                                    <strong>Ilość:</strong> {{ fulfillment.quantityFulfilled }} szt.<br>
+                                                    {% if fulfillment.childMessage %}
+                                                        <strong>Podziękowanie:</strong><br>
+                                                        <em>"{{ fulfillment.childMessage }}"</em><br>
+                                                    {% endif %}
+                                                </p>
+                                                {% if fulfillment.childPhotoUrl %}
+                                                    <div class="mt-3">
+                                                        <img src="{{ fulfillment.childPhotoUrl }}" class="img-fluid rounded" alt="Zdjęcie dziecka z prezentem">
+                                                    </div>
+                                                {% endif %}
+                                                {% if is_granted('ROLE_DIRECTOR') and app.user.orphanage and dream.orphanage.id == app.user.orphanage.id %}
+                                                    <div class="mt-3">
+                                                        <a href="{{ path('app_dream_fulfillment_edit_thanks', {id: fulfillment.id}) }}" class="btn btn-sm btn-outline-warning">
+                                                            <i class="bi bi-pencil"></i> Edytuj podziękowanie
+                                                        </a>
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
     </div>
 </div>
 {% endblock %}

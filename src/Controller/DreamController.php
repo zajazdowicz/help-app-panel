@@ -193,4 +193,37 @@ class DreamController extends AbstractController
         
         return $this->redirectToRoute('director_dream_list');
     }
+
+    #[Route('/realized', name: 'app_dream_fulfilled')]
+    public function fulfilled(Request $request, DreamRepository $dreamRepository): Response
+    {
+        $page = $request->query->getInt('page', 1);
+        $limit = 12;
+        $offset = ($page - 1) * $limit;
+
+        $qb = $dreamRepository->createQueryBuilder('d')
+            ->andWhere('d.status = :status')
+            ->setParameter('status', Dream::STATUS_FULFILLED)
+            ->orderBy('d.updatedAt', 'DESC')
+            ->setFirstResult($offset)
+            ->setMaxResults($limit);
+
+        $dreams = $qb->getQuery()->getResult();
+
+        // total count
+        $countQb = clone $qb;
+        $countQb->resetDQLPart('orderBy')
+            ->setFirstResult(null)
+            ->setMaxResults(null);
+        $countQb->select('COUNT(d.id)');
+        $total = $countQb->getQuery()->getSingleScalarResult();
+        $pages = ceil($total / $limit);
+
+        return $this->render('dream/fulfilled.html.twig', [
+            'dreams' => $dreams,
+            'currentPage' => $page,
+            'pages' => $pages,
+            'total' => $total,
+        ]);
+    }
 }

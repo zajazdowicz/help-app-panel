@@ -1,0 +1,106 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Zrealizowane marzenia – Podziękowania{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <h1 class="mb-4">Zrealizowane marzenia</h1>
+    <p class="lead mb-5">Dzięki hojności naszych darczyńców udało się spełnić już wiele dziecięcych marzeń. Poniżej znajdziesz listę spełnionych marzeń wraz z podziękowaniami od dzieci i domów dziecka.</p>
+
+    {% if dreams|length > 0 %}
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+            {% for dream in dreams %}
+                <div class="col">
+                    <div class="card h-100 shadow-sm">
+                        {% if dream.fulfillments|length > 0 and dream.fulfillments.first.childPhotoUrl %}
+                            <img src="{{ dream.fulfillments.first.childPhotoUrl }}" class="card-img-top" alt="Zdjęcie dziecka z prezentem" style="height: 200px; object-fit: cover;">
+                        {% else %}
+                            <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                                <i class="bi bi-gift display-4 text-muted"></i>
+                            </div>
+                        {% endif %}
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title">{{ dream.productTitle }}</h5>
+                            <h6 class="card-subtitle mb-3 text-muted">
+                                <i class="bi bi-person"></i> {{ dream.child.firstName }} ({{ dream.child.age }} lat)<br>
+                                <i class="bi bi-house-door"></i> {{ dream.orphanage.name }}
+                            </h6>
+                            <div class="card-text mb-3 flex-grow-1">
+                                <p><strong>Kategoria:</strong> {{ dream.category.name }}</p>
+                                <p><strong>Data spełnienia:</strong> {{ dream.updatedAt|date('d.m.Y') }}</p>
+                                {% if dream.fulfillments|length > 0 %}
+                                    <p class="mb-1"><strong>Darczyńcy:</strong></p>
+                                    <ul class="list-unstyled small">
+                                        {% for fulfillment in dream.fulfillments %}
+                                            <li>
+                                                {% if fulfillment.isAnonymous %}
+                                                    <i class="bi bi-person-fill"></i> Anonimowy darczyńca
+                                                {% else %}
+                                                    <i class="bi bi-person-fill"></i> {{ fulfillment.donorName|default(fulfillment.user ? fulfillment.user.email : 'Darczyńca') }}
+                                                {% endif %}
+                                                – {{ fulfillment.quantityFulfilled }} szt.
+                                                {% if fulfillment.childMessage %}
+                                                    <br><em class="text-muted">"{{ fulfillment.childMessage|slice(0, 80) }}{% if fulfillment.childMessage|length > 80 %}...{% endif %}"</em>
+                                                {% endif %}
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
+                                {% endif %}
+                            </div>
+                            <div class="mt-auto">
+                                <a href="{{ path('app_dream_show', {id: dream.id}) }}" class="btn btn-outline-primary btn-sm">Zobacz szczegóły</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        {# Pagination #}
+        {% if pages > 1 %}
+            <nav aria-label="Paginacja" class="mt-5">
+                <ul class="pagination justify-content-center">
+                    {% if currentPage > 1 %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ path('app_dream_fulfilled', {'page': currentPage - 1}) }}">&laquo; Poprzednia</a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled">
+                            <span class="page-link">&laquo; Poprzednia</span>
+                        </li>
+                    {% endif %}
+
+                    {% for i in 1..pages %}
+                        {% if i == currentPage %}
+                            <li class="page-item active"><span class="page-link">{{ i }}</span></li>
+                        {% else %}
+                            <li class="page-item"><a class="page-link" href="{{ path('app_dream_fulfilled', {'page': i}) }}">{{ i }}</a></li>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if currentPage < pages %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ path('app_dream_fulfilled', {'page': currentPage + 1}) }}">Następna &raquo;</a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled">
+                            <span class="page-link">Następna &raquo;</span>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        {% endif %}
+
+    {% else %}
+        <div class="alert alert-info">
+            <i class="bi bi-info-circle me-2"></i>
+            Na razie nie ma jeszcze zrealizowanych marzeń. Bądź pierwszym, który pomoże spełnić dziecięce marzenie!
+        </div>
+    {% endif %}
+
+    <div class="mt-5 pt-4 border-top text-center">
+        <p class="lead">Chcesz pomóc spełnić kolejne marzenie?</p>
+        <a href="{{ path('app_dream_index') }}" class="btn btn-primary btn-lg">Przeglądaj aktualne marzenia</a>
+    </div>
+</div>
+{% endblock %}
