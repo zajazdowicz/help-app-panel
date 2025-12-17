@@ -136,10 +136,13 @@ Ten dokument opisuje aktualny stan aplikacji, brakujące funkcjonalności, plan 
 1. ✅ **Przyjazna strona główna** – nowy szablon z statystykami, ostatnimi marzeniami i sekcją "Jak to działa".
 2. ✅ **Aktualizacja HomeController** – pobieranie statystyk i ostatnich marzeń.
 3. ✅ **Instalacja komponentu Symfony Asset** – umożliwia korzystanie z funkcji `asset()` w szablonach.
-4. 🔄 **Dodanie typu Enum dla statusów** (np. klasa DreamStatus, DreamFulfillmentStatus).
-5. 🔄 **Walidacja formularzy** (Constraints).
-6. 🔄 **Dodanie event subscriberów** do automatycznej aktualizacji pól `updatedAt`.
-7. 🔄 **Zapis logów ważnych operacji**.
+4. ✅ **System kategorii** – encja Category, relacja z Dream, panel administratora do zarządzania kategoriami, dropdown w formularzu marzeń.
+5. ✅ **Aktualizacja DreamRepository** – metody getDistinctCategories i getDreamsWithFiltersQueryBuilder obsługują teraz relację z Category.
+6. ✅ **Aktualizacja szablonów** – dream/index.html.twig, admin/dashboard.html.twig, AdminController.
+7. 🔄 **Dodanie typu Enum dla statusów** (np. klasa DreamStatus, DreamFulfillmentStatus).
+8. 🔄 **Walidacja formularzy** (Constraints).
+9. 🔄 **Dodanie event subscriberów** do automatycznej aktualizacji pól `updatedAt`.
+10. 🔄 **Zapis logów ważnych operacji**.
 
 ### Faza 6 – Usprawnienia i bezpieczeństwo
 1. **Dodanie typu Enum dla statusów** (np. klasa DreamStatus, DreamFulfillmentStatus).
