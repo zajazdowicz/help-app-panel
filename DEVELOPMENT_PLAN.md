@@ -212,9 +212,9 @@ Ten dokument opisuje aktualny stan aplikacji, brakujące funkcjonalności, plan 
   - Walidować typy MIME i rozmiary.
   - Przechowywać pliki poza katalogiem publicznym lub użyć bezpiecznej konfiguracji.
 
-### 4.6. Rola Super Admin
-- Wprowadzono możliwość przypisania użytkownikowi jednocześnie ról `ROLE_ADMIN` i `ROLE_DIRECTOR` (opcja "Super Admin" w panelu administratora).
-- Użytkownik z takimi rolami ma dostęp do panelu administratora oraz panelu dyrektora bez konieczności przelogowywania.
+### 4.6. Rola Super Admin (Admin + Dyrektor)
+- W panelu administratora istnieje opcja "Super Admin", która przypisuje użytkownikowi trzy role: `ROLE_ADMIN`, `ROLE_DIRECTOR` oraz `ROLE_USER`.
+- Użytkownik z tymi rolami ma jednoczesny dostęp do panelu administratora oraz panelu dyrektora bez konieczności przelogowywania.
 - W panelu dyrektora Super Admin może przeglądać listy dzieci i marzeń, ale nie może dodawać/edycji bez przypisanego domu dziecka (brak encji `Orphanage` powiązanej z użytkownikiem).
 - Logika kontrolerów dyrektora została zaktualizowana, aby uwzględniać ten przypadek i wyświetlać odpowiednie komunikaty.
 

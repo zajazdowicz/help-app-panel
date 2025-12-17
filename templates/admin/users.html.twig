@@ -57,7 +57,7 @@
                                             {% if 'ROLE_ADMIN' in user.roles and 'ROLE_DIRECTOR' not in user.roles %}selected{% endif %}>
                                             Administrator
                                         </option>
-                                        <option value="ROLE_SUPER_ADMIN" 
+                                        <option value="SUPER_ADMIN" 
                                             {% if 'ROLE_ADMIN' in user.roles and 'ROLE_DIRECTOR' in user.roles %}selected{% endif %}>
                                             Super Admin (Admin + Dyrektor)
                                         </option>

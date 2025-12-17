@@ -60,7 +60,7 @@ class AdminController extends AbstractController
     public function toggleUserRole(Request $request, User $user, EntityManagerInterface $entityManager): Response
     {
         $role = $request->request->get('role');
-        $validRoles = ['ROLE_USER', 'ROLE_DIRECTOR', 'ROLE_ADMIN', 'ROLE_SUPER_ADMIN'];
+        $validRoles = ['ROLE_USER', 'ROLE_DIRECTOR', 'ROLE_ADMIN', 'SUPER_ADMIN'];
         
         if (!in_array($role, $validRoles)) {
             $this->addFlash('error', 'Nieprawidłowa rola.');
@@ -76,7 +76,7 @@ class AdminController extends AbstractController
         } elseif ($role === 'ROLE_DIRECTOR') {
             // Dyrektor: ROLE_DIRECTOR + ROLE_USER
             $newRoles = ['ROLE_DIRECTOR', 'ROLE_USER'];
-        } elseif ($role === 'ROLE_SUPER_ADMIN') {
+        } elseif ($role === 'SUPER_ADMIN') {
             // Super Admin: ROLE_ADMIN + ROLE_DIRECTOR + ROLE_USER
             $newRoles = ['ROLE_ADMIN', 'ROLE_DIRECTOR', 'ROLE_USER'];
         } else {
