@@ -192,7 +192,57 @@ Ten dokument opisuje aktualny stan aplikacji, brakujące funkcjonalności, plan 
 1. **Stworzenie testów jednostkowych** dla encji i repozytoriów.
 2. **Testy funkcjonalne** dla kontrolerów.
 
-### Faza 10 – Optymalizacja i skalowanie
+### Faza 10 – Testy end‑to‑end (flow aplikacji)
+1. **Scenariusz 1: Rejestracja dyrektora i weryfikacja przez admina**
+   - Użytkownik wchodzi na stronę główną i klika „Rejestracja”.
+   - Wybiera opcję „Dyrektor domu dziecka” w formularzu rejestracji.
+   - Wypełnia dane osobowe (email, nazwa użytkownika, hasło) oraz dane domu dziecka (nazwa, adres, miasto, region, kod pocztowy, email kontaktowy, telefon).
+   - Po rejestracji otrzymuje rolę `ROLE_DIRECTOR` i jest przekierowany do panelu dyrektora.
+   - W panelu dyrektora widzi komunikat, że dom dziecka oczekuje na weryfikację.
+   - Administrator loguje się do panelu administracyjnego, przechodzi do zakładki „Domy dziecka”.
+   - Administrator znajduje nowo zarejestrowany dom dziecka i klika „Zweryfikuj”.
+   - Dyrektor po odświeżeniu panelu widzi, że dom dziecka jest już zweryfikowany.
+
+2. **Scenariusz 2: Dyrektor dodaje dziecko i marzenie**
+   - Zalogowany dyrektor (z zweryfikowanym domem dziecka) przechodzi do zakładki „Dzieci”.
+   - Klika „Dodaj dziecko”, wypełnia formularz (imię, wiek, opis) i zapisuje.
+   - Nowe dziecko pojawia się na liście dzieci.
+   - Dyrektor przechodzi do zakładki „Nasze marzenia”.
+   - Klika „Dodaj marzenie”, wypełnia formularz (tytuł produktu, link, cena, kategoria, opis, potrzebna ilość, pilne, wybiera dziecko z listy).
+   - Po zapisaniu marzenie pojawia się na liście marzeń dyrektora ze statusem „Oczekujące”.
+
+3. **Scenariusz 3: Użytkownik anonimowy przegląda marzenia i składa darowiznę**
+   - Użytkownik niezalogowany odwiedza stronę główną i klika „Marzenia”.
+   - Przegląda listę marzeń, może używać filtrów (kategoria, region, pilne).
+   - Wybiera marzenie z listy i przechodzi do szczegółów.
+   - Na stronie szczegółów klika „Chcę pomóc!”.
+   - Wypełnia formularz darowizny (imię, email, pseudonim, ilość, opcjonalnie anonimowość) – bez konieczności logowania.
+   - Po złożeniu darowizny widzi komunikat sukcesu, a ilość zebrana w marzeniu zwiększa się.
+
+4. **Scenariusz 4: Administrator zarządza marzeniami i darowiznami**
+   - Administrator loguje się do panelu administracyjnego.
+   - W zakładce „Marzenia” zmienia status marzenia z „Oczekujące” na „Zweryfikowane”.
+   - W zakładce „Darowizny” przegląda listę wszystkich darowizn.
+   - W zakładce „Użytkownicy” zmienia rolę użytkownika na „Super Admin” (Admin + Dyrektor).
+
+5. **Scenariusz 5: Dyrektor edytuje podziękowania za darowiznę**
+   - Dyrektor loguje się do panelu dyrektora.
+   - Przechodzi do szczegółów marzenia, które ma już darowizny.
+   - Dla każdej darowizny (jeśli dotyczy jego domu dziecka) może edytować podziękowanie (dodawać zdjęcie dziecka z prezentem i wiadomość).
+   - Po zapisaniu zmiany są widoczne w publicznej sekcji „Zrealizowane marzenia”.
+
+6. **Scenariusz 6: Super Admin działa w obu panelach**
+   - Użytkownik z rolą Super Admin (ROLE_ADMIN + ROLE_DIRECTOR) loguje się.
+   - Widzi w navbarze linki do panelu administracyjnego i panelu dyrektora.
+   - Może przeglądać panel administracyjny (wszystkie funkcje admina).
+   - Może przeglądać panel dyrektora (lista dzieci, marzeń), ale nie może dodawać dzieci/marzeń, ponieważ nie ma przypisanego domu dziecka (lub ma, jeśli został mu przypisany).
+
+7. **Weryfikacja danych po każdym scenariuszu**
+   - Sprawdzenie, czy dane zapisują się poprawnie w bazie danych.
+   - Sprawdzenie, czy komunikaty błędów są wyświetlane odpowiednio (np. próba dodania dziecka bez weryfikacji domu dziecka).
+   - Sprawdzenie, czy uprawnienia działają (brak dostępu do nieautoryzowanych ścieżek).
+
+### Faza 11 – Optymalizacja i skalowanie
 1. **Konfiguracja środowiska produkcyjnego** (cache, środowisko `prod`).
 2. **Monitoring** (logi, błędy).
 3. **Ewentualna integracja z usługami reklamowymi** (Google AdSense).
@@ -273,7 +323,7 @@ Trasa `/dev/fill-data` działa wyłącznie w środowisku deweloperskim i nie wym
 ## 6. Notatki
 
 - **Data rozpoczęcia planu**: 2025-12-16
-- **Ostatnia aktualizacja**: 2025-12-17 (dodanie planu rozróżnienia rejestracji użytkownika i dyrektora)
+- **Ostatnia aktualizacja**: 2025-12-17 (dodanie testów end‑to‑end całego flow aplikacji)
 - **Wersja aplikacji**: w rozwoju
 - **Ostatnia migracja bazy danych**: Version20251217130000
 
