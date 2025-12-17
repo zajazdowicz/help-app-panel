@@ -16,12 +16,18 @@ use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 
 class RegistrationController extends AbstractController
 {
+    private $mailer;
+
+    public function __construct(MailerInterface $mailer)
+    {
+        $this->mailer = $mailer;
+    }
+
     #[Route('/register', name: 'app_register')]
     public function register(
         Request $request,
         UserPasswordHasherInterface $userPasswordHasher,
-        EntityManagerInterface $entityManager,
-        MailerInterface $mailer
+        EntityManagerInterface $entityManager
     ): Response {
         $user = new User();
         $form = $this->createForm(RegistrationFormType::class, $user);
@@ -76,7 +82,7 @@ class RegistrationController extends AbstractController
                         'accountType' => $accountType,
                     ]);
 
-                $mailer->send($email);
+                $this->mailer->send($email);
             } catch (\Exception $e) {
                 // Log error, but don't break registration
                 // In production, you should log this
