@@ -140,6 +140,39 @@ class DreamController extends AbstractController
         ]);
     }
 
+    #[Route('/director/list', name: 'director_dream_list')]
+    #[IsGranted('ROLE_DIRECTOR')]
+    public function directorList(Request $request, DreamRepository $dreamRepository): Response
+    {
+        $user = $this->getUser();
+        $orphanage = $user->getOrphanage();
+        
+        if (!$orphanage) {
+            $this->addFlash('warning', 'Nie jesteś przypisany do żadnego domu dziecka.');
+            return $this->redirectToRoute('app_home');
+        }
+        
+        $status = $request->query->get('status');
+        $queryBuilder = $dreamRepository->createQueryBuilder('d')
+            ->andWhere('d.orphanage = :orphanage')
+            ->setParameter('orphanage', $orphanage)
+            ->orderBy('d.createdAt', 'DESC');
+        
+        if ($status && in_array($status, array_values(Dream::STATUS_CHOICES))) {
+            $queryBuilder->andWhere('d.status = :status')
+                ->setParameter('status', $status);
+        }
+        
+        $dreams = $queryBuilder->getQuery()->getResult();
+        
+        return $this->render('dream/director_list.html.twig', [
+            'dreams' => $dreams,
+            'orphanage' => $orphanage,
+            'currentStatus' => $status,
+            'statusChoices' => Dream::STATUS_CHOICES,
+        ]);
+    }
+
     #[Route('/director/{id}', name: 'director_dream_delete', methods: ['POST'])]
     #[IsGranted('ROLE_DIRECTOR')]
     public function delete(Request $request, Dream $dream, EntityManagerInterface $entityManager): Response
@@ -158,6 +191,6 @@ class DreamController extends AbstractController
             $this->addFlash('success', 'Usunięto marzenie.');
         }
         
-        return $this->redirectToRoute('app_dream_index');
+        return $this->redirectToRoute('director_dream_list');
     }
 }

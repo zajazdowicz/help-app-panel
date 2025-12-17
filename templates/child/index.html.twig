@@ -9,7 +9,8 @@
             <h1>Dzieci w domu dziecka: {{ orphanage.name }}</h1>
             <a href="{{ path('director_child_new') }}" class="btn btn-primary">Dodaj nowe dziecko</a>
             <a href="{{ path('director_dream_new') }}" class="btn btn-success">Dodaj nowe marzenie</a>
-            <a href="{{ path('app_dream_index') }}" class="btn btn-info">Przeglądaj wszystkie marzenia</a>
+            <a href="{{ path('director_dream_list') }}" class="btn btn-info">Moje marzenia ({{ orphanage.name }})</a>
+            <a href="{{ path('app_dream_index') }}" class="btn btn-outline-info">Przeglądaj wszystkie marzenia</a>
             <a href="{{ path('app_home') }}" class="btn btn-secondary">Powrót do strony głównej</a>
         </div>
     </div>

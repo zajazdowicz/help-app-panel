@@ -7,7 +7,11 @@
     <div class="row">
         <div class="col-md-8 offset-md-2">
             <h1>Edytuj marzenie: {{ dream.productTitle }}</h1>
-            <a href="{{ path('app_dream_show', {'id': dream.id}) }}" class="btn btn-secondary mb-3">Powrót do szczegółów</a>
+            {% if is_granted('ROLE_DIRECTOR') and app.user.orphanage and dream.orphanage.id == app.user.orphanage.id %}
+                <a href="{{ path('director_dream_list') }}" class="btn btn-secondary mb-3">Powrót do moich marzeń</a>
+            {% else %}
+                <a href="{{ path('app_dream_show', {'id': dream.id}) }}" class="btn btn-secondary mb-3">Powrót do szczegółów</a>
+            {% endif %}
             
             {{ form_start(form) }}
                 {{ form_row(form.productTitle) }}

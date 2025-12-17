@@ -116,6 +116,8 @@ Ten dokument opisuje aktualny stan aplikacji, brakujące funkcjonalności, plan 
 7. ✅ **Przyciski edycji/usuwania marzeń** w widoku szczegółów marzenia dla dyrektora.
 8. ✅ **Linki do dodawania nowego marzenia** w panelu dyrektora i widoku szczegółów.
 9. ✅ **Logika biznesowa** – dyrektor dodaje marzenia w imieniu dzieci ze swojego domu dziecka, wybierając konkretne dziecko z listy.
+10. ✅ **Widok listy marzeń dla dyrektora** – z filtrowaniem po statusie, dostępny pod `/dreams/director/list`.
+11. ✅ **Inteligentne linki powrotu** – dyrektor w widokach edycji/dodawania/szczegółów marzenia jest kierowany do swojej listy marzeń, a nie do publicznej listy.
 
 ### Faza 5 – Panel administratora (ROLE_ADMIN) – ✅ UKOŃCZONA
 1. ✅ **Utworzenie AdminController** z akcjami:

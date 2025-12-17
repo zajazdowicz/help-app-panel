@@ -7,7 +7,11 @@
     <div class="row">
         <div class="col-md-8 offset-md-2">
             <h1>Dodaj nowe marzenie</h1>
-            <a href="{{ path('app_dream_index') }}" class="btn btn-secondary mb-3">Powrót do listy marzeń</a>
+            {% if is_granted('ROLE_DIRECTOR') and app.user.orphanage %}
+                <a href="{{ path('director_dream_list') }}" class="btn btn-secondary mb-3">Powrót do moich marzeń</a>
+            {% else %}
+                <a href="{{ path('app_dream_index') }}" class="btn btn-secondary mb-3">Powrót do listy marzeń</a>
+            {% endif %}
             
             {{ form_start(form) }}
                 {{ form_row(form.productTitle) }}

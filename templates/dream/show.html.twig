@@ -49,7 +49,11 @@
                     </form>
                 {% endif %}
                 
-                <a href="{{ path('app_dream_index') }}" class="btn btn-outline-secondary">Powrót do listy</a>
+                {% if is_granted('ROLE_DIRECTOR') and app.user.orphanage and dream.orphanage.id == app.user.orphanage.id %}
+                    <a href="{{ path('director_dream_list') }}" class="btn btn-outline-secondary">Powrót do moich marzeń</a>
+                {% else %}
+                    <a href="{{ path('app_dream_index') }}" class="btn btn-outline-secondary">Powrót do listy</a>
+                {% endif %}
             </div>
             
             {# Link do dodawania nowego marzenia dla dyrektora #}
