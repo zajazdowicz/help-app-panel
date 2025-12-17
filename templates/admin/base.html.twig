@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Panel administracyjny – HelpDreams{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            padding-top: 20px;
+        }
+        .admin-container {
+            display: flex;
+            flex-wrap: wrap;
+            min-height: calc(100vh - 100px);
+        }
+        .admin-sidebar {
+            width: 250px;
+            background: #fff;
+            border-right: 1px solid #dee2e6;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.05);
+        }
+        .admin-content {
+            flex: 1;
+            padding: 20px;
+            max-width: calc(100% - 250px);
+        }
+        .sidebar-heading {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 1.5rem;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #dc3545;
+        }
+        .sidebar-nav .nav-link {
+            color: #495057;
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            transition: all 0.2s;
+        }
+        .sidebar-nav .nav-link i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+        .sidebar-nav .nav-link:hover,
+        .sidebar-nav .nav-link.active {
+            background-color: #ffeaea;
+            color: #dc3545;
+        }
+        .admin-badge {
+            background-color: #dc3545;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+            display: inline-block;
+        }
+        @media (max-width: 768px) {
+            .admin-sidebar {
+                width: 100%;
+                border-right: none;
+                border-bottom: 1px solid #dee2e6;
+            }
+            .admin-content {
+                max-width: 100%;
+            }
+        }
+    </style>
+    {% block stylesheets %}{% endblock %}
+</head>
+<body>
+    {% if not app.user or not is_granted('ROLE_ADMIN') %}
+        <div class="container mt-5">
+            <div class="alert alert-danger">
+                Brak dostępu. Ta strona jest przeznaczona tylko dla administratorów.
+            </div>
+        </div>
+    {% else %}
+        <div class="container-fluid admin-container">
+            <div class="admin-sidebar">
+                <div class="sidebar-heading">
+                    <i class="bi bi-shield-lock"></i> Panel administracyjny
+                </div>
+                <div class="admin-badge">
+                    <i class="bi bi-person-badge"></i> Administrator
+                </div>
+                <nav class="sidebar-nav">
+                    <a class="nav-link {{ app.request.get('_route') == 'admin_dashboard' ? 'active' }}" href="{{ path('admin_dashboard') }}">
+                        <i class="bi bi-speedometer2"></i> Dashboard
+                    </a>
+                    <a class="nav-link {{ app.request.get('_route') starts with 'admin_users' ? 'active' }}" href="{{ path('admin_users') }}">
+                        <i class="bi bi-people"></i> Użytkownicy
+                    </a>
+                    <a class="nav-link {{ app.request.get('_route') starts with 'admin_orphanages' ? 'active' }}" href="{{ path('admin_orphanages') }}">
+                        <i class="bi bi-house-door"></i> Domy dziecka
+                    </a>
+                    <a class="nav-link {{ app.request.get('_route') starts with 'admin_dreams' ? 'active' }}" href="{{ path('admin_dreams') }}">
+                        <i class="bi bi-stars"></i> Marzenia
+                    </a>
+                    <a class="nav-link {{ app.request.get('_route') starts with 'admin_fulfillments' ? 'active' }}" href="{{ path('admin_fulfillments') }}">
+                        <i class="bi bi-gift"></i> Darowizny
+                    </a>
+                    <a class="nav-link {{ app.request.get('_route') starts with 'admin_categories' ? 'active' }}" href="{{ path('admin_categories') }}">
+                        <i class="bi bi-tags"></i> Kategorie
+                    </a>
+                    <div class="mt-4 pt-3 border-top">
+                        <a class="nav-link" href="{{ path('app_dream_index') }}">
+                            <i class="bi bi-binoculars"></i> Przeglądaj marzenia
+                        </a>
+                        <a class="nav-link" href="{{ path('app_home') }}">
+                            <i class="bi bi-house"></i> Strona główna
+                        </a>
+                    </div>
+                </nav>
+            </div>
+            <div class="admin-content">
+                {% for flash in app.flashes('success') %}
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        {{ flash }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+                {% for flash in app.flashes('warning') %}
+                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                        {{ flash }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+                {% for flash in app.flashes('error') %}
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        {{ flash }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+                {% block admin_body %}{% endblock %}
+            </div>
+        </div>
+    {% endif %}
+    <footer class="footer mt-5 py-4 bg-light border-top">
+        <div class="container text-center">
+            <p class="mb-0 text-muted">&copy; {{ "now"|date("Y") }} HelpDreams. Wszelkie prawa zastrzeżone.</p>
+        </div>
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    {% block javascripts %}{% endblock %}
+</body>
+</html>
