@@ -57,11 +57,17 @@
             </div>
             
             {# Link do dodawania nowego marzenia dla dyrektora #}
-            {% if is_granted('ROLE_DIRECTOR') and app.user.orphanage %}
+            {% if is_granted('ROLE_DIRECTOR') %}
                 <div class="mt-4">
-                    <a href="{{ path('director_dream_new') }}" class="btn btn-outline-primary">
-                        <span class="me-1">➕</span> Dodaj nowe marzenie
-                    </a>
+                    {% if app.user.orphanage and app.user.orphanage.isVerified %}
+                        <a href="{{ path('director_dream_new') }}" class="btn btn-outline-primary">
+                            <span class="me-1">➕</span> Dodaj nowe marzenie
+                        </a>
+                    {% else %}
+                        <button class="btn btn-outline-secondary" disabled title="{% if not app.user.orphanage %}Brak przypisanego domu dziecka{% elseif not app.user.orphanage.isVerified %}Dom dziecka niezweryfikowany{% endif %}">
+                            <span class="me-1">➕</span> Dodaj nowe marzenie ({% if not app.user.orphanage %}brak domu dziecka{% else %}wymaga weryfikacji{% endif %})
+                        </button>
+                    {% endif %}
                 </div>
             {% endif %}
         </div>

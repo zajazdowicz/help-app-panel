@@ -42,9 +42,22 @@
                                 <form method="post" action="{{ path('admin_user_toggle_role', {id: user.id}) }}" class="d-inline">
                                     <input type="hidden" name="_token" value="{{ csrf_token('toggle_role' ~ user.id) }}">
                                     <select name="role" class="form-select form-select-sm d-inline w-auto" onchange="this.form.submit()">
-                                        <option value="ROLE_USER" {% if 'ROLE_USER' in user.roles and 'ROLE_ADMIN' not in user.roles and 'ROLE_DIRECTOR' not in user.roles %}selected{% endif %}>Użytkownik</option>
-                                        <option value="ROLE_DIRECTOR" {% if 'ROLE_DIRECTOR' in user.roles %}selected{% endif %}>Dyrektor</option>
-                                        <option value="ROLE_ADMIN" {% if 'ROLE_ADMIN' in user.roles %}selected{% endif %}>Administrator</option>
+                                        <option value="ROLE_USER" 
+                                            {% if 'ROLE_USER' in user.roles and 'ROLE_ADMIN' not in user.roles and 'ROLE_DIRECTOR' not in user.roles %}selected{% endif %}>
+                                            Użytkownik
+                                        </option>
+                                        <option value="ROLE_DIRECTOR" 
+                                            {% if 'ROLE_DIRECTOR' in user.roles and 'ROLE_ADMIN' not in user.roles %}selected{% endif %}>
+                                            Dyrektor
+                                        </option>
+                                        <option value="ROLE_ADMIN" 
+                                            {% if 'ROLE_ADMIN' in user.roles and 'ROLE_DIRECTOR' not in user.roles %}selected{% endif %}>
+                                            Administrator
+                                        </option>
+                                        <option value="ROLE_SUPER_ADMIN" 
+                                            {% if 'ROLE_ADMIN' in user.roles and 'ROLE_DIRECTOR' in user.roles %}selected{% endif %}>
+                                            Super Admin (Admin + Dyrektor)
+                                        </option>
                                     </select>
                                 </form>
                             </td>

@@ -22,16 +22,22 @@ class ChildController extends AbstractController
         $user = $this->getUser();
         $orphanage = $user->getOrphanage();
         
+        // Jeśli użytkownik nie ma przypisanego domu dziecka, ale ma rolę ROLE_DIRECTOR (np. admin)
         if (!$orphanage) {
-            $this->addFlash('warning', 'Nie jesteś przypisany do żadnego domu dziecka.');
-            return $this->redirectToRoute('director_orphanage_register');
+            if ($this->isGranted('ROLE_ADMIN') && $this->isGranted('ROLE_DIRECTOR')) {
+                // Super admin może przeglądać, ale nie ma przypisanego domu dziecka
+                $this->addFlash('info', 'Jesteś zalogowany jako Super Admin. Nie masz przypisanego domu dziecka, więc nie możesz dodawać dzieci ani marzeń.');
+                $children = [];
+            } else {
+                $this->addFlash('warning', 'Nie jesteś przypisany do żadnego domu dziecka.');
+                return $this->redirectToRoute('director_orphanage_register');
+            }
+        } else {
+            if (!$orphanage->isVerified()) {
+                $this->addFlash('warning', 'Twój dom dziecka nie jest jeszcze zweryfikowany.');
+            }
+            $children = $childRepository->findBy(['orphanage' => $orphanage], ['firstName' => 'ASC']);
         }
-        
-        if (!$orphanage->isVerified()) {
-            $this->addFlash('warning', 'Twój dom dziecka nie jest jeszcze zweryfikowany.');
-        }
-        
-        $children = $childRepository->findBy(['orphanage' => $orphanage], ['firstName' => 'ASC']);
         
         return $this->render('child/index.html.twig', [
             'children' => $children,

@@ -143,16 +143,40 @@ Ten dokument opisuje aktualny stan aplikacji, brakujące funkcjonalności, plan 
 8. ✅ **Sekcja zrealizowanych darowizn** – publiczna lista spełnionych marzeń (`/realized`) z podziękowaniami i darczyńcami.
 9. ✅ **Lista darczyńców w szczegółach marzenia** – wyświetlanie informacji o darczyńcach, zdjęcia i wiadomości.
 10. ✅ **Panel dyrektora – edycja podziękowań** – możliwość dodania/edycji zdjęcia i wiadomości dla każdej darowizny.
-11. 🔄 **Dodanie typu Enum dla statusów** (np. klasa DreamStatus, DreamFulfillmentStatus).
-12. 🔄 **Walidacja formularzy** (Constraints).
-13. 🔄 **Dodanie event subscriberów** do automatycznej aktualizacji pól `updatedAt`.
-14. 🔄 **Zapis logów ważnych operacji**.
+11. ✅ **Rejestracja i zarządzanie domami dziecka przez dyrektora** – formularz rejestracji, edycji, weryfikacja przez admina, blokada dodawania dzieci/marzeń przed weryfikacją.
+12. ✅ **Rola Super Admin** – możliwość przypisania użytkownikowi ról ROLE_ADMIN i ROLE_DIRECTOR jednocześnie, pozwalająca na dostęp do panelu admina i dyrektora bez przelogowywania.
+13. 🔄 **Dodanie typu Enum dla statusów** (np. klasa DreamStatus, DreamFulfillmentStatus).
+14. 🔄 **Walidacja formularzy** (Constraints).
+15. 🔄 **Dodanie event subscriberów** do automatycznej aktualizacji pól `updatedAt`.
+16. 🔄 **Zapis logów ważnych operacji**.
 
-### Faza 6 – Usprawnienia i bezpieczeństwo
-1. **Dodanie typu Enum dla statusów** (np. klasa DreamStatus, DreamFulfillmentStatus).
-2. **Walidacja formularzy** (Constraints).
-3. **Dodanie event subscriberów** do automatycznej aktualizacji pól `updatedAt`.
-4. **Zapis logów ważnych operacji**.
+### Faza 7 – Aktualizacja produkcji i wdrożenie
+1. **Procedura aktualizacji środowiska produkcyjnego**:
+   - Zapisanie zmian w repozytorium Git.
+   - Logowanie na serwer produkcyjny.
+   - Pobranie najnowszego kodu (`git pull`).
+   - Instalacja zależności Composer (`composer install --no-dev --optimize-autoloader`).
+   - Uruchomienie migracji bazodanowych (`php bin/console doctrine:migrations:migrate --no-interaction`).
+   - Czyszczenie cache (`php bin/console cache:clear --env=prod --no-debug`).
+   - Uruchomienie kompilacji assetów (jeśli używane) (`npm run build`).
+   - Restart usługi PHP-FPM (jeśli potrzebny) (`sudo systemctl reload php-fpm`).
+2. **Kopia zapasowa bazy danych przed migracjami**:
+   - `mysqldump -u [user] -p [database] > backup_$(date +%Y%m%d_%H%M%S).sql`
+3. **Monitorowanie błędów po wdrożeniu**:
+   - Sprawdzenie logów Symfony (`var/log/prod.log`).
+   - Sprawdzenie logów serwera web (Apache/nginx).
+4. **Testy funkcjonalne po wdrożeniu**:
+   - Sprawdzenie działania głównych ścieżek (strona główna, lista marzeń, logowanie, panele admina/dyrektora).
+   - Weryfikacja formularzy (rejestracja, darowizny, dodawanie dzieci/marzeń).
+
+### Faza 8 – Testy
+1. **Stworzenie testów jednostkowych** dla encji i repozytoriów.
+2. **Testy funkcjonalne** dla kontrolerów.
+
+### Faza 9 – Optymalizacja i skalowanie
+1. **Konfiguracja środowiska produkcyjnego** (cache, środowisko `prod`).
+2. **Monitoring** (logi, błędy).
+3. **Ewentualna integracja z usługami reklamowymi** (Google AdSense).
 
 ### Faza 7 – Testy
 1. **Stworzenie testów jednostkowych** dla encji i repozytoriów.
@@ -188,7 +212,13 @@ Ten dokument opisuje aktualny stan aplikacji, brakujące funkcjonalności, plan 
   - Walidować typy MIME i rozmiary.
   - Przechowywać pliki poza katalogiem publicznym lub użyć bezpiecznej konfiguracji.
 
-### 4.6. Hasła
+### 4.6. Rola Super Admin
+- Wprowadzono możliwość przypisania użytkownikowi jednocześnie ról `ROLE_ADMIN` i `ROLE_DIRECTOR` (opcja "Super Admin" w panelu administratora).
+- Użytkownik z takimi rolami ma dostęp do panelu administratora oraz panelu dyrektora bez konieczności przelogowywania.
+- W panelu dyrektora Super Admin może przeglądać listy dzieci i marzeń, ale nie może dodawać/edycji bez przypisanego domu dziecka (brak encji `Orphanage` powiązanej z użytkownikiem).
+- Logika kontrolerów dyrektora została zaktualizowana, aby uwzględniać ten przypadek i wyświetlać odpowiednie komunikaty.
+
+### 4.7. Hasła
 - Używany jest `UserPasswordHasherInterface` z algorytmem bcrypt (domyślnie w Symfony).
 - Należy wymusić minimalną siłę hasła podczas rejestracji.
 
@@ -227,8 +257,9 @@ Trasa `/dev/fill-data` działa wyłącznie w środowisku deweloperskim i nie wym
 ## 6. Notatki
 
 - **Data rozpoczęcia planu**: 2025-12-16
-- **Ostatnia aktualizacja**: 2025-12-17 (zakończenie faz 2 i 3)
+- **Ostatnia aktualizacja**: 2025-12-17 (dodanie rejestracji domów dziecka, roli Super Admin, procedur wdrożeniowych)
 - **Wersja aplikacji**: w rozwoju
+- **Ostatnia migracja bazy danych**: Version20251217130000
 
 ---
 *Dokument będzie aktualizowany przy każdym wczytaniu projektu oraz po wprowadzeniu znaczących modyfikacji.*

@@ -94,10 +94,19 @@
                 {% if app.user.orphanage %}
                     <div class="orphanage-badge">
                         <i class="bi bi-house-door"></i> {{ app.user.orphanage.name }}
+                        {% if not app.user.orphanage.isVerified %}
+                            <span class="badge bg-warning ms-1">Oczekuje na weryfikację</span>
+                        {% endif %}
                     </div>
                 {% else %}
                     <div class="alert alert-warning small">
-                        Nie jesteś przypisany do żadnego domu dziecka.
+                        {% if is_granted('ROLE_ADMIN') and is_granted('ROLE_DIRECTOR') %}
+                            <strong>Super Admin</strong><br>
+                            Jesteś zalogowany jako Super Admin. Nie masz przypisanego domu dziecka, więc nie możesz dodawać dzieci ani marzeń.
+                        {% else %}
+                            Nie jesteś przypisany do żadnego domu dziecka.
+                            <a href="{{ path('director_orphanage_register') }}" class="alert-link">Zarejestruj dom dziecka</a>
+                        {% endif %}
                     </div>
                 {% endif %}
                 <nav class="sidebar-nav">
