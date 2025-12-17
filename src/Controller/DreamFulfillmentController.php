@@ -35,6 +35,12 @@ class DreamFulfillmentController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             // Default status
             $fulfillment->setStatus(DreamFulfillment::STATUS_PENDING);
+            
+            // If user is logged in, associate them
+            if ($this->getUser()) {
+                $fulfillment->setUser($this->getUser());
+            }
+            
             $entityManager->persist($fulfillment);
 
             // Update dream's fulfilled quantity

@@ -38,6 +38,10 @@ class DreamFulfillment
     #[ORM\JoinColumn(nullable: false)]
     private ?Dream $dream = null;
 
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id', nullable: true, onDelete: 'SET NULL')]
+    private ?User $user = null;
+
     #[ORM\Column(length: 255, nullable: true)]
     #[Assert\Length(max: 255)]
     private ?string $donorName = null;
@@ -46,10 +50,6 @@ class DreamFulfillment
     #[Assert\Email]
     #[Assert\Length(max: 255)]
     private ?string $donorEmail = null;
-
-    #[ORM\ManyToOne(targetEntity: User::class)]
-    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id', nullable: true, onDelete: 'SET NULL')]
-    private ?User $user = null;
 
     #[ORM\Column(length: 100, nullable: true)]
     #[Assert\Length(max: 100)]
