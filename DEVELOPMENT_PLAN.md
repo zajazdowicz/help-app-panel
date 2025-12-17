@@ -93,12 +93,12 @@ Ten dokument opisuje aktualny stan aplikacji, brakujące funkcjonalności, plan 
 3. **Stworzenie migracji** dla nowych pól/relacji.
 4. **Aktualizacja konfiguracji ról w security.yaml** (hierarchy: ROLE_USER, ROLE_DIRECTOR, ROLE_ADMIN).
 
-### Faza 2 – Publiczna lista marzeń i szczegóły
-1. **Utworzenie DreamController** z akcjami:
+### Faza 2 – Publiczna lista marzeń i szczegóły ✅
+1. ✅ **Utworzenie DreamController** z akcjami:
    - `public function index(Request $request): Response` (lista z paginacją i filtrami)
    - `public function show(Dream $dream): Response`
-2. **Rozszerzenie DreamRepository** o metody wyszukiwania z filtrami.
-3. **Szablony** `templates/dream/index.html.twig`, `templates/dream/show.html.twig`.
+2. ✅ **Rozszerzenie DreamRepository** o metody wyszukiwania z filtrami.
+3. ✅ **Szablony** `templates/dream/index.html.twig`, `templates/dream/show.html.twig`.
 
 ### Faza 3 – Formularz darowizny ✅
 1. ✅ **Utworzenie DreamFulfillmentController** z akcją `public function fulfill(Request $request, Dream $dream): Response`.
