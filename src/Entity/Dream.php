@@ -57,10 +57,9 @@ class Dream
     #[Assert\PositiveOrZero]
     private ?string $productPrice = null;
 
-    #[ORM\Column(length: 100)]
-    #[Assert\NotBlank]
-    #[Assert\Length(max: 100)]
-    private ?string $productCategory = null;
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Category $category = null;
 
     #[ORM\Column(type: Types::TEXT, length: 100)]
     #[Assert\NotBlank]
@@ -173,14 +172,14 @@ class Dream
         return $this;
     }
 
-    public function getProductCategory(): ?string
+    public function getCategory(): ?Category
     {
-        return $this->productCategory;
+        return $this->category;
     }
 
-    public function setProductCategory(string $productCategory): static
+    public function setCategory(?Category $category): static
     {
-        $this->productCategory = $productCategory;
+        $this->category = $category;
 
         return $this;
     }

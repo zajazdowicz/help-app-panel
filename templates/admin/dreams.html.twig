@@ -43,6 +43,7 @@
                                     <span class="badge bg-danger">Anulowane</span>
                                 {% endif %}
                             </td>
+                            <td>{{ dream.category.name }}</td>
                             <td>{{ dream.productPrice }} zł</td>
                             <td>{{ dream.quantityFulfilled }}/{{ dream.quantityNeeded }}</td>
                             <td>{{ dream.isUrgent ? 'Tak' : 'Nie' }}</td>

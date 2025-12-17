@@ -35,9 +35,18 @@ class DreamType extends AbstractType
                 'label' => 'Cena',
                 'required' => true,
             ])
-            ->add('productCategory', TextType::class, [
+            ->add('category', EntityType::class, [
+                'class' => \App\Entity\Category::class,
                 'label' => 'Kategoria',
                 'required' => true,
+                'choice_label' => 'name',
+                'placeholder' => 'Wybierz kategorię',
+                'query_builder' => function (\App\Repository\CategoryRepository $repository) {
+                    return $repository->createQueryBuilder('c')
+                        ->where('c.isActive = :active')
+                        ->setParameter('active', true)
+                        ->orderBy('c.name', 'ASC');
+                },
             ])
             ->add('description', TextareaType::class, [
                 'label' => 'Opis marzenia',

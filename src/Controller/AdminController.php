@@ -11,6 +11,7 @@ use App\Repository\OrphanageRepository;
 use App\Repository\DreamRepository;
 use App\Repository\DreamFulfillmentRepository;
 use App\Repository\CategoryRepository;
+use App\Entity\Category;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -129,5 +130,77 @@ class AdminController extends AbstractController
         return $this->render('admin/fulfillments.html.twig', [
             'fulfillments' => $fulfillments,
         ]);
+    }
+
+    #[Route('/categories', name: 'admin_categories')]
+    public function categories(CategoryRepository $categoryRepository): Response
+    {
+        $categories = $categoryRepository->findAll();
+        
+        return $this->render('admin/categories.html.twig', [
+            'categories' => $categories,
+        ]);
+    }
+
+    #[Route('/categories/new', name: 'admin_category_new', methods: ['GET', 'POST'])]
+    public function newCategory(Request $request, EntityManagerInterface $entityManager): Response
+    {
+        $category = new Category();
+        $form = $this->createForm(\App\Form\CategoryType::class, $category);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager->persist($category);
+            $entityManager->flush();
+
+            $this->addFlash('success', 'Kategoria została dodana.');
+            return $this->redirectToRoute('admin_categories');
+        }
+
+        return $this->render('admin/category_form.html.twig', [
+            'form' => $form,
+            'category' => $category,
+        ]);
+    }
+
+    #[Route('/categories/{id}/edit', name: 'admin_category_edit', methods: ['GET', 'POST'])]
+    public function editCategory(Request $request, Category $category, EntityManagerInterface $entityManager): Response
+    {
+        $form = $this->createForm(\App\Form\CategoryType::class, $category);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager->flush();
+
+            $this->addFlash('success', 'Kategoria została zaktualizowana.');
+            return $this->redirectToRoute('admin_categories');
+        }
+
+        return $this->render('admin/category_form.html.twig', [
+            'form' => $form,
+            'category' => $category,
+        ]);
+    }
+
+    #[Route('/categories/{id}/toggle', name: 'admin_category_toggle', methods: ['POST'])]
+    public function toggleCategory(Request $request, Category $category, EntityManagerInterface $entityManager): Response
+    {
+        $category->setIsActive(!$category->isActive());
+        $entityManager->flush();
+
+        $this->addFlash('success', 'Status kategorii został zmieniony.');
+        return $this->redirectToRoute('admin_categories');
+    }
+
+    #[Route('/categories/{id}', name: 'admin_category_delete', methods: ['POST'])]
+    public function deleteCategory(Request $request, Category $category, EntityManagerInterface $entityManager): Response
+    {
+        if ($this->isCsrfTokenValid('delete'.$category->getId(), $request->request->get('_token'))) {
+            $entityManager->remove($category);
+            $entityManager->flush();
+            $this->addFlash('success', 'Kategoria została usunięta.');
+        }
+
+        return $this->redirectToRoute('admin_categories');
     }
 }

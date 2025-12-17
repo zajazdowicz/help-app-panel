@@ -43,12 +43,13 @@ class DreamRepository extends ServiceEntityRepository
     {
         $qb = $this->createQueryBuilder('d')
             ->leftJoin('d.orphanage', 'o')
+            ->innerJoin('d.category', 'c')
             ->andWhere('d.status = :status')
             ->setParameter('status', 'approved');
 
         if (!empty($filters['category'])) {
-            $qb->andWhere('d.productCategory = :category')
-                ->setParameter('category', $filters['category']);
+            $qb->andWhere('c.id = :category')
+                ->setParameter('category', (int)$filters['category']);
         }
         if (!empty($filters['region'])) {
             $qb->andWhere('o.region = :region')
@@ -91,13 +92,22 @@ class DreamRepository extends ServiceEntityRepository
      */
     public function getDistinctCategories(): array
     {
-        $result = $this->createQueryBuilder('d')
-            ->select('DISTINCT d.productCategory')
-            ->orderBy('d.productCategory', 'ASC')
-            ->getQuery()
-            ->getScalarResult();
+        // Since we now have a Category entity, we should fetch from it
+        // But for backward compatibility, we'll return active categories
+        $qb = $this->createQueryBuilder('d')
+            ->select('c.id, c.name')
+            ->innerJoin('d.category', 'c')
+            ->where('c.isActive = :active')
+            ->setParameter('active', true)
+            ->groupBy('c.id')
+            ->orderBy('c.name', 'ASC');
 
-        return array_column($result, 'productCategory');
+        $results = $qb->getQuery()->getResult();
+        $categories = [];
+        foreach ($results as $row) {
+            $categories[$row['name']] = $row['id'];
+        }
+        return $categories;
     }
 
     /**
