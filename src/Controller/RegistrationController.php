@@ -3,44 +3,91 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Entity\Orphanage;
 use App\Form\RegistrationFormType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 
 class RegistrationController extends AbstractController
 {
     #[Route('/register', name: 'app_register')]
-    public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, Security $security, EntityManagerInterface $entityManager): Response
-    {
+    public function register(
+        Request $request,
+        UserPasswordHasherInterface $userPasswordHasher,
+        EntityManagerInterface $entityManager,
+        MailerInterface $mailer
+    ): Response {
         $user = new User();
         $form = $this->createForm(RegistrationFormType::class, $user);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            /** @var string $plainPassword */
-            $plainPassword = $form->get('plainPassword')->getData();
-
             // encode the plain password
-            $user->setPassword($userPasswordHasher->hashPassword($user, $plainPassword));
+            $user->setPassword(
+                $userPasswordHasher->hashPassword(
+                    $user,
+                    $form->get('plainPassword')->getData()
+                )
+            );
 
-            // Set default role for new user
-            $user->setRoles(['ROLE_USER']);
+            $accountType = $form->get('accountType')->getData();
+            $roles = ['ROLE_USER'];
+            if ($accountType === 'director') {
+                $roles[] = 'ROLE_DIRECTOR';
+            }
+            $user->setRoles($roles);
+            $user->setIsVerified(true); // na razie automatyczna weryfikacja, można zmienić
 
             $entityManager->persist($user);
+
+            // Jeśli to dyrektor, utwórz pusty dom dziecka (niezweryfikowany)
+            if ($accountType === 'director') {
+                $orphanage = new Orphanage();
+                $orphanage->setName('Nowy dom dziecka - do uzupełnienia');
+                $orphanage->setAddress('');
+                $orphanage->setCity('');
+                $orphanage->setRegion('');
+                $orphanage->setPostalCode('');
+                $orphanage->setContactEmail($user->getEmail());
+                $orphanage->setContactPhone('');
+                $orphanage->setIsVerified(false);
+                $orphanage->setDirector($user);
+
+                $entityManager->persist($orphanage);
+            }
+
             $entityManager->flush();
 
-            // do anything else you need here, like send an email
+            // Wyślij email powitalny
+            try {
+                $email = (new TemplatedEmail())
+                    ->from('noreply@helpdreams.pl')
+                    ->to($user->getEmail())
+                    ->subject('Witamy w HelpDreams!')
+                    ->htmlTemplate('emails/user_registered.html.twig')
+                    ->context([
+                        'user' => $user,
+                        'accountType' => $accountType,
+                    ]);
 
-            return $security->login($user, 'form_login', 'main');
+                $mailer->send($email);
+            } catch (\Exception $e) {
+                // Log error, but don't break registration
+                // In production, you should log this
+            }
+
+            $this->addFlash('success', 'Rejestracja zakończona sukcesem. Możesz się teraz zalogować.');
+            return $this->redirectToRoute('app_login');
         }
 
         return $this->render('registration/register.html.twig', [
-            'registrationForm' => $form,
+            'registrationForm' => $form->createView(),
         ]);
     }
 }

@@ -5,6 +5,8 @@ namespace App\Form;
 use App\Entity\User;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -18,46 +20,49 @@ class RegistrationFormType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('email')
-            ->add('username', TextType::class, [
-                'constraints' => [
-                    new NotBlank([
-                        'message' => 'Please enter a username',
-                    ]),
-                    new Length([
-                        'min' => 3,
-                        'max' => 180,
-                        'minMessage' => 'Your username should be at least {{ limit }} characters',
-                        'maxMessage' => 'Your username cannot be longer than {{ limit }} characters',
-                    ]),
-                ],
+            ->add('email', EmailType::class, [
+                'label' => 'Email',
+                'required' => true,
             ])
-            ->add('agreeTerms', CheckboxType::class, [
-                'mapped' => false,
-                'constraints' => [
-                    new IsTrue([
-                        'message' => 'You should agree to our terms.',
-                    ]),
-                ],
+            ->add('username', TextType::class, [
+                'label' => 'Nazwa użytkownika',
+                'required' => true,
             ])
             ->add('plainPassword', PasswordType::class, [
-                // instead of being set onto the object directly,
-                // this is read and encoded in the controller
+                'label' => 'Hasło',
                 'mapped' => false,
-                'attr' => ['autocomplete' => 'new-password'],
+                'required' => true,
                 'constraints' => [
                     new NotBlank([
-                        'message' => 'Please enter a password',
+                        'message' => 'Proszę wprowadzić hasło',
                     ]),
                     new Length([
                         'min' => 6,
-                        'minMessage' => 'Your password should be at least {{ limit }} characters',
-                        // max length allowed by Symfony for security reasons
+                        'minMessage' => 'Twoje hasło powinno mieć co najmniej {{ limit }} znaków',
                         'max' => 4096,
                     ]),
                 ],
             ])
-        ;
+            ->add('accountType', ChoiceType::class, [
+                'label' => 'Typ konta',
+                'choices' => [
+                    'Użytkownik (chcę wspierać marzenia)' => 'user',
+                    'Dyrektor domu dziecka (chcę dodawać dzieci i marzenia)' => 'director',
+                ],
+                'expanded' => false,
+                'multiple' => false,
+                'required' => true,
+                'data' => 'user',
+            ])
+            ->add('agreeTerms', CheckboxType::class, [
+                'label' => 'Akceptuję regulamin',
+                'mapped' => false,
+                'constraints' => [
+                    new IsTrue([
+                        'message' => 'Musisz zaakceptować regulamin.',
+                    ]),
+                ],
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
