@@ -135,10 +135,11 @@ Ten dokument opisuje aktualny stan aplikacji, brakujące funkcjonalności, plan 
 ### Faza 6 – Usprawnienia i bezpieczeństwo – W TRAKCIE
 1. ✅ **Przyjazna strona główna** – nowy szablon z statystykami, ostatnimi marzeniami i sekcją "Jak to działa".
 2. ✅ **Aktualizacja HomeController** – pobieranie statystyk i ostatnich marzeń.
-3. 🔄 **Dodanie typu Enum dla statusów** (np. klasa DreamStatus, DreamFulfillmentStatus).
-4. 🔄 **Walidacja formularzy** (Constraints).
-5. 🔄 **Dodanie event subscriberów** do automatycznej aktualizacji pól `updatedAt`.
-6. 🔄 **Zapis logów ważnych operacji**.
+3. ✅ **Instalacja komponentu Symfony Asset** – umożliwia korzystanie z funkcji `asset()` w szablonach.
+4. 🔄 **Dodanie typu Enum dla statusów** (np. klasa DreamStatus, DreamFulfillmentStatus).
+5. 🔄 **Walidacja formularzy** (Constraints).
+6. 🔄 **Dodanie event subscriberów** do automatycznej aktualizacji pól `updatedAt`.
+7. 🔄 **Zapis logów ważnych operacji**.
 
 ### Faza 6 – Usprawnienia i bezpieczeństwo
 1. **Dodanie typu Enum dla statusów** (np. klasa DreamStatus, DreamFulfillmentStatus).
