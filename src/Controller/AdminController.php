@@ -67,7 +67,7 @@ class AdminController extends AbstractController
             return $this->redirectToRoute('admin_users');
         }
         
-        // Pobierz aktualne role
+        // Pobierz aktualne role i upewnij się, że są w formie tablicy
         $currentRoles = $user->getRoles();
         
         if ($role === 'ROLE_ADMIN') {
@@ -84,7 +84,10 @@ class AdminController extends AbstractController
             $newRoles = ['ROLE_USER'];
         }
         
-        $user->setRoles(array_values($newRoles));
+        // Usuń ewentualne błędne role (np. 'ROLE_SUPER_ADMINR')
+        $newRoles = array_values(array_unique($newRoles));
+        
+        $user->setRoles($newRoles);
         $entityManager->flush();
         
         $this->addFlash('success', 'Zaktualizowano rolę użytkownika.');

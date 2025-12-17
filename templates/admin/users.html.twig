@@ -28,9 +28,12 @@
                             <td>{{ user.email }}</td>
                             <td>{{ user.username }}</td>
                             <td>
-                                {% if 'ROLE_ADMIN' in user.roles %}
+                                {% set roles = user.roles %}
+                                {% if 'ROLE_ADMIN' in roles and 'ROLE_DIRECTOR' in roles %}
+                                    <span class="badge bg-danger">Super Admin</span>
+                                {% elseif 'ROLE_ADMIN' in roles %}
                                     <span class="badge bg-danger">Administrator</span>
-                                {% elseif 'ROLE_DIRECTOR' in user.roles %}
+                                {% elseif 'ROLE_DIRECTOR' in roles %}
                                     <span class="badge bg-warning">Dyrektor</span>
                                 {% else %}
                                     <span class="badge bg-secondary">Użytkownik</span>

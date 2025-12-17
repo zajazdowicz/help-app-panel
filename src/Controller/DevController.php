@@ -25,6 +25,39 @@ class DevController extends AbstractController
         $this->passwordHasher = $passwordHasher;
     }
 
+    #[Route('/fix-roles', name: 'dev_fix_roles')]
+    public function fixRoles(): Response
+    {
+        // Allow only in dev environment
+        if ($this->getParameter('kernel.environment') !== 'dev') {
+            throw $this->createNotFoundException();
+        }
+
+        $users = $this->entityManager->getRepository(User::class)->findAll();
+        $fixed = 0;
+        foreach ($users as $user) {
+            $roles = $user->getRoles();
+            $needsFix = false;
+            // Jeśli znajdziemy błędną rolę ROLE_SUPER_ADMINR, zamień na poprawne
+            if (in_array('ROLE_SUPER_ADMINR', $roles, true)) {
+                $roles = array_filter($roles, fn($r) => $r !== 'ROLE_SUPER_ADMINR');
+                $roles = array_unique(array_merge($roles, ['ROLE_ADMIN', 'ROLE_DIRECTOR', 'ROLE_USER']));
+                $needsFix = true;
+            }
+            // Upewnij się, że ROLE_USER zawsze istnieje
+            if (!in_array('ROLE_USER', $roles, true)) {
+                $roles[] = 'ROLE_USER';
+                $needsFix = true;
+            }
+            if ($needsFix) {
+                $user->setRoles(array_values($roles));
+                $fixed++;
+            }
+        }
+        $this->entityManager->flush();
+        return new Response("Naprawiono $fixed użytkowników.");
+    }
+
     #[Route('/fill-data', name: 'dev_fill_data')]
     public function fillData(): Response
     {

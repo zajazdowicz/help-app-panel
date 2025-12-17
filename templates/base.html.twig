@@ -31,12 +31,13 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{{ path('app_dream_fulfilled') }}">Zrealizowane</a>
                     </li>
-                    {% if is_granted('ROLE_ADMIN') %}
+                    {% set userRoles = app.user ? app.user.roles : [] %}
+                    {% if is_granted('ROLE_ADMIN') or 'ROLE_SUPER_ADMINR' in userRoles %}
                         <li class="nav-item">
                             <a class="nav-link" href="{{ path('admin_dashboard') }}">Panel administracyjny</a>
                         </li>
                     {% endif %}
-                    {% if is_granted('ROLE_DIRECTOR') %}
+                    {% if is_granted('ROLE_DIRECTOR') or 'ROLE_SUPER_ADMINR' in userRoles %}
                         <li class="nav-item">
                             <a class="nav-link" href="{{ path('director_child_index') }}">Panel dyrektora</a>
                         </li>
