@@ -1,0 +1,58 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Użytkownicy - Panel administratora{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <h1>Użytkownicy</h1>
+    <a href="{{ path('admin_dashboard') }}" class="btn btn-secondary mb-3">Powrót do panelu</a>
+    
+    <div class="card">
+        <div class="card-body">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Email</th>
+                        <th>Nazwa użytkownika</th>
+                        <th>Rola</th>
+                        <th>Zweryfikowany</th>
+                        <th>Dom dziecka</th>
+                        <th>Akcje</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                        <tr>
+                            <td>{{ user.id }}</td>
+                            <td>{{ user.email }}</td>
+                            <td>{{ user.username }}</td>
+                            <td>
+                                {% if 'ROLE_ADMIN' in user.roles %}
+                                    <span class="badge bg-danger">Administrator</span>
+                                {% elseif 'ROLE_DIRECTOR' in user.roles %}
+                                    <span class="badge bg-warning">Dyrektor</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">Użytkownik</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ user.isVerified ? 'Tak' : 'Nie' }}</td>
+                            <td>{{ user.orphanage ? user.orphanage.name : 'Brak' }}</td>
+                            <td>
+                                <form method="post" action="{{ path('admin_user_toggle_role', {id: user.id}) }}" class="d-inline">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('toggle_role' ~ user.id) }}">
+                                    <select name="role" class="form-select form-select-sm d-inline w-auto" onchange="this.form.submit()">
+                                        <option value="ROLE_USER" {% if 'ROLE_USER' in user.roles and 'ROLE_ADMIN' not in user.roles and 'ROLE_DIRECTOR' not in user.roles %}selected{% endif %}>Użytkownik</option>
+                                        <option value="ROLE_DIRECTOR" {% if 'ROLE_DIRECTOR' in user.roles %}selected{% endif %}>Dyrektor</option>
+                                        <option value="ROLE_ADMIN" {% if 'ROLE_ADMIN' in user.roles %}selected{% endif %}>Administrator</option>
+                                    </select>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

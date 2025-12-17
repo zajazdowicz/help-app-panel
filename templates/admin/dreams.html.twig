@@ -1,0 +1,69 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Marzenia - Panel administratora{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <h1>Marzenia</h1>
+    <a href="{{ path('admin_dashboard') }}" class="btn btn-secondary mb-3">Powrót do panelu</a>
+    
+    <div class="card">
+        <div class="card-body">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Tytuł produktu</th>
+                        <th>Dziecko</th>
+                        <th>Dom dziecka</th>
+                        <th>Status</th>
+                        <th>Cena</th>
+                        <th>Zebrano</th>
+                        <th>Pilne</th>
+                        <th>Akcje</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for dream in dreams %}
+                        <tr>
+                            <td>{{ dream.id }}</td>
+                            <td>{{ dream.productTitle|slice(0, 30) }}{% if dream.productTitle|length > 30 %}...{% endif %}</td>
+                            <td>{{ dream.child ? dream.child.firstName : 'Brak' }}</td>
+                            <td>{{ dream.orphanage.name }}</td>
+                            <td>
+                                {% if dream.status == 'pending' %}
+                                    <span class="badge bg-secondary">Oczekujące</span>
+                                {% elseif dream.status == 'verified' %}
+                                    <span class="badge bg-primary">Zweryfikowane</span>
+                                {% elseif dream.status == 'in_progress' %}
+                                    <span class="badge bg-warning">W realizacji</span>
+                                {% elseif dream.status == 'fulfilled' %}
+                                    <span class="badge bg-success">Zrealizowane</span>
+                                {% elseif dream.status == 'cancelled' %}
+                                    <span class="badge bg-danger">Anulowane</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ dream.productPrice }} zł</td>
+                            <td>{{ dream.quantityFulfilled }}/{{ dream.quantityNeeded }}</td>
+                            <td>{{ dream.isUrgent ? 'Tak' : 'Nie' }}</td>
+                            <td>
+                                <a href="{{ path('app_dream_show', {id: dream.id}) }}" class="btn btn-sm btn-info">Szczegóły</a>
+                                <form method="post" action="{{ path('admin_dream_toggle_status', {id: dream.id}) }}" class="d-inline">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('toggle_status' ~ dream.id) }}">
+                                    <select name="status" class="form-select form-select-sm d-inline w-auto" onchange="this.form.submit()">
+                                        <option value="pending" {% if dream.status == 'pending' %}selected{% endif %}>Oczekujące</option>
+                                        <option value="verified" {% if dream.status == 'verified' %}selected{% endif %}>Zweryfikowane</option>
+                                        <option value="in_progress" {% if dream.status == 'in_progress' %}selected{% endif %}>W realizacji</option>
+                                        <option value="fulfilled" {% if dream.status == 'fulfilled' %}selected{% endif %}>Zrealizowane</option>
+                                        <option value="cancelled" {% if dream.status == 'cancelled' %}selected{% endif %}>Anulowane</option>
+                                    </select>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

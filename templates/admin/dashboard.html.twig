@@ -1,0 +1,64 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Panel administratora{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <h1>Panel administratora</h1>
+    
+    <div class="row mt-4">
+        <div class="col-md-3 mb-4">
+            <div class="card text-white bg-primary">
+                <div class="card-body">
+                    <h5 class="card-title">Użytkownicy</h5>
+                    <p class="card-text display-6">{{ stats.users }}</p>
+                    <a href="{{ path('admin_users') }}" class="text-white">Zarządzaj →</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-4">
+            <div class="card text-white bg-success">
+                <div class="card-body">
+                    <h5 class="card-title">Domy dziecka</h5>
+                    <p class="card-text display-6">{{ stats.orphanages }}</p>
+                    <small>Oczekujące: {{ stats.orphanages_pending }}</small><br>
+                    <a href="{{ path('admin_orphanages') }}" class="text-white">Zarządzaj →</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-4">
+            <div class="card text-white bg-warning">
+                <div class="card-body">
+                    <h5 class="card-title">Marzenia</h5>
+                    <p class="card-text display-6">{{ stats.dreams }}</p>
+                    <small>Oczekujące: {{ stats.dreams_pending }}</small><br>
+                    <a href="{{ path('admin_dreams') }}" class="text-white">Zarządzaj →</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-4">
+            <div class="card text-white bg-info">
+                <div class="card-body">
+                    <h5 class="card-title">Darowizny</h5>
+                    <p class="card-text display-6">{{ stats.fulfillments }}</p>
+                    <a href="{{ path('admin_fulfillments') }}" class="text-white">Zarządzaj →</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mt-4">
+        <div class="col">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Szybkie linki</h5>
+                    <a href="{{ path('admin_users') }}" class="btn btn-outline-primary me-2">Użytkownicy</a>
+                    <a href="{{ path('admin_orphanages') }}" class="btn btn-outline-success me-2">Domy dziecka</a>
+                    <a href="{{ path('admin_dreams') }}" class="btn btn-outline-warning me-2">Marzenia</a>
+                    <a href="{{ path('admin_fulfillments') }}" class="btn btn-outline-info me-2">Darowizny</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

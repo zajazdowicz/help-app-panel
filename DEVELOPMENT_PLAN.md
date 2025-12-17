@@ -111,12 +111,18 @@ Ten dokument opisuje aktualny stan aplikacji, brakujące funkcjonalności, plan 
 2. **Stworzenie DreamController akcje `new`, `edit`, `delete`** (z ograniczeniem do własnego orphanage).
 3. **Szablony** dla zarządzania dziećmi i marzeniami.
 
-### Faza 5 – Panel administratora (ROLE_ADMIN)
-1. **Utworzenie AdminController** z akcjami:
-   - Lista użytkowników z możliwością zmiany ról.
-   - Lista domów dziecka do weryfikacji.
-   - Lista wszystkich marzeń i darowizn.
-2. **Szablony** administracyjne.
+### Faza 5 – Panel administratora (ROLE_ADMIN) – ✅ UKOŃCZONA
+1. ✅ **Utworzenie AdminController** z akcjami:
+   - Dashboard ze statystykami
+   - Lista użytkowników z możliwością zmiany ról
+   - Lista domów dziecka do weryfikacji
+   - Lista wszystkich marzeń z możliwością zmiany statusu
+   - Lista wszystkich darowizn
+2. ✅ **Szablony** administracyjne (dashboard, users, orphanages, dreams, fulfillments)
+3. ✅ **Link w navbarze** do panelu administratora
+4. ✅ **Funkcjonalność zmiany ról użytkowników**
+5. ✅ **Funkcjonalność weryfikacji domów dziecka**
+6. ✅ **Funkcjonalność zmiany statusu marzeń**
 
 ### Faza 6 – Usprawnienia i bezpieczeństwo
 1. **Dodanie typu Enum dla statusów** (np. klasa DreamStatus, DreamFulfillmentStatus).

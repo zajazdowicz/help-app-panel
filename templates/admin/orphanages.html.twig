@@ -1,0 +1,56 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Domy dziecka - Panel administratora{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <h1>Domy dziecka</h1>
+    <a href="{{ path('admin_dashboard') }}" class="btn btn-secondary mb-3">Powrót do panelu</a>
+    
+    <div class="card">
+        <div class="card-body">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nazwa</th>
+                        <th>Miasto</th>
+                        <th>Region</th>
+                        <th>Email kontaktowy</th>
+                        <th>Zweryfikowany</th>
+                        <th>Dyrektor</th>
+                        <th>Akcje</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for orphanage in orphanages %}
+                        <tr>
+                            <td>{{ orphanage.id }}</td>
+                            <td>{{ orphanage.name }}</td>
+                            <td>{{ orphanage.city }}</td>
+                            <td>{{ orphanage.region }}</td>
+                            <td>{{ orphanage.contactEmail }}</td>
+                            <td>
+                                {% if orphanage.isVerified %}
+                                    <span class="badge bg-success">Tak</span>
+                                {% else %}
+                                    <span class="badge bg-warning">Nie</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ orphanage.director ? orphanage.director.email : 'Brak' }}</td>
+                            <td>
+                                <form method="post" action="{{ path('admin_orphanage_toggle_verify', {id: orphanage.id}) }}" class="d-inline">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('toggle_verify' ~ orphanage.id) }}">
+                                    <button type="submit" class="btn btn-sm {% if orphanage.isVerified %}btn-warning{% else %}btn-success{% endif %}">
+                                        {% if orphanage.isVerified %}Cofnij weryfikację{% else %}Zweryfikuj{% endif %}
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
