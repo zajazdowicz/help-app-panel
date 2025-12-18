@@ -2,23 +2,11 @@
 
 namespace App\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
-
 /**
- * @ORM\Entity
- * @ORM\Table(name="dream_fulfillments")
+ * @deprecated This entity is no longer used. The donation system has been removed.
  */
 class DreamFulfillment
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
-    private $id;
-
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
+    // This class is kept only to prevent autoloading errors.
+    // It is not mapped to a database table.
 }

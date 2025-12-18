@@ -59,11 +59,10 @@ Ten dokument opisuje aktualny stan aplikacji, brakujące funkcjonalności, plan 
 
 ### 2.5. Usprawnienia encji
 - **Dream::status** – warto użyć typu wyliczeniowego (enum) zamiast dowolnego stringa.
-- **DreamFulfillment::status** – podobnie.
-- **DreamFulfillment** – brak relacji z User (dla zalogowanych darczyńców).
+- **DreamFulfillment** – całkowicie usunięty (tabela i encja), ponieważ nie zbieramy darowizn
 - **User** – brak domyślnej roli przy rejestracji (np. `ROLE_USER`).
 - Brak pola `photoUrl` w Child (opcjonalne zdjęcie dziecka).
-- Brak pola `amount` w DreamFulfillment? (obecnie `quantityFulfilled` – ilość sztuk, ale może warto dodać kwotę darowizny).
+- System opiera się wyłącznie na śledzeniu afiliacyjnym (AffiliateClick, AffiliateConversion)
 
 ### 2.6. Bezpieczeństwo i walidacja
 - Ograniczenie dostępu do określonych ścieżek według ról (ROLE_USER, ROLE_DIRECTOR, ROLE_ADMIN).
