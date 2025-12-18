@@ -21,12 +21,13 @@ class DreamController extends AbstractController
     public function index(Request $request, DreamRepository $dreamRepository): Response
     {
         $filters = [
-            'sort'     => $request->query->get('sort', 'created_desc'),
-            'category' => $request->query->get('category'),
-            'region'   => $request->query->get('region'),
-            'urgent'   => $request->query->get('urgent'),
-            'minPrice' => $request->query->get('minPrice'),
-            'maxPrice' => $request->query->get('maxPrice'),
+            'sort'        => $request->query->get('sort', 'created_desc'),
+            'category'    => $request->query->get('category'),
+            'region'      => $request->query->get('region'),
+            'urgent'      => $request->query->get('urgent'),
+            'minPrice'    => $request->query->get('minPrice'),
+            'maxPrice'    => $request->query->get('maxPrice'),
+            'fundingType' => $request->query->get('fundingType'),
         ];
 
         $page = $request->query->getInt('page', 1);
@@ -61,6 +62,7 @@ class DreamController extends AbstractController
             'urgent'       => $filters['urgent'],
             'minPrice'     => $filters['minPrice'],
             'maxPrice'     => $filters['maxPrice'],
+            'fundingType'  => $filters['fundingType'],
             'categoryList' => $categoryList,
             'regionList'   => $regionList,
             'total'        => $total,
