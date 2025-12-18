@@ -82,9 +82,6 @@ class Dream
     #[ORM\OneToMany(mappedBy: 'dream', targetEntity: AffiliateClick::class, orphanRemoval: true)]
     private Collection $affiliateClicks;
 
-    #[ORM\OneToMany(mappedBy: 'dream', targetEntity: AffiliateClick::class, orphanRemoval: true)]
-    private Collection $affiliateClicks;
-
     #[ORM\OneToMany(mappedBy: 'dream', targetEntity: AffiliateConversion::class, orphanRemoval: true)]
     private Collection $affiliateConversions;
 
@@ -96,7 +93,6 @@ class Dream
 
     public function __construct()
     {
-        $this->fulfillments = new ArrayCollection();
         $this->affiliateClicks = new ArrayCollection();
         $this->affiliateConversions = new ArrayCollection();
         $this->status = DreamStatus::PENDING;
