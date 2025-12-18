@@ -2,5 +2,10 @@
 
 namespace App\Form;
 
-// This form has been removed because we don't collect donations anymore
-// The only way to help is through affiliate links
+use Symfony\Component\Form\AbstractType;
+
+class DreamFulfillmentType extends AbstractType
+{
+    // Empty class to satisfy Symfony's service autowiring
+    // The donation system has been removed; only affiliate tracking remains.
+}

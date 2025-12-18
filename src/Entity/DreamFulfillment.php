@@ -2,5 +2,23 @@
 
 namespace App\Entity;
 
-// This entity has been removed because we don't collect donations anymore
-// The only way to help is through affiliate links
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * @ORM\Entity
+ * @ORM\Table(name="dream_fulfillments")
+ */
+class DreamFulfillment
+{
+    /**
+     * @ORM\Id
+     * @ORM\GeneratedValue
+     * @ORM\Column(type="integer")
+     */
+    private $id;
+
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+}
