@@ -3,6 +3,8 @@
 Ten dokument opisuje aktualny stan aplikacji, brakujące funkcjonalności, plan implementacji oraz uwagi dotyczące bezpieczeństwa.  
 **Aktualizowany przy każdym wczytaniu projektu oraz po wprowadzeniu znaczących modyfikacji.**
 
+*Ostatnia duża modyfikacja: dodanie pełnej implementacji sieci afiliacyjnej (Faza 13) – 2025-12-18.*
+
 ---
 
 ## 1. Przegląd istniejącego kodu
@@ -341,7 +343,7 @@ Po wdrożeniu przetestuj kluczowe funkcjonalności:
    - Sprawdzenie, czy komunikaty błędów są wyświetlane odpowiednio (np. próba dodania dziecka bez weryfikacji domu dziecka).
    - Sprawdzenie, czy uprawnienia działają (brak dostępu do nieautoryzowanych ścieżek).
 
-### Faza 11 – System kolejek i powiadomień
+### Faza 15 – System kolejek i powiadomień
 1. **Cel systemu**:
    - Automatyczne wysyłanie powiadomień email do odpowiednich użytkowników w reakcji na zdarzenia w systemie.
    - Przechowywanie powiadomień w panelu użytkownika (np. „Masz nową darowiznę”, „Twój dom dziecka został zweryfikowany”).
@@ -390,9 +392,113 @@ Po wdrożeniu przetestuj kluczowe funkcjonalności:
 2. **Monitoring** (logi, błędy).
 3. **Ewentualna integracja z usługami reklamowymi** (Google AdSense).
 
+### Faza 13 – Sieć afiliacyjna i śledzenie konwersji – ✅ UKOŃCZONA
+**Cel**: Umożliwienie finansowania marzeń poprzez linki partnerskie (afiliacyjne) zamiast bezpośrednich darowizn. Platforma nie zbiera pieniędzy, lecz przekierowuje użytkowników do sklepów partnerskich i śledzi kliknięcia oraz zakupy.
+
+#### ✅ **13.1. Rozszerzenie encji Dream**
+- Dodano pola afiliacyjne: `affiliatePartner` (string), `affiliateTrackingId` (string), `originalProductUrl` (text), `affiliateUrl` (text), `purchasedQuantity` (int).
+- Dodano relacje `OneToMany` do nowych encji `AffiliateClick` i `AffiliateConversion`.
+- Zaktualizowano konstruktor oraz dodano gettery i settery.
+
+#### ✅ **13.2. Nowe encje do śledzenia**
+- **AffiliateClick** – przechowuje każde kliknięcie w link afiliacyjny (IP, user‑agent, sesja, timestamp).
+- **AffiliateConversion** – rejestruje zakupy (numer zamówienia, kwota, prowizja, ilość sztuk, powiązanie z kliknięciem).
+- Dla obu encji utworzono repozytoria z metodami pomocniczymi (`countClicksForDream`, `getTotalPurchasedQuantityForDream`).
+
+#### ✅ **13.3. Migracja bazy danych**
+- Utworzono migrację `Version20251218000000`, która dodaje tabele `affiliate_clicks`, `affiliate_conversions` oraz nowe kolumny w tabeli `dreams`.
+
+#### ✅ **13.4. Formularz marzenia z polami afiliacyjnymi**
+- Zaktualizowano `DreamType` o pola: `originalProductUrl`, `affiliatePartner` (dropdown: Ceneo, Amazon, Allegro, Inny), `affiliateTrackingId`, `affiliateUrl`.
+- Pola są opcjonalne i wyświetlane w formularzu dodawania/edycji marzenia.
+
+#### ✅ **13.5. Automatyczne generowanie linków afiliacyjnych**
+- Utworzono serwis `AffiliateLinkGenerator`, który na podstawie partnera i oryginalnego URL tworzy link z odpowiednimi parametrami śledzącymi (np. `?aff_id=...` dla Allegro).
+- Dodano event subscriber `DreamAffiliateSubscriber`, który automatycznie wywołuje generator przy zapisie marzenia (`prePersist`/`preUpdate`) i ustawia `affiliateUrl`.
+
+#### ✅ **13.6. Śledzenie kliknięć i przekierowanie**
+- Utworzono `AffiliateController` z akcją `/go/{id}`.
+- Endpoint rejestruje kliknięcie (`AffiliateClick`) z danymi klienta, a następnie przekierowuje użytkownika na `affiliateUrl` (lub `productUrl`, jeśli afiliacyjny brak).
+
+#### ✅ **13.7. Panel administratora dla sieci afiliacyjnych**
+- Utworzono `AdminAffiliateController` z dashboardem (`/admin/affiliate`) prezentującym statystyki dla wszystkich marzeń (kliknięcia, zakupione sztuki, współczynnik konwersji).
+- Możliwość ręcznego dodawania konwersji (formularz) oraz usuwania istniejących.
+- Kontroler automatycznie aktualizuje `Dream::purchasedQuantity` po każdej zmianie.
+- Dodano link do panelu afiliacyjnego w dashboardzie administratora (`admin/dashboard.html.twig`).
+
+#### ✅ **13.8. Front – wyświetlanie linków afiliacyjnych**
+- Zaktualizowano szablon `dream/show.html.twig`:
+  - Sekcja **"Kup przez afiliację"** z przyciskiem "Kup teraz (link afiliacyjny)" prowadzącym do `/go/{id}`.
+  - Statystyki afiliacyjne (liczba kliknięć, zakupione sztuki, partner).
+  - Informacja o partnerze i linku afiliacyjnym.
+- Zaktualizowano szablon `dream/index.html.twig`:
+  - Ikona 🔗 i znacznik "Afiliacja" dla marzeń z partnerem afiliacyjnym.
+  - Nowe kolumny statystyk: `Zakupione (afiliacja)`, `Pozostało` (uwzględniające oba typy finansowania).
+  - Dodano filtr **"Typ finansowania"** (afiliacyjne/darowizny) w sekcji filtrów.
+
+#### ✅ **13.9. Backend – obsługa filtrowania po typie finansowania**
+- Zaktualizowano `DreamRepository::getDreamsWithFiltersQueryBuilder` o obsługę parametru `fundingType` (`affiliate` / `donation`).
+- Zaktualizowano `DreamController::index` o przekazywanie parametru `fundingType` do widoku.
+
+#### ✅ **13.10. Integracja z istniejącym modelem darowizn**
+- Dodano pole `type` (enum: `donation` / `affiliate`) do encji `DreamFulfillment`.
+- Zaktualizowano `DreamRepository` o metodę `updatePurchasedQuantity`, która przelicza sumę `quantity` z `AffiliateConversion` i aktualizuje `Dream::purchasedQuantity`.
+- Logika spełniania marzeń uwzględnia teraz **dwie składowe**: `quantityFulfilled` (darowizny) + `purchasedQuantity` (zakupy afiliacyjne).
+
+#### ✅ **13.11. Dane testowe**
+- Rozszerzono `DevController::fillData()` o przykładowe dane afiliacyjne:
+  - Dla marzenia "Rower górski" ustawiono partnera Allegro z linkiem afiliacyjnym.
+  - Dodano kliknięcia (`AffiliateClick`) i konwersje (`AffiliateConversion`).
+  - Automatycznie zaktualizowano `purchasedQuantity`.
+
+#### ✅ **13.12. Dokumentacja i flow działania**
+- Dodano szczegółowy opis flow (krok po kroku) w sekcji **6. Flow sieci afiliacyjnej – instrukcja krok po kroku** (poniżej).
+
 ---
 
-## 4. Uwagi bezpieczeństwa (audyt)
+## 6. Flow sieci afiliacyjnej – instrukcja krok po kroku
+
+### 6.1. Dla dyrektora (tworzenie marzenia z linkiem afiliacyjnym)
+1. **Zaloguj się** jako dyrektor (ROLE_DIRECTOR) i przejdź do panelu dyrektora.
+2. **Kliknij "Dodaj nowe marzenie"** – otworzy się formularz z nowymi polami afiliacyjnymi.
+3. **Wypełnij pola afiliacyjne**:
+   - **Oryginalny link produktu (afiliacyjny)** – bezpośredni URL produktu w sklepie partnerskim.
+   - **Partner afiliacyjny** – wybierz z listy (Ceneo, Amazon, Allegro, Inny).
+   - **ID śledzenia afiliacyjnego** – wpisz swój kod z programu partnerskiego (opcjonalnie).
+   - **Wygenerowany link afiliacyjny** – pozostaw puste, system wypełni je automatycznie.
+4. **Uzupełnij standardowe dane** (tytuł, cena, dziecko, ilość potrzebna itp.) i zapisz marzenie.
+5. **System automatycznie generuje link afiliacyjny** na podstawie partnera i ID śledzenia, dodając odpowiednie parametry (np. `?aff_id=...` dla Allegro).
+6. **Marzenie trafia do bazy** i po weryfikacji przez administratora jest publikowane.
+
+### 6.2. Dla użytkownika (zakup przez afiliację)
+1. **Przeglądaj listę marzeń** (`/dreams`) – marzenia z linkiem afiliacyjnym mogą być oznaczone ikoną 🔗.
+2. **Wejdź w szczegóły marzenia** (`/dreams/{id}`) – zobaczysz sekcję "Kup przez afiliację" z przyciskiem "Kup teraz (link afiliacyjny)".
+3. **Kliknij przycisk** – zostaniesz przekierowany na `/go/{id}`, gdzie system zarejestruje kliknięcie (`AffiliateClick`) i natychmiast przekieruje Cię do sklepu partnerskiego.
+4. **Dokonaj zakupu** w sklepie – korzystając z linku zawierającego nasz kod śledzący.
+5. **Administrator lub dyrektor ręcznie dodaje konwersję** w panelu administratora (`/admin/affiliate`), podając dane zamówienia (numer, kwotę, prowizję, ilość sztuk).
+6. **System aktualizuje liczbę zakupionych sztuk** (`Dream::purchasedQuantity`) i sprawdza, czy marzenie zostało już spełnione.
+
+### 6.3. Dla administratora (pełna kontrola)
+- **Dashboard afiliacyjny** (`/admin/affiliate`) – tabela ze statystykami wszystkich marzeń (kliknięcia, zakupy, współczynnik konwersji).
+- **Ręczne dodawanie/edycja/usuwanie konwersji** – formularz dostępny z poziomu dashboardu.
+- **Monitorowanie efektywności** – na podstawie współczynnika konwersji można optymalizować wybór partnerów lub treść opisu marzenia.
+
+### 6.4. Jak przygotować linki afiliacyjne (praktyczne wskazówki)
+1. **Zarejestruj się w programach partnerskich** wybranych sklepów (Allegro Partners, CeneoLab, Amazon Associates) i odbierz swój identyfikator śledzenia.
+2. **Skopiuj bezpośredni URL produktu** ze sklepu.
+3. **W formularzu marzenia** wklej URL w polu "Oryginalny link produktu", wybierz partnera i opcjonalnie wpisz identyfikator śledzenia.
+4. **System samodzielnie doda parametry śledzące** zgodne z wymaganiami danego partnera.
+5. **Po zapisie sprawdź wygenerowany link** w szczegółach marzenia – powinien prowadzić do produktu z Twoim kodem śledzącym.
+
+### 6.5. Przepływ danych w bazie
+- **Dream** – przechowuje dane afiliacyjne (`affiliatePartner`, `affiliateTrackingId`, `originalProductUrl`, `affiliateUrl`, `purchasedQuantity`).
+- **AffiliateClick** – rejestruje każde kliknięcie w link afiliacyjny (IP, user‑agent, sesja, timestamp).
+- **AffiliateConversion** – rejestruje każdy zakup (numer zamówienia, kwota, prowizja, ilość sztuk).
+- **DreamFulfillment** – rozszerzone o pole `type` (`donation` / `affiliate`), na razie używane tylko dla darowizn bezpośrednich.
+
+---
+
+## 7. Uwagi bezpieczeństwa (audyt)
 
 ### 4.1. Konfiguracja security.yaml
 - Upewnić się, że ścieżki `/admin`, `/director` są chronione odpowiednimi rolami.
@@ -472,9 +578,9 @@ Trasa `/dev/fill-data` działa wyłącznie w środowisku deweloperskim i nie wym
 ## 6. Notatki
 
 - **Data rozpoczęcia planu**: 2025-12-16
-- **Ostatnia aktualizacja**: 2025-12-17 (dodanie instrukcji wdrożeniowych i konfiguracji kolejek na serwerze produkcyjnym)
+- **Ostatnia aktualizacja**: 2025-12-18 (dodanie pełnej implementacji sieci afiliacyjnej – Faza 13)
 - **Wersja aplikacji**: w rozwoju
-- **Ostatnia migracja bazy danych**: Version20251217130000
+- **Ostatnia migracja bazy danych**: Version20251218000000 (afiliacyjna)
 
 ---
 *Dokument będzie aktualizowany przy każdym wczytaniu projektu oraz po wprowadzeniu znaczących modyfikacji.*
