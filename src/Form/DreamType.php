@@ -141,8 +141,7 @@ class DreamType extends AbstractType
                     new Range([
                         'min' => 1,
                         'max' => 1000,
-                        'minMessage' => 'Ilość musi wynosić co najmniej {{ limit }}.',
-                        'maxMessage' => 'Ilość nie może przekraczać {{ limit }}.',
+                        'notInRangeMessage' => 'Ilość musi być między {{ min }} a {{ max }}.',
                     ]),
                 ],
             ])
