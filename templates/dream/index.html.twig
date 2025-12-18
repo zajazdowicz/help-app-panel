@@ -80,7 +80,7 @@
                                 {% endif %}
                             </p>
                             <ul class="list-unstyled small">
-                                <li><strong>Status:</strong> {{ dream.status }}</li>
+                                <li><strong>Status:</strong> {{ dream.status.label() }}</li>
                                 <li><strong>Cena:</strong> {{ dream.productPrice }} zł</li>
                                 <li><strong>Potrzebna ilość:</strong> {{ dream.quantityNeeded }}</li>
                                 <li><strong>Zebrano:</strong> {{ dream.quantityFulfilled }}</li>
