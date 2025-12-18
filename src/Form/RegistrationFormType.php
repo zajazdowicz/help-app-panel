@@ -43,10 +43,18 @@ class RegistrationFormType extends AbstractType
                     ]),
                 ],
             ])
-            ->add('isDirector', CheckboxType::class, [
-                'label' => 'Chcę zarejestrować się jako dyrektor domu dziecka (będę mógł dodawać dzieci i marzenia)',
-                'required' => false,
+            ->add('accountType', ChoiceType::class, [
+                'label' => 'Typ konta',
+                'choices' => [
+                    'Zwykły użytkownik' => 'user',
+                    'Dyrektor domu dziecka' => 'director',
+                ],
+                'expanded' => true,
+                'multiple' => false,
                 'mapped' => false,
+                'required' => true,
+                'data' => 'user',
+                'help' => 'Dyrektorzy mogą dodawać dzieci i marzenia, ale wymagają weryfikacji przez administratora.',
             ])
             ->add('agreeTerms', CheckboxType::class, [
                 'label' => 'Akceptuję regulamin',

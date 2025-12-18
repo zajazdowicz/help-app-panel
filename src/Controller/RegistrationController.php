@@ -42,8 +42,9 @@ class RegistrationController extends AbstractController
                 )
             );
 
-            $isDirector = $form->get('isDirector')->getData();
+            $accountType = $form->get('accountType')->getData();
             $roles = ['ROLE_USER'];
+            $isDirector = ($accountType === 'director');
             if ($isDirector) {
                 $roles[] = 'ROLE_DIRECTOR';
             }

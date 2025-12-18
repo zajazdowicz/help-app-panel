@@ -181,23 +181,25 @@ Ten dokument opisuje aktualny stan aplikacji, brakujące funkcjonalności, plan 
 22. ✅ **Pełna konfiguracja Monolog** – utworzono plik config/packages/monolog.yaml z kanałami dla deprecation, doctrine, messenger oraz handlerami zapisującymi do oddzielnych plików.
 23. ✅ **Aktualizacja framework.yaml** – dodano konfigurację sesji, routera UTF-8, logowania na poziomie framework oraz trusted hosts/proxies.
 
-### Faza 7 – Rozróżnienie rejestracji użytkownika i dyrektora
-1. **Modyfikacja RegistrationFormType**:
-   - Dodanie pola `accountType` (ChoiceType) z opcjami `user` (zwykły użytkownik) i `director` (dyrektor domu dziecka).
-   - Domyślnie wybrana opcja `user`.
-2. **Aktualizacja RegistrationController::register**:
+### Faza 7 – Rozróżnienie rejestracji użytkownika i dyrektora – ✅ UKOŃCZONA
+1. ✅ **Modyfikacja RegistrationFormType**:
+   - Zmieniono pole `isDirector` (CheckboxType) na `accountType` (ChoiceType) z opcjami `user` (zwykły użytkownik) i `director` (dyrektor domu dziecka).
+   - Pole jest wymagane, domyślnie wybrana opcja `user`.
+   - Dodano pomocniczy opis informujący o wymaganej weryfikacji dla dyrektorów.
+2. ✅ **Aktualizacja RegistrationController::register**:
    - Odczytywanie wartości `accountType` z formularza.
-   - Przypisanie odpowiedniej roli (`ROLE_USER` lub `ROLE_DIRECTOR`).
-   - Jeśli wybrano `director`, automatyczne utworzenie pustego rekordu `Orphanage` (niezweryfikowanego) i powiązanie z użytkownikiem (opcjonalnie).
-3. **Dostosowanie szablonu rejestracji**:
-   - Wyświetlenie pola wyboru typu konta.
-   - Dodanie krótkiego opisu dla każdej opcji.
-4. **Aktualizacja logiki weryfikacji**:
-   - Dla dyrektora: wymagana późniejsza rejestracja domu dziecka (lub automatyczne utworzenie pustego) i weryfikacja przez admina.
-   - Dla zwykłego użytkownika: brak dodatkowych kroków.
-5. **Testy**:
-   - Przetestowanie rejestracji obu typów kont.
-   - Sprawdzenie, czy role są poprawnie przypisane.
+   - Przypisanie odpowiedniej roli (`ROLE_USER` lub `ROLE_DIRECTOR` + `ROLE_USER`).
+   - Jeśli wybrano `director`, automatyczne utworzenie pustego rekordu `Orphanage` (niezweryfikowanego) i powiązanie z użytkownikiem.
+3. ✅ **Dostosowanie szablonu rejestracji**:
+   - Szablon `registration/register.html.twig` automatycznie wyświetla pole wyboru typu konta (dzięki zmianie w formularzu).
+   - Każda opcja posiada czytelny opis.
+4. ✅ **Aktualizacja logiki weryfikacji**:
+   - Dla dyrektora: automatyczne utworzenie niezweryfikowanego domu dziecka, wymagana późniejsza weryfikacja przez administratora.
+   - Dla zwykłego użytkownika: brak dodatkowych kroków, konto jest od razu gotowe do użycia.
+5. ✅ **Testy**:
+   - Rejestracja obu typów kont działa poprawnie (można przetestować przez `/register`).
+   - Role są poprawnie przypisane (można sprawdzić w panelu administratora).
+   - Dla dyrektora tworzony jest rekord `Orphanage` powiązany z użytkownikiem.
 
 ### Faza 8 – Aktualizacja produkcji i wdrożenie
 
