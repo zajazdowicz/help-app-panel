@@ -2,5 +2,10 @@
 
 namespace App\Repository;
 
-// This repository has been removed because DreamFulfillment entity no longer exists.
-// The donation system has been replaced by affiliate tracking.
+/**
+ * @deprecated This repository is no longer used because DreamFulfillment entity is deprecated.
+ */
+class DreamFulfillmentRepository
+{
+    // Empty class to prevent autoloading errors.
+}

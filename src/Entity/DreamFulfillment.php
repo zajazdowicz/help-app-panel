@@ -2,5 +2,11 @@
 
 namespace App\Entity;
 
-// This file has been removed because DreamFulfillment is no longer used.
-// The donation system has been replaced by affiliate tracking.
+/**
+ * @deprecated This entity is no longer used. The donation system has been removed.
+ */
+class DreamFulfillment
+{
+    // This class is kept only to prevent autoloading errors.
+    // It is not mapped to a database table.
+}
