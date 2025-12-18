@@ -145,11 +145,17 @@ Ten dokument opisuje aktualny stan aplikacji, brakujące funkcjonalności, plan 
 10. ✅ **Panel dyrektora – edycja podziękowań** – możliwość dodania/edycji zdjęcia i wiadomości dla każdej darowizny.
 11. ✅ **Rejestracja i zarządzanie domami dziecka przez dyrektora** – formularz rejestracji, edycji, weryfikacja przez admina, blokada dodawania dzieci/marzeń przed weryfikacją.
 12. ✅ **Rola Super Admin** – możliwość przypisania użytkownikowi ról ROLE_ADMIN i ROLE_DIRECTOR jednocześnie, pozwalająca na dostęp do panelu admina i dyrektora bez przelogowywania.
-13. 🔄 **Rozróżnienie rejestracji użytkownika (ROLE_USER) i dyrektora (ROLE_DIRECTOR)** – dodanie pola wyboru typu konta w formularzu rejestracji, automatyczne przypisanie odpowiedniej roli.
+13. ✅ **Rozróżnienie rejestracji użytkownika (ROLE_USER) i dyrektora (ROLE_DIRECTOR)** – dodanie pola wyboru typu konta w formularzu rejestracji, automatyczne przypisanie odpowiedniej roli.
 14. 🔄 **Dodanie typu Enum dla statusów** (np. klasa DreamStatus, DreamFulfillmentStatus).
 15. 🔄 **Walidacja formularzy** (Constraints).
 16. 🔄 **Dodanie event subscriberów** do automatycznej aktualizacji pól `updatedAt`.
-17. 🔄 **Zapis logów ważnych operacji**.
+17. ✅ **Zapis logów ważnych operacji** – dodano MonologBundle, skonfigurowano logowanie do plików (w tym osobne logi dla Doctrine i Messenger). Działa również logowanie w konsoli.
+18. ✅ **Naprawa systemu kolejek (Messenger)** – dodano brakujący pakiet `symfony/doctrine-messenger`, skonfigurowano transport `async` z Doctrine, dodano transport `failed` oraz włączono logging w konfiguracji messenger.
+19. ✅ **Utworzenie pliku .env.local** – przykładowa konfiguracja dla środowiska deweloperskiego i produkcyjnego, zawierająca ustawienia bazy danych, mailera, messengera oraz zwiększony limit pamięci.
+20. ✅ **Aktualizacja .gitignore** – dodano wykluczenie plików .env.local.
+21. ✅ **Konfiguracja bezpieczeństwa (trusted_hosts, trusted_proxies)** – dodano zmienne środowiskowe TRUSTED_HOSTS i TRUSTED_PROXIES oraz odpowiednie ustawienia w framework.yaml.
+22. ✅ **Pełna konfiguracja Monolog** – utworzono plik config/packages/monolog.yaml z kanałami dla deprecation, doctrine, messenger oraz handlerami zapisującymi do oddzielnych plików.
+23. ✅ **Aktualizacja framework.yaml** – dodano konfigurację sesji, routera UTF-8, logowania na poziomie framework oraz trusted hosts/proxies.
 
 ### Faza 7 – Rozróżnienie rejestracji użytkownika i dyrektora
 1. **Modyfikacja RegistrationFormType**:
