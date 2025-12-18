@@ -55,7 +55,7 @@ class Dream
     private ?string $description = null;
 
     #[ORM\Column(length: 20, enumType: DreamStatus::class)]
-    private ?DreamStatus = null;
+    private ?DreamStatus $status = null;
 
     #[ORM\Column]
     #[Assert\Positive]
