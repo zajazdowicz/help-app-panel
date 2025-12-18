@@ -91,7 +91,24 @@ class DevController extends AbstractController
         $regularUser->setIsVerified(true);
         $this->entityManager->persist($regularUser);
 
-        // 2. Orphanage
+        // Dodajemy więcej użytkowników
+        $user2 = new User();
+        $user2->setEmail('user2@example.com');
+        $user2->setUsername('user2');
+        $user2->setRoles(['ROLE_USER']);
+        $user2->setPassword($this->passwordHasher->hashPassword($user2, 'password123'));
+        $user2->setIsVerified(true);
+        $this->entityManager->persist($user2);
+
+        $director2 = new User();
+        $director2->setEmail('director2@example.com');
+        $director2->setUsername('director2');
+        $director2->setRoles(['ROLE_DIRECTOR']);
+        $director2->setPassword($this->passwordHasher->hashPassword($director2, 'password123'));
+        $director2->setIsVerified(true);
+        $this->entityManager->persist($director2);
+
+        // 2. Orphanages
         $orphanage = new Orphanage();
         $orphanage->setName('Dom Dziecka w Warszawie');
         $orphanage->setAddress('ul. Przykładowa 123');
@@ -103,6 +120,18 @@ class DevController extends AbstractController
         $orphanage->setIsVerified(true);
         $orphanage->setDirector($directorUser);
         $this->entityManager->persist($orphanage);
+
+        $orphanage2 = new Orphanage();
+        $orphanage2->setName('Dom Dziecka w Krakowie');
+        $orphanage2->setAddress('ul. Krakowska 456');
+        $orphanage2->setCity('Kraków');
+        $orphanage2->setRegion('Małopolskie');
+        $orphanage2->setPostalCode('30-001');
+        $orphanage2->setContactEmail('kontakt@krakow.dd.pl');
+        $orphanage2->setContactPhone('+48 987 654 321');
+        $orphanage2->setIsVerified(false); // Niezweryfikowany
+        $orphanage2->setDirector($director2);
+        $this->entityManager->persist($orphanage2);
 
         // 3. Children
         $child1 = new Child();
@@ -121,6 +150,22 @@ class DevController extends AbstractController
         $child2->setIsVerified(true);
         $this->entityManager->persist($child2);
 
+        $child3 = new Child();
+        $child3->setFirstName('Piotr');
+        $child3->setAge(12);
+        $child3->setDescription('Piotr lubi grać w piłkę nożną.');
+        $child3->setOrphanage($orphanage2);
+        $child3->setIsVerified(true);
+        $this->entityManager->persist($child3);
+
+        $child4 = new Child();
+        $child4->setFirstName('Kasia');
+        $child4->setAge(9);
+        $child4->setDescription('Kasia uwielbia czytać książki przygodowe.');
+        $child4->setOrphanage($orphanage2);
+        $child4->setIsVerified(true);
+        $this->entityManager->persist($child4);
+
         // 4. Dreams
         $dream1 = new Dream();
         $dream1->setChild($child1);
@@ -128,7 +173,6 @@ class DevController extends AbstractController
         $dream1->setProductUrl('https://example.com/rower');
         $dream1->setProductTitle('Rower górski 24 cale');
         $dream1->setProductPrice('599.99');
-        $dream1->setProductCategory('Sport');
         $dream1->setDescription('Rower pomógłby Janowi w codziennych dojazdach do szkoły i rekreacji.');
         // set status bypassing validation
         (function() use ($dream1) {
@@ -148,7 +192,6 @@ class DevController extends AbstractController
         $dream2->setProductUrl('https://example.com/zestaw-malarski');
         $dream2->setProductTitle('Zestaw malarski 100 elementów');
         $dream2->setProductPrice('129.50');
-        $dream2->setProductCategory('Edukacja');
         $dream2->setDescription('Anna chce rozwijać talent plastyczny.');
         $dream2->setStatus('pending');
         $dream2->setQuantityNeeded(1);
@@ -162,7 +205,6 @@ class DevController extends AbstractController
         $dream3->setProductUrl('https://example.com/ksiazki');
         $dream3->setProductTitle('Komiksy przygodowe');
         $dream3->setProductPrice('89.00');
-        $dream3->setProductCategory('Książki');
         $dream3->setDescription('Jan lubi czytać komiksy.');
         // set status bypassing validation
         (function() use ($dream3) {
@@ -175,6 +217,32 @@ class DevController extends AbstractController
         $dream3->setQuantityFulfilled(2);
         $dream3->setIsUrgent(false);
         $this->entityManager->persist($dream3);
+
+        $dream4 = new Dream();
+        $dream4->setChild($child3);
+        $dream4->setOrphanage($orphanage2);
+        $dream4->setProductUrl('https://example.com/pilka');
+        $dream4->setProductTitle('Piłka nożna profesjonalna');
+        $dream4->setProductPrice('199.00');
+        $dream4->setDescription('Piotr marzy o profesjonalnej piłce do treningów.');
+        $dream4->setStatus('approved');
+        $dream4->setQuantityNeeded(1);
+        $dream4->setQuantityFulfilled(1);
+        $dream4->setIsUrgent(false);
+        $this->entityManager->persist($dream4);
+
+        $dream5 = new Dream();
+        $dream5->setChild($child4);
+        $dream5->setOrphanage($orphanage2);
+        $dream5->setProductUrl('https://example.com/ksiazka');
+        $dream5->setProductTitle('Seria książek "Harry Potter"');
+        $dream5->setProductPrice('350.00');
+        $dream5->setDescription('Kasia chciałaby przeczytać całą serię Harry\'ego Pottera.');
+        $dream5->setStatus('completed');
+        $dream5->setQuantityNeeded(1);
+        $dream5->setQuantityFulfilled(1);
+        $dream5->setIsUrgent(false);
+        $this->entityManager->persist($dream5);
 
         // 5. DreamFulfillment
         $fulfillment1 = new DreamFulfillment();
@@ -209,8 +277,32 @@ class DevController extends AbstractController
         $fulfillment2->setQuantityFulfilled(1);
         $this->entityManager->persist($fulfillment2);
 
+        $fulfillment3 = new DreamFulfillment();
+        $fulfillment3->setDream($dream4);
+        $fulfillment3->setDonorName('Maria Nowak');
+        $fulfillment3->setDonorEmail('maria.nowak@example.com');
+        $fulfillment3->setDonorNickname('Maria');
+        $fulfillment3->setIsAnonymous(false);
+        $fulfillment3->setStatus('completed');
+        $fulfillment3->setQuantityFulfilled(1);
+        $fulfillment3->setChildPhotoUrl('https://example.com/photo.jpg');
+        $fulfillment3->setChildMessage('Dziękuję za piłkę! Piotr');
+        $this->entityManager->persist($fulfillment3);
+
+        $fulfillment4 = new DreamFulfillment();
+        $fulfillment4->setDream($dream5);
+        $fulfillment4->setDonorName('Fundacja Pomocna Dłoń');
+        $fulfillment4->setDonorEmail('fundacja@example.com');
+        $fulfillment4->setDonorNickname('Fundacja');
+        $fulfillment4->setIsAnonymous(false);
+        $fulfillment4->setStatus('completed');
+        $fulfillment4->setQuantityFulfilled(1);
+        $fulfillment4->setChildPhotoUrl('https://example.com/kasia.jpg');
+        $fulfillment4->setChildMessage('Kasia jest bardzo szczęśliwa z nowych książek!');
+        $this->entityManager->persist($fulfillment4);
+
         $this->entityManager->flush();
 
-        return new Response('Dane testowe zostały dodane pomyślnie.');
+        return new Response('Dane testowe zostały dodane pomyślnie. Utworzono: 5 użytkowników, 2 domy dziecka, 4 dzieci, 5 marzeń, 4 darowizny.');
     }
 }
