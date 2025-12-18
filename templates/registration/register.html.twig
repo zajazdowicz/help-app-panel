@@ -12,7 +12,10 @@
                     {{ form_row(registrationForm.email, {'attr': {'class': 'form-control'}}) }}
                     {{ form_row(registrationForm.username, {'attr': {'class': 'form-control'}}) }}
                     {{ form_row(registrationForm.plainPassword, {'attr': {'class': 'form-control'}}) }}
-                    {{ form_row(registrationForm.accountType, {'attr': {'class': 'form-control'}}) }}
+                    <div class="form-check mb-3">
+                        {{ form_widget(registrationForm.isDirector, {'attr': {'class': 'form-check-input'}}) }}
+                        {{ form_label(registrationForm.isDirector, null, {'label_attr': {'class': 'form-check-label'}}) }}
+                    </div>
                     {{ form_row(registrationForm.agreeTerms) }}
 
                     <div class="alert alert-info mt-3">
