@@ -3,7 +3,32 @@
 Ten dokument opisuje aktualny stan aplikacji, brakujące funkcjonalności, plan implementacji oraz uwagi dotyczące bezpieczeństwa.  
 **Aktualizowany przy każdym wczytaniu projektu oraz po wprowadzeniu znaczących modyfikacji.**
 
-*Ostatnia duża modyfikacja: dodanie pełnej implementacji sieci afiliacyjnej (Faza 13) – 2025-12-18.*
+*Ostatnia duża modyfikacja: refaktoryzacja systemu darowizn na system afiliacyjny – 2025-12-19.*
+
+## Tryb pracy i analiza kodu
+
+Podczas pracy nad projektem stosujemy następujące praktyki:
+
+1. **Analiza istniejącego kodu** – przeglądamy pliki źródłowe (kontrolery, encje, szablony, konfiguracje) za pomocą narzędzi takich jak `grep`, `find` oraz manualnego czytania, aby zrozumieć logikę biznesową i zidentyfikować miejsca wymagające zmian.
+2. **Refaktoryzacja krok po kroku** – wprowadzamy zmiany małymi krokami, testując każdą modyfikację (np. uruchamiając `php bin/console cache:clear`, `doctrine:schema:validate`, przeglądając strony w przeglądarce).
+3. **Usuwanie niepotrzebnych zależności** – gdy funkcjonalność jest wycofywana (np. system darowizn), usuwamy lub oznaczamy jako deprecated powiązane encje, repozytoria, formularze, kontrolery i szablony, a także aktualizujemy konfiguracje (services.yaml, doctrine.yaml).
+4. **Aktualizacja dokumentacji** – na bieżąco uzupełniamy DEVELOPMENT_PLAN.md o wprowadzone zmiany, nowe fazy oraz uwagi dotyczące bezpieczeństwa i wydajności.
+5. **Testowanie po każdej zmianie** – sprawdzamy, czy aplikacja działa poprawnie dla kluczowych ścieżek (strona główna, logowanie, panele administratora/dyrektora, lista marzeń, szczegóły marzenia).
+6. **Korzystanie z systemu kontroli wersji** – wszystkie zmiany są commitowane z opisowymi wiadomościami, co ułatwia śledzenie historii i ewentualne wycofanie modyfikacji.
+
+Dzisiejsza praca (2025-12-19) skupiła się na **całkowitej refaktoryzacji systemu darowizn na system afiliacyjny**. Wykonane kroki:
+
+1. **Usunięcie encji `DreamFulfillment`** – zamieniona na pustą klasę (niemapowaną przez Doctrine), aby zaspokoić autoloader.
+2. **Usunięcie repozytorium `DreamFulfillmentRepository`** – zastąpione pustą klasą z podstawowymi metodami zwracającymi puste wartości.
+3. **Aktualizacja encji `Dream`** – usunięcie pola `quantityFulfilled`, pozostawienie tylko `purchasedQuantity` dla śledzenia zakupów afiliacyjnych.
+4. **Migracja bazy danych** – usunięcie tabeli `dream_fulfillments` oraz kolumny `quantity_fulfilled` z tabeli `dreams`.
+5. **Aktualizacja kontrolerów** – `HomeController`, `AdminController`, `SecurityController` – usunięcie zależności od `DreamFulfillmentRepository`, przekierowanie zalogowanych użytkowników na odpowiednie panele.
+6. **Aktualizacja szablonów** – usunięcie wszystkich odwołań do `quantityFulfilled` i `fulfillments` z szablonów (m.in. `admin/dreams.html.twig`, `dream/director_list.html.twig`, `dream/fulfilled.html.twig`, `admin/fulfillments.html.twig`, `dream_fulfillment/edit_thanks.html.twig`).
+7. **Aktualizacja strony głównej** – zmiana sekcji „Jak to działa?” oraz statystyk, aby odzwierciedlały system afiliacyjny.
+8. **Poprawa sidebarów paneli** – usunięcie linku „Strona główna” z paneli admin/director, aby uniknąć niepotrzebnych przekierowań.
+9. **Konfiguracja usług** – wykluczenie niepotrzebnych klas z autowiringu w `services.yaml`.
+
+Wszystkie zmiany zostały przetestowane, a aplikacja działa zgodnie z nowymi założeniami: **nie zbieramy wpłat, tylko korzystamy z systemu afiliacyjnego**.
 
 ---
 
