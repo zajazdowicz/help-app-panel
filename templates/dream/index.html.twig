@@ -83,8 +83,11 @@
                                 <li><strong>Status:</strong> {{ dream.status.label() }}</li>
                                 <li><strong>Cena:</strong> {{ dream.productPrice }} zł</li>
                                 <li><strong>Potrzebna ilość:</strong> {{ dream.quantityNeeded }}</li>
-                                <li><strong>Zebrano:</strong> {{ dream.quantityFulfilled }}</li>
+                                <li><strong>Zakupiono:</strong> {{ dream.purchasedQuantity }}</li>
                                 <li><strong>Pozostało:</strong> {{ dream.remainingQuantity }}</li>
+                                {% if dream.affiliatePartner %}
+                                    <li><strong>Partner:</strong> {{ dream.affiliatePartner }}</li>
+                                {% endif %}
                                 <li class="mt-2">
                                     {% if dream.isUrgent %}
                                         <span class="badge bg-danger">Pilne</span>

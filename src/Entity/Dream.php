@@ -238,17 +238,6 @@ class Dream
         return $this;
     }
 
-    public function getQuantityFulfilled(): int
-    {
-        return $this->quantityFulfilled;
-    }
-
-    public function setQuantityFulfilled(int $quantityFulfilled): static
-    {
-        $this->quantityFulfilled = $quantityFulfilled;
-
-        return $this;
-    }
 
     public function isUrgent(): bool
     {
@@ -318,14 +307,6 @@ class Dream
     }
 
     /**
-     * @return Collection<int, DreamFulfillment>
-     */
-    public function getFulfillments(): Collection
-    {
-        return $this->fulfillments;
-    }
-
-    /**
      * @return Collection<int, AffiliateClick>
      */
     public function getAffiliateClicks(): Collection
@@ -385,28 +366,6 @@ class Dream
         return $this;
     }
 
-    public function addFulfillment(DreamFulfillment $fulfillment): static
-    {
-        if (!$this->fulfillments->contains($fulfillment)) {
-            $this->fulfillments->add($fulfillment);
-            $fulfillment->setDream($this);
-        }
-
-        return $this;
-    }
-
-    public function removeFulfillment(DreamFulfillment $fulfillment): static
-    {
-        if ($this->fulfillments->removeElement($fulfillment)) {
-            // set the owning side to null (unless already changed)
-            if ($fulfillment->getDream() === $this) {
-                $fulfillment->setDream(null);
-            }
-        }
-
-        return $this;
-    }
-
     public function getCreatedAt(): ?\DateTimeInterface
     {
         return $this->createdAt;
@@ -433,12 +392,12 @@ class Dream
 
     public function getRemainingQuantity(): int
     {
-        return max(0, $this->quantityNeeded - $this->quantityFulfilled);
+        return max(0, $this->quantityNeeded - $this->purchasedQuantity);
     }
 
     public function isFullyFulfilled(): bool
     {
-        return $this->quantityFulfilled >= $this->quantityNeeded;
+        return $this->purchasedQuantity >= $this->quantityNeeded;
     }
 
     public function __toString(): string

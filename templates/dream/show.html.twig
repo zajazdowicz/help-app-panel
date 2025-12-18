@@ -16,8 +16,11 @@
                         <li><strong>Cena produktu:</strong> {{ dream.productPrice }} zł</li>
                         <li><strong>Kategoria:</strong> {{ dream.category.name }}</li>
                         <li><strong>Potrzebna ilość:</strong> {{ dream.quantityNeeded }}</li>
-                        <li><strong>Zebrano:</strong> {{ dream.quantityFulfilled }}</li>
+                        <li><strong>Zakupiono przez afiliację:</strong> {{ dream.purchasedQuantity }}</li>
                         <li><strong>Pozostało:</strong> {{ dream.remainingQuantity }}</li>
+                        {% if dream.affiliatePartner %}
+                            <li><strong>Partner afiliacyjny:</strong> {{ dream.affiliatePartner }}</li>
+                        {% endif %}
                         <li><strong>Pilne:</strong> {% if dream.isUrgent %}Tak{% else %}Nie{% endif %}</li>
                         <li><strong>Dom dziecka:</strong> {{ dream.orphanage.name }}</li>
                     </ul>
@@ -28,12 +31,17 @@
             </div>
             
             <div class="mt-3">
-                {% if not dream.isFullyFulfilled %}
-                    <a href="{{ path('app_dream_fulfillment', {id: dream.id}) }}" class="btn btn-success me-2">
-                        <span class="me-1">🎁</span> Chcę pomóc!
+                {# Przycisk do linku afiliacyjnego #}
+                {% if dream.affiliateUrl %}
+                    <a href="{{ path('app_affiliate_go', {id: dream.id}) }}" class="btn btn-success me-2" target="_blank">
+                        <span class="me-1">🛒</span> Kup teraz (link afiliacyjny)
                     </a>
+                    <p class="text-muted small mt-2">
+                        Klikając powyższy przycisk, zostaniesz przekierowany do sklepu partnerskiego. 
+                        Zakup w sklepie partnerskim pomoże spełnić to marzenie.
+                    </p>
                 {% else %}
-                    <button class="btn btn-secondary me-2" disabled>Marzenie spełnione!</button>
+                    <button class="btn btn-secondary me-2" disabled>Brak linku afiliacyjnego</button>
                 {% endif %}
                 
                 {# Przyciski dla dyrektora, jeśli marzenie należy do jego domu dziecka #}
