@@ -153,7 +153,25 @@ Ten dokument opisuje aktualny stan aplikacji, brakujące funkcjonalności, plan 
    - Zaktualizowano encje `Dream` i `DreamFulfillment` do używania enumów zamiast stringów.
    - Zaktualizowano `DevController` do używania wartości enum.
    - Zachowano kompatybilność wsteczną (settery akceptują zarówno enum, jak i string).
-15. 🔄 **Walidacja formularzy** (Constraints).
+15. ✅ **Walidacja formularzy** (Constraints):
+   - Dodano szczegółowe walidacje do `DreamType`:
+     - `productTitle` (NotBlank, Length 3‑255),
+     - `productUrl` (NotBlank, Url),
+     - `originalProductUrl` (Url, opcjonalne),
+     - `affiliateTrackingId` (Length max 255, opcjonalne),
+     - `affiliateUrl` (Url, opcjonalne),
+     - `productPrice` (NotBlank, PositiveOrZero),
+     - `description` (NotBlank, Length max 100),
+     - `quantityNeeded` (NotBlank, Positive, Range 1‑1000),
+     - `isUrgent` (NotBlank),
+     - `child` (NotBlank).
+   - Dodano walidacje do `DreamFulfillmentType`:
+     - `donorName` (Length 2‑255, opcjonalne),
+     - `donorEmail` (Email, Length max 255, opcjonalne),
+     - `donorNickname` (Length max 100, opcjonalne),
+     - `quantityFulfilled` (NotBlank, Positive, Range 1‑100),
+     - `amount` (PositiveOrZero, opcjonalne).
+   - Wszystkie walidacje są automatycznie wyświetlane w formularzach dzięki komponentowi Symfony Form.
 16. 🔄 **Dodanie event subscriberów** do automatycznej aktualizacji pól `updatedAt`.
 17. ✅ **Zapis logów ważnych operacji** – dodano MonologBundle, skonfigurowano logowanie do plików (w tym osobne logi dla Doctrine i Messenger). Działa również logowanie w konsoli.
 18. ✅ **Naprawa systemu kolejek (Messenger)** – dodano brakujący pakiet `symfony/doctrine-messenger`, skonfigurowano transport `async` z Doctrine, dodano transport `failed` oraz włączono logging w konfiguracji messenger.
