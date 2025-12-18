@@ -31,9 +31,4 @@ enum DreamStatus: string
             self::CANCELLED => 'Anulowane',
         };
     }
-
-    public function __toString(): string
-    {
-        return $this->value;
-    }
 }
