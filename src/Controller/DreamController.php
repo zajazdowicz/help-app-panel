@@ -179,7 +179,7 @@ class DreamController extends AbstractController
             ->setParameter('orphanage', $orphanage)
             ->orderBy('d.createdAt', 'DESC');
         
-        if ($status && in_array($status, array_values(Dream::STATUS_CHOICES))) {
+        if ($status && in_array($status, array_values(\App\Enum\DreamStatus::choices()))) {
             $queryBuilder->andWhere('d.status = :status')
                 ->setParameter('status', $status);
         }
@@ -190,7 +190,7 @@ class DreamController extends AbstractController
             'dreams' => $dreams,
             'orphanage' => $orphanage,
             'currentStatus' => $status,
-            'statusChoices' => Dream::STATUS_CHOICES,
+            'statusChoices' => \App\Enum\DreamStatus::choices(),
         ]);
     }
 
@@ -234,7 +234,7 @@ class DreamController extends AbstractController
 
         $qb = $dreamRepository->createQueryBuilder('d')
             ->andWhere('d.status = :status')
-            ->setParameter('status', Dream::STATUS_FULFILLED)
+            ->setParameter('status', \App\Enum\DreamStatus::FULFILLED)
             ->orderBy('d.updatedAt', 'DESC')
             ->setFirstResult($offset)
             ->setMaxResults($limit);

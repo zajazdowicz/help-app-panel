@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Dream;
+use App\Enum\DreamStatus;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -19,8 +20,8 @@ class DreamRepository extends ServiceEntityRepository
     public function findPublicDreams()
     {
         return $this->createQueryBuilder('d')
-            ->andWhere('d.status = :status')
-            ->setParameter('status', 'approved')
+            ->andWhere('d.status IN (:statuses)')
+            ->setParameter('statuses', [DreamStatus::VERIFIED, DreamStatus::IN_PROGRESS])
             ->orderBy('d.createdAt', 'DESC')
             ->getQuery()
             ->getResult();
@@ -44,8 +45,10 @@ class DreamRepository extends ServiceEntityRepository
         $qb = $this->createQueryBuilder('d')
             ->leftJoin('d.orphanage', 'o')
             ->innerJoin('d.category', 'c')
-            ->andWhere('d.status = :status')
-            ->setParameter('status', 'approved');
+            ->andWhere('d.status IN (:statuses)')
+            ->andWhere('c.isActive = :active')
+            ->setParameter('statuses', [DreamStatus::VERIFIED, DreamStatus::IN_PROGRESS])
+            ->setParameter('active', true);
 
         if (!empty($filters['category'])) {
             $qb->andWhere('c.id = :category')
