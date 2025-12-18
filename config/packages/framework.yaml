@@ -2,12 +2,22 @@ framework:
     secret: '%env(APP_SECRET)%'
     #csrf_protection: true
     handle_all_throwables: true
-    session: true
+    session:
+        handler_id: null
+        cookie_secure: auto
+        cookie_samesite: lax
     php_errors:
         log: true
     router:
         # Ustaw domyślny URI dla aplikacji działającej w podkatalogu
         default_uri: 'https://srv101355.seohost.com.pl/help-app-panel'
+        utf8: true
+    trusted_hosts: '%env(TRUSTED_HOSTS)%'
+    trusted_proxies: '%env(TRUSTED_PROXIES)%'
+    # Logowanie dla framework (opcjonalne)
+    log:
+        # Domyślnie loguje tylko błędy, można zmienić na 'debug'
+        level: error
 
 when@test:
     framework:
