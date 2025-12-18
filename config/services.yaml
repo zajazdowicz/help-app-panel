@@ -19,6 +19,7 @@ services:
             - '../src/DependencyInjection/'
             - '../src/Entity/'
             - '../src/Kernel.php'
+            - '../src/Repository/DreamFulfillmentRepository.php'
 
     # Explicit alias for MailerInterface to ensure autowiring works
     Symfony\Component\Mailer\MailerInterface: '@mailer'
