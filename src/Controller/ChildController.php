@@ -13,13 +13,31 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/director/children')]
-#[IsGranted('ROLE_DIRECTOR')]
+#[IsGranted('PUBLIC_ACCESS')]
 class ChildController extends AbstractController
 {
     #[Route('/', name: 'director_child_index', methods: ['GET'])]
     public function index(ChildRepository $childRepository): Response
     {
         $user = $this->getUser();
+        if (!$user) {
+            // This should not happen because of IsGranted, but just in case
+            throw $this->createAccessDeniedException('Nie jesteś zalogowany.');
+        }
+        
+        // Debug: dump user and roles (only in dev)
+        if ($this->getParameter('kernel.environment') === 'dev') {
+            dump($user);
+            dump($user->getRoles());
+            dump($this->isGranted('ROLE_DIRECTOR'));
+            // exit; // uncomment to see dump
+        }
+        
+        // Sprawdź, czy użytkownik ma rolę ROLE_DIRECTOR
+        if (!$this->isGranted('ROLE_DIRECTOR')) {
+            throw $this->createAccessDeniedException('Brak wymaganej roli ROLE_DIRECTOR.');
+        }
+        
         $orphanage = $user->getOrphanage();
         
         // Jeśli użytkownik nie ma przypisanego domu dziecka, ale ma rolę ROLE_DIRECTOR (np. admin)
