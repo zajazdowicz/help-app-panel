@@ -14,10 +14,6 @@ framework:
         utf8: true
     trusted_hosts: '%env(TRUSTED_HOSTS)%'
     trusted_proxies: '%env(TRUSTED_PROXIES)%'
-    # Logowanie dla framework (opcjonalne)
-    log:
-        # Domyślnie loguje tylko błędy, można zmienić na 'debug'
-        level: error
 
 when@test:
     framework:
