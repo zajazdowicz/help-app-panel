@@ -77,11 +77,32 @@ class Dream
     #[Assert\PositiveOrZero]
     private int $quantityFulfilled = 0;
 
+    #[ORM\Column(length: 50, nullable: true)]
+    private ?string $affiliatePartner = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $affiliateTrackingId = null;
+
+    #[ORM\Column(length: 2000, nullable: true)]
+    private ?string $originalProductUrl = null;
+
+    #[ORM\Column(length: 2000, nullable: true)]
+    private ?string $affiliateUrl = null;
+
+    #[ORM\Column]
+    private int $purchasedQuantity = 0;
+
     #[ORM\Column]
     private bool $isUrgent = false;
 
     #[ORM\OneToMany(mappedBy: 'dream', targetEntity: DreamFulfillment::class, orphanRemoval: true)]
     private Collection $fulfillments;
+
+    #[ORM\OneToMany(mappedBy: 'dream', targetEntity: AffiliateClick::class, orphanRemoval: true)]
+    private Collection $affiliateClicks;
+
+    #[ORM\OneToMany(mappedBy: 'dream', targetEntity: AffiliateConversion::class, orphanRemoval: true)]
+    private Collection $affiliateConversions;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $createdAt = null;
@@ -92,6 +113,8 @@ class Dream
     public function __construct()
     {
         $this->fulfillments = new ArrayCollection();
+        $this->affiliateClicks = new ArrayCollection();
+        $this->affiliateConversions = new ArrayCollection();
     }
 
     #[ORM\PrePersist]
@@ -247,12 +270,127 @@ class Dream
         return $this;
     }
 
+    public function getAffiliatePartner(): ?string
+    {
+        return $this->affiliatePartner;
+    }
+
+    public function setAffiliatePartner(?string $affiliatePartner): static
+    {
+        $this->affiliatePartner = $affiliatePartner;
+        return $this;
+    }
+
+    public function getAffiliateTrackingId(): ?string
+    {
+        return $this->affiliateTrackingId;
+    }
+
+    public function setAffiliateTrackingId(?string $affiliateTrackingId): static
+    {
+        $this->affiliateTrackingId = $affiliateTrackingId;
+        return $this;
+    }
+
+    public function getOriginalProductUrl(): ?string
+    {
+        return $this->originalProductUrl;
+    }
+
+    public function setOriginalProductUrl(?string $originalProductUrl): static
+    {
+        $this->originalProductUrl = $originalProductUrl;
+        return $this;
+    }
+
+    public function getAffiliateUrl(): ?string
+    {
+        return $this->affiliateUrl;
+    }
+
+    public function setAffiliateUrl(?string $affiliateUrl): static
+    {
+        $this->affiliateUrl = $affiliateUrl;
+        return $this;
+    }
+
+    public function getPurchasedQuantity(): int
+    {
+        return $this->purchasedQuantity;
+    }
+
+    public function setPurchasedQuantity(int $purchasedQuantity): static
+    {
+        $this->purchasedQuantity = $purchasedQuantity;
+        return $this;
+    }
+
     /**
      * @return Collection<int, DreamFulfillment>
      */
     public function getFulfillments(): Collection
     {
         return $this->fulfillments;
+    }
+
+    /**
+     * @return Collection<int, AffiliateClick>
+     */
+    public function getAffiliateClicks(): Collection
+    {
+        return $this->affiliateClicks;
+    }
+
+    public function addAffiliateClick(AffiliateClick $affiliateClick): static
+    {
+        if (!$this->affiliateClicks->contains($affiliateClick)) {
+            $this->affiliateClicks->add($affiliateClick);
+            $affiliateClick->setDream($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAffiliateClick(AffiliateClick $affiliateClick): static
+    {
+        if ($this->affiliateClicks->removeElement($affiliateClick)) {
+            // set the owning side to null (unless already changed)
+            if ($affiliateClick->getDream() === $this) {
+                $affiliateClick->setDream(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, AffiliateConversion>
+     */
+    public function getAffiliateConversions(): Collection
+    {
+        return $this->affiliateConversions;
+    }
+
+    public function addAffiliateConversion(AffiliateConversion $affiliateConversion): static
+    {
+        if (!$this->affiliateConversions->contains($affiliateConversion)) {
+            $this->affiliateConversions->add($affiliateConversion);
+            $affiliateConversion->setDream($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAffiliateConversion(AffiliateConversion $affiliateConversion): static
+    {
+        if ($this->affiliateConversions->removeElement($affiliateConversion)) {
+            // set the owning side to null (unless already changed)
+            if ($affiliateConversion->getDream() === $this) {
+                $affiliateConversion->setDream(null);
+            }
+        }
+
+        return $this;
     }
 
     public function addFulfillment(DreamFulfillment $fulfillment): static
