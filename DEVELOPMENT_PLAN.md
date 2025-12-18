@@ -172,7 +172,11 @@ Ten dokument opisuje aktualny stan aplikacji, brakujące funkcjonalności, plan 
      - `quantityFulfilled` (NotBlank, Positive, Range 1‑100),
      - `amount` (PositiveOrZero, opcjonalne).
    - Wszystkie walidacje są automatycznie wyświetlane w formularzach dzięki komponentowi Symfony Form.
-16. 🔄 **Dodanie event subscriberów** do automatycznej aktualizacji pól `updatedAt`.
+16. ✅ **Dodanie event subscriberów** do automatycznej aktualizacji pól `updatedAt`:
+   - Utworzono `TimestampableSubscriber`, który automatycznie ustawia pola `createdAt` i `updatedAt` dla każdej encji, która posiada te właściwości.
+   - Subscriber nasłuchuje zdarzeń Doctrine `prePersist` i `preUpdate`.
+   - Zapewnia centralne zarządzanie timestampami, redukując powtarzalny kod w encjach.
+   - Subscriber jest kompatybilny z istniejącymi metodami `setTimestamps()` w encjach `Dream` i `DreamFulfillment`.
 17. ✅ **Zapis logów ważnych operacji** – dodano MonologBundle, skonfigurowano logowanie do plików (w tym osobne logi dla Doctrine i Messenger). Działa również logowanie w konsoli.
 18. ✅ **Naprawa systemu kolejek (Messenger)** – dodano brakujący pakiet `symfony/doctrine-messenger`, skonfigurowano transport `async` z Doctrine, dodano transport `failed` oraz włączono logging w konfiguracji messenger.
 19. ✅ **Utworzenie pliku .env.local** – przykładowa konfiguracja dla środowiska deweloperskiego i produkcyjnego, zawierająca ustawienia bazy danych, mailera, messengera oraz zwiększony limit pamięci.
@@ -474,6 +478,8 @@ Po wdrożeniu przetestuj kluczowe funkcjonalności:
   - Dla marzenia "Rower górski" ustawiono partnera Allegro z linkiem afiliacyjnym.
   - Dodano kliknięcia (`AffiliateClick`) i konwersje (`AffiliateConversion`).
   - Automatycznie zaktualizowano `purchasedQuantity`.
+- **Naprawiono błąd `category_id cannot be null`** – dodano tworzenie trzech przykładowych kategorii (Zabawki i gry, Sport, Książki) oraz przypisano odpowiednie kategorie do wszystkich marzeń.
+- Dane testowe teraz w pełni odzwierciedlają model afiliacyjny jako domyślny i są kompletne (brakujące wymagane relacje).
 
 #### ✅ **13.12. Dokumentacja i flow działania**
 - Dodano szczegółowy opis flow (krok po kroku) w sekcji **6. Flow sieci afiliacyjnej – instrukcja krok po kroku** (poniżej).
@@ -585,10 +591,16 @@ Do szybkiego przetestowania aplikacji w środowisku deweloperskim (`APP_ENV=dev`
   - Jan (10 lat)
   - Anna (14 lat)
 
-- **Marzenia**:
+- **Kategorie**:
+  - Zabawki i gry
+  - Sport
+  - Książki
+- **Marzenia** (każde z przypisaną kategorią):
   1. Rower górski (status: `approved`, cena 599,99 zł, kategoria Sport)
-  2. Zestaw malarski (status: `pending`, pilne, cena 129,50 zł)
-  3. Komiksy (status: `approved`, potrzebna ilość: 5, zebrano: 2)
+  2. Zestaw malarski (status: `pending`, pilne, cena 129,50 zł, kategoria Zabawki i gry)
+  3. Komiksy (status: `approved`, potrzebna ilość: 5, zebrano: 2, kategoria Książki)
+  4. Piłka nożna profesjonalna (status: `approved`, cena 199,00 zł, kategoria Sport)
+  5. Seria książek "Harry Potter" (status: `fulfilled`, cena 350,00 zł, kategoria Książki)
 
 - **Darowizny**:
   - Dwie darowizny dla komiksów (jedna zakończona, druga w trakcie)
@@ -602,7 +614,7 @@ Trasa `/dev/fill-data` działa wyłącznie w środowisku deweloperskim i nie wym
 ## 6. Notatki
 
 - **Data rozpoczęcia planu**: 2025-12-16
-- **Ostatnia aktualizacja**: 2025-12-18 (dodanie pełnej implementacji sieci afiliacyjnej – Faza 13)
+- **Ostatnia aktualizacja**: 2025-12-19 (naprawa danych testowych, ukończenie Fazy 6, aktualizacja planu)
 - **Wersja aplikacji**: w rozwoju
 - **Ostatnia migracja bazy danych**: Version20251218000000 (afiliacyjna)
 
