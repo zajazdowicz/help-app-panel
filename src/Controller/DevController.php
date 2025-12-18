@@ -7,6 +7,8 @@ use App\Entity\Orphanage;
 use App\Entity\Child;
 use App\Entity\Dream;
 use App\Entity\DreamFulfillment;
+use App\Enum\DreamStatus;
+use App\Enum\DreamFulfillmentStatus;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -179,7 +181,7 @@ class DevController extends AbstractController
             $reflection = new \ReflectionClass($dream1);
             $property = $reflection->getProperty('status');
             $property->setAccessible(true);
-            $property->setValue($dream1, Dream::STATUS_VERIFIED);
+            $property->setValue($dream1, DreamStatus::VERIFIED);
         })();
         $dream1->setQuantityNeeded(1);
         $dream1->setQuantityFulfilled(0);
@@ -198,7 +200,7 @@ class DevController extends AbstractController
             $reflection = new \ReflectionClass($dream2);
             $property = $reflection->getProperty('status');
             $property->setAccessible(true);
-            $property->setValue($dream2, Dream::STATUS_PENDING);
+            $property->setValue($dream2, DreamStatus::PENDING);
         })();
         $dream2->setQuantityNeeded(1);
         $dream2->setQuantityFulfilled(0);
@@ -217,7 +219,7 @@ class DevController extends AbstractController
             $reflection = new \ReflectionClass($dream3);
             $property = $reflection->getProperty('status');
             $property->setAccessible(true);
-            $property->setValue($dream3, Dream::STATUS_VERIFIED);
+            $property->setValue($dream3, DreamStatus::VERIFIED);
         })();
         $dream3->setQuantityNeeded(5);
         $dream3->setQuantityFulfilled(2);
@@ -236,7 +238,7 @@ class DevController extends AbstractController
             $reflection = new \ReflectionClass($dream4);
             $property = $reflection->getProperty('status');
             $property->setAccessible(true);
-            $property->setValue($dream4, Dream::STATUS_VERIFIED);
+            $property->setValue($dream4, DreamStatus::VERIFIED);
         })();
         $dream4->setQuantityNeeded(1);
         $dream4->setQuantityFulfilled(1);
@@ -255,7 +257,7 @@ class DevController extends AbstractController
             $reflection = new \ReflectionClass($dream5);
             $property = $reflection->getProperty('status');
             $property->setAccessible(true);
-            $property->setValue($dream5, Dream::STATUS_FULFILLED);
+            $property->setValue($dream5, DreamStatus::FULFILLED);
         })();
         $dream5->setQuantityNeeded(1);
         $dream5->setQuantityFulfilled(1);
@@ -274,7 +276,7 @@ class DevController extends AbstractController
             $reflection = new \ReflectionClass($fulfillment1);
             $property = $reflection->getProperty('status');
             $property->setAccessible(true);
-            $property->setValue($fulfillment1, DreamFulfillment::STATUS_CONFIRMED);
+            $property->setValue($fulfillment1, DreamFulfillmentStatus::CONFIRMED);
         })();
         $fulfillment1->setQuantityFulfilled(2);
         $this->entityManager->persist($fulfillment1);
@@ -290,7 +292,7 @@ class DevController extends AbstractController
             $reflection = new \ReflectionClass($fulfillment2);
             $property = $reflection->getProperty('status');
             $property->setAccessible(true);
-            $property->setValue($fulfillment2, DreamFulfillment::STATUS_PENDING);
+            $property->setValue($fulfillment2, DreamFulfillmentStatus::PENDING);
         })();
         $fulfillment2->setQuantityFulfilled(1);
         $this->entityManager->persist($fulfillment2);
@@ -306,7 +308,7 @@ class DevController extends AbstractController
             $reflection = new \ReflectionClass($fulfillment3);
             $property = $reflection->getProperty('status');
             $property->setAccessible(true);
-            $property->setValue($fulfillment3, DreamFulfillment::STATUS_CONFIRMED);
+            $property->setValue($fulfillment3, DreamFulfillmentStatus::CONFIRMED);
         })();
         $fulfillment3->setQuantityFulfilled(1);
         $fulfillment3->setChildPhotoUrl('https://example.com/photo.jpg');
@@ -324,7 +326,7 @@ class DevController extends AbstractController
             $reflection = new \ReflectionClass($fulfillment4);
             $property = $reflection->getProperty('status');
             $property->setAccessible(true);
-            $property->setValue($fulfillment4, DreamFulfillment::STATUS_CONFIRMED);
+            $property->setValue($fulfillment4, DreamFulfillmentStatus::CONFIRMED);
         })();
         $fulfillment4->setQuantityFulfilled(1);
         $fulfillment4->setChildPhotoUrl('https://example.com/kasia.jpg');
