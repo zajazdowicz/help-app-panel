@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\DreamFulfillmentRepository;
+use App\Enum\DreamFulfillmentStatus;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -13,21 +14,6 @@ use App\Entity\User;
 #[ORM\HasLifecycleCallbacks]
 class DreamFulfillment
 {
-    public const STATUS_RESERVED = 'reserved';
-    public const STATUS_ORDERED = 'ordered';
-    public const STATUS_DELIVERED = 'delivered';
-    public const STATUS_CONFIRMED = 'confirmed';
-    public const STATUS_CANCELLED = 'cancelled';
-    public const STATUS_PENDING = 'pending';
-
-    public const STATUS_CHOICES = [
-        'Oczekujące' => self::STATUS_PENDING,
-        'Zarezerwowane' => self::STATUS_RESERVED,
-        'Zamówione' => self::STATUS_ORDERED,
-        'Dostarczone' => self::STATUS_DELIVERED,
-        'Potwierdzone' => self::STATUS_CONFIRMED,
-        'Anulowane' => self::STATUS_CANCELLED,
-    ];
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -58,8 +44,8 @@ class DreamFulfillment
     #[ORM\Column]
     private bool $isAnonymous = false;
 
-    #[ORM\Column(length: 20)]
-    private ?string $status = self::STATUS_RESERVED;
+    #[ORM\Column(length: 20, enumType: DreamFulfillmentStatus::class)]
+    private ?DreamFulfillmentStatus $status = null;
 
     #[ORM\Column]
     #[Assert\Positive]
@@ -78,6 +64,11 @@ class DreamFulfillment
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $createdAt = null;
+
+    public function __construct()
+    {
+        $this->status = DreamFulfillmentStatus::RESERVED;
+    }
 
     #[ORM\PrePersist]
     public function setTimestamps(): void
@@ -162,15 +153,18 @@ class DreamFulfillment
         return $this;
     }
 
-    public function getStatus(): ?string
+    public function getStatus(): ?DreamFulfillmentStatus
     {
         return $this->status;
     }
 
-    public function setStatus(string $status): static
+    public function setStatus(DreamFulfillmentStatus|string $status): static
     {
-        if (!in_array($status, array_values(self::STATUS_CHOICES))) {
-            throw new \InvalidArgumentException(sprintf('Invalid status "%s"', $status));
+        if (is_string($status)) {
+            $status = DreamFulfillmentStatus::tryFrom($status);
+            if ($status === null) {
+                throw new \InvalidArgumentException(sprintf('Invalid status "%s"', $status));
+            }
         }
         $this->status = $status;
 

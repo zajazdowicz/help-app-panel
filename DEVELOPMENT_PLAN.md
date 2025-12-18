@@ -148,7 +148,11 @@ Ten dokument opisuje aktualny stan aplikacji, brakujące funkcjonalności, plan 
 11. ✅ **Rejestracja i zarządzanie domami dziecka przez dyrektora** – formularz rejestracji, edycji, weryfikacja przez admina, blokada dodawania dzieci/marzeń przed weryfikacją.
 12. ✅ **Rola Super Admin** – możliwość przypisania użytkownikowi ról ROLE_ADMIN i ROLE_DIRECTOR jednocześnie, pozwalająca na dostęp do panelu admina i dyrektora bez przelogowywania.
 13. ✅ **Rozróżnienie rejestracji użytkownika (ROLE_USER) i dyrektora (ROLE_DIRECTOR)** – dodanie pola wyboru typu konta w formularzu rejestracji, automatyczne przypisanie odpowiedniej roli.
-14. 🔄 **Dodanie typu Enum dla statusów** (np. klasa DreamStatus, DreamFulfillmentStatus).
+14. ✅ **Dodanie typu Enum dla statusów**:
+   - Utworzono `App\Enum\DreamStatus` i `App\Enum\DreamFulfillmentStatus`.
+   - Zaktualizowano encje `Dream` i `DreamFulfillment` do używania enumów zamiast stringów.
+   - Zaktualizowano `DevController` do używania wartości enum.
+   - Zachowano kompatybilność wsteczną (settery akceptują zarówno enum, jak i string).
 15. 🔄 **Walidacja formularzy** (Constraints).
 16. 🔄 **Dodanie event subscriberów** do automatycznej aktualizacji pól `updatedAt`.
 17. ✅ **Zapis logów ważnych operacji** – dodano MonologBundle, skonfigurowano logowanie do plików (w tym osobne logi dla Doctrine i Messenger). Działa również logowanie w konsoli.

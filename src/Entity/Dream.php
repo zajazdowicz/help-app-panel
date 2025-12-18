@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\DreamRepository;
+use App\Enum\DreamStatus;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -14,19 +15,6 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\HasLifecycleCallbacks]
 class Dream
 {
-    public const STATUS_PENDING = 'pending';
-    public const STATUS_VERIFIED = 'verified';
-    public const STATUS_IN_PROGRESS = 'in_progress';
-    public const STATUS_FULFILLED = 'fulfilled';
-    public const STATUS_CANCELLED = 'cancelled';
-
-    public const STATUS_CHOICES = [
-        'Oczekujące' => self::STATUS_PENDING,
-        'Zweryfikowane' => self::STATUS_VERIFIED,
-        'W realizacji' => self::STATUS_IN_PROGRESS,
-        'Zrealizowane' => self::STATUS_FULFILLED,
-        'Anulowane' => self::STATUS_CANCELLED,
-    ];
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -66,8 +54,8 @@ class Dream
     #[Assert\Length(max: 100)]
     private ?string $description = null;
 
-    #[ORM\Column(length: 20)]
-    private ?string $status = self::STATUS_PENDING;
+    #[ORM\Column(length: 20, enumType: DreamStatus::class)]
+    private ?DreamStatus = null;
 
     #[ORM\Column]
     #[Assert\Positive]
@@ -115,6 +103,7 @@ class Dream
         $this->fulfillments = new ArrayCollection();
         $this->affiliateClicks = new ArrayCollection();
         $this->affiliateConversions = new ArrayCollection();
+        $this->status = DreamStatus::PENDING;
     }
 
     #[ORM\PrePersist]
@@ -219,15 +208,18 @@ class Dream
         return $this;
     }
 
-    public function getStatus(): ?string
+    public function getStatus(): ?DreamStatus
     {
         return $this->status;
     }
 
-    public function setStatus(string $status): static
+    public function setStatus(DreamStatus|string $status): static
     {
-        if (!in_array($status, array_values(self::STATUS_CHOICES))) {
-            throw new \InvalidArgumentException(sprintf('Invalid status "%s"', $status));
+        if (is_string($status)) {
+            $status = DreamStatus::tryFrom($status);
+            if ($status === null) {
+                throw new \InvalidArgumentException(sprintf('Invalid status "%s"', $status));
+            }
         }
         $this->status = $status;
 
