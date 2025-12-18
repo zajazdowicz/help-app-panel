@@ -42,9 +42,9 @@ class RegistrationController extends AbstractController
                 )
             );
 
-            $accountType = $form->get('accountType')->getData();
+            $isDirector = $form->get('isDirector')->getData();
             $roles = ['ROLE_USER'];
-            if ($accountType === 'director') {
+            if ($isDirector) {
                 $roles[] = 'ROLE_DIRECTOR';
             }
             $user->setRoles($roles);
@@ -53,7 +53,7 @@ class RegistrationController extends AbstractController
             $entityManager->persist($user);
 
             // Jeśli to dyrektor, utwórz pusty dom dziecka (niezweryfikowany)
-            if ($accountType === 'director') {
+            if ($isDirector) {
                 $orphanage = new Orphanage();
                 $orphanage->setName('Nowy dom dziecka - do uzupełnienia');
                 $orphanage->setAddress('');
@@ -72,14 +72,15 @@ class RegistrationController extends AbstractController
 
             // Wyślij email powitalny
             try {
+                $fromEmail = $_ENV['MAILER_FROM'] ?? 'noreply@helpdreams.pl';
                 $email = (new TemplatedEmail())
-                    ->from('noreply@helpdreams.pl')
+                    ->from($fromEmail)
                     ->to($user->getEmail())
                     ->subject('Witamy w HelpDreams!')
                     ->htmlTemplate('emails/user_registered.html.twig')
                     ->context([
                         'user' => $user,
-                        'accountType' => $accountType,
+                        'isDirector' => $isDirector,
                     ]);
 
                 $this->mailer->send($email);
