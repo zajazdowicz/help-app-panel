@@ -102,11 +102,11 @@ Ten dokument opisuje aktualny stan aplikacji, brakujące funkcjonalności, plan 
 2. ✅ **Rozszerzenie DreamRepository** o metody wyszukiwania z filtrami.
 3. ✅ **Szablony** `templates/dream/index.html.twig`, `templates/dream/show.html.twig`.
 
-### Faza 3 – Formularz darowizny ✅
-1. ✅ **Utworzenie DreamFulfillmentController** z akcją `public function fulfill(Request $request, Dream $dream): Response`.
-2. ✅ **Stworzenie DreamFulfillmentType** (formularz z danymi darczyńcy i ilością).
-3. ✅ **Obsługa zapisu** wraz z aktualizacją `Dream::quantityFulfilled`.
-4. ✅ **Szablon** `templates/dream_fulfillment/fulfill.html.twig`.
+### Faza 3 – System afiliacyjny jako jedyny sposób pomocy ✅
+1. ✅ **Usunięcie systemu darowizn** (DreamFulfillment) - nie zbieramy pieniędzy na portalu
+2. ✅ **Przerobienie encji Dream** - usunięcie quantityFulfilled, pozostawienie tylko purchasedQuantity dla śledzenia zakupów afiliacyjnych
+3. ✅ **Aktualizacja logiki biznesowej** - marzenia są spełniane wyłącznie poprzez zakupy w sklepach partnerskich
+4. ✅ **Usunięcie formularzy i kontrolerów związanych z darowiznami**
 
 ### Faza 4 – Panel dyrektora (ROLE_DIRECTOR) – ✅ UKOŃCZONA
 1. ✅ **Stworzenie ChildController** (CRUD dla dzieci, dostęp tylko dla director swojego domu dziecka).
