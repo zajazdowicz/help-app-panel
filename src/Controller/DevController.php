@@ -68,224 +68,287 @@ class DevController extends AbstractController
             throw $this->createNotFoundException();
         }
 
-        // 1. Users
-        $adminUser = new User();
-        $adminUser->setEmail('admin@example.com');
-        $adminUser->setUsername('admin');
-        $adminUser->setRoles(['ROLE_ADMIN']);
-        $adminUser->setPassword($this->passwordHasher->hashPassword($adminUser, 'password123'));
-        $adminUser->setIsVerified(true);
-        $this->entityManager->persist($adminUser);
+        $repoUser = $this->entityManager->getRepository(User::class);
+        $repoOrphanage = $this->entityManager->getRepository(Orphanage::class);
+        $repoCategory = $this->entityManager->getRepository(\App\Entity\Category::class);
 
-        $directorUser = new User();
-        $directorUser->setEmail('director@example.com');
-        $directorUser->setUsername('director');
-        $directorUser->setRoles(['ROLE_DIRECTOR']);
-        $directorUser->setPassword($this->passwordHasher->hashPassword($directorUser, 'password123'));
-        $directorUser->setIsVerified(true);
-        $this->entityManager->persist($directorUser);
+        // 1. Users - sprawdź czy istnieją, jeśli nie to utwórz
+        $adminUser = $repoUser->findOneBy(['email' => 'admin@example.com']);
+        if (!$adminUser) {
+            $adminUser = new User();
+            $adminUser->setEmail('admin@example.com');
+            $adminUser->setUsername('admin');
+            $adminUser->setRoles(['ROLE_ADMIN']);
+            $adminUser->setPassword($this->passwordHasher->hashPassword($adminUser, 'password123'));
+            $adminUser->setIsVerified(true);
+            $this->entityManager->persist($adminUser);
+        }
 
-        $regularUser = new User();
-        $regularUser->setEmail('user@example.com');
-        $regularUser->setUsername('user');
-        $regularUser->setRoles(['ROLE_USER']);
-        $regularUser->setPassword($this->passwordHasher->hashPassword($regularUser, 'password123'));
-        $regularUser->setIsVerified(true);
-        $this->entityManager->persist($regularUser);
+        $directorUser = $repoUser->findOneBy(['email' => 'director@example.com']);
+        if (!$directorUser) {
+            $directorUser = new User();
+            $directorUser->setEmail('director@example.com');
+            $directorUser->setUsername('director');
+            $directorUser->setRoles(['ROLE_DIRECTOR']);
+            $directorUser->setPassword($this->passwordHasher->hashPassword($directorUser, 'password123'));
+            $directorUser->setIsVerified(true);
+            $this->entityManager->persist($directorUser);
+        }
+
+        $regularUser = $repoUser->findOneBy(['email' => 'user@example.com']);
+        if (!$regularUser) {
+            $regularUser = new User();
+            $regularUser->setEmail('user@example.com');
+            $regularUser->setUsername('user');
+            $regularUser->setRoles(['ROLE_USER']);
+            $regularUser->setPassword($this->passwordHasher->hashPassword($regularUser, 'password123'));
+            $regularUser->setIsVerified(true);
+            $this->entityManager->persist($regularUser);
+        }
 
         // Dodajemy więcej użytkowników
-        $user2 = new User();
-        $user2->setEmail('user2@example.com');
-        $user2->setUsername('user2');
-        $user2->setRoles(['ROLE_USER']);
-        $user2->setPassword($this->passwordHasher->hashPassword($user2, 'password123'));
-        $user2->setIsVerified(true);
-        $this->entityManager->persist($user2);
+        $user2 = $repoUser->findOneBy(['email' => 'user2@example.com']);
+        if (!$user2) {
+            $user2 = new User();
+            $user2->setEmail('user2@example.com');
+            $user2->setUsername('user2');
+            $user2->setRoles(['ROLE_USER']);
+            $user2->setPassword($this->passwordHasher->hashPassword($user2, 'password123'));
+            $user2->setIsVerified(true);
+            $this->entityManager->persist($user2);
+        }
 
-        $director2 = new User();
-        $director2->setEmail('director2@example.com');
-        $director2->setUsername('director2');
-        $director2->setRoles(['ROLE_DIRECTOR']);
-        $director2->setPassword($this->passwordHasher->hashPassword($director2, 'password123'));
-        $director2->setIsVerified(true);
-        $this->entityManager->persist($director2);
+        $director2 = $repoUser->findOneBy(['email' => 'director2@example.com']);
+        if (!$director2) {
+            $director2 = new User();
+            $director2->setEmail('director2@example.com');
+            $director2->setUsername('director2');
+            $director2->setRoles(['ROLE_DIRECTOR']);
+            $director2->setPassword($this->passwordHasher->hashPassword($director2, 'password123'));
+            $director2->setIsVerified(true);
+            $this->entityManager->persist($director2);
+        }
 
         // 2. Orphanages
-        $orphanage = new Orphanage();
-        $orphanage->setName('Dom Dziecka w Warszawie');
-        $orphanage->setAddress('ul. Przykładowa 123');
-        $orphanage->setCity('Warszawa');
-        $orphanage->setRegion('Mazowieckie');
-        $orphanage->setPostalCode('00-001');
-        $orphanage->setContactEmail('kontakt@warszawa.dd.pl');
-        $orphanage->setContactPhone('+48 123 456 789');
-        $orphanage->setIsVerified(true);
-        $orphanage->setDirector($directorUser);
-        $this->entityManager->persist($orphanage);
+        $orphanage = $repoOrphanage->findOneBy(['name' => 'Dom Dziecka w Warszawie']);
+        if (!$orphanage) {
+            $orphanage = new Orphanage();
+            $orphanage->setName('Dom Dziecka w Warszawie');
+            $orphanage->setAddress('ul. Przykładowa 123');
+            $orphanage->setCity('Warszawa');
+            $orphanage->setRegion('Mazowieckie');
+            $orphanage->setPostalCode('00-001');
+            $orphanage->setContactEmail('kontakt@warszawa.dd.pl');
+            $orphanage->setContactPhone('+48 123 456 789');
+            $orphanage->setIsVerified(true);
+            $orphanage->setDirector($directorUser);
+            $this->entityManager->persist($orphanage);
+        }
 
-        $orphanage2 = new Orphanage();
-        $orphanage2->setName('Dom Dziecka w Krakowie');
-        $orphanage2->setAddress('ul. Krakowska 456');
-        $orphanage2->setCity('Kraków');
-        $orphanage2->setRegion('Małopolskie');
-        $orphanage2->setPostalCode('30-001');
-        $orphanage2->setContactEmail('kontakt@krakow.dd.pl');
-        $orphanage2->setContactPhone('+48 987 654 321');
-        $orphanage2->setIsVerified(false); // Niezweryfikowany
-        $orphanage2->setDirector($director2);
-        $this->entityManager->persist($orphanage2);
+        $orphanage2 = $repoOrphanage->findOneBy(['name' => 'Dom Dziecka w Krakowie']);
+        if (!$orphanage2) {
+            $orphanage2 = new Orphanage();
+            $orphanage2->setName('Dom Dziecka w Krakowie');
+            $orphanage2->setAddress('ul. Krakowska 456');
+            $orphanage2->setCity('Kraków');
+            $orphanage2->setRegion('Małopolskie');
+            $orphanage2->setPostalCode('30-001');
+            $orphanage2->setContactEmail('kontakt@krakow.dd.pl');
+            $orphanage2->setContactPhone('+48 987 654 321');
+            $orphanage2->setIsVerified(false); // Niezweryfikowany
+            $orphanage2->setDirector($director2);
+            $this->entityManager->persist($orphanage2);
+        }
 
-        // 3. Children
-        $child1 = new Child();
-        $child1->setFirstName('Jan');
-        $child1->setAge(10);
-        $child1->setDescription('Jan marzy o nowym rowerze, aby jeździć ze znajomymi.');
-        $child1->setOrphanage($orphanage);
-        $child1->setIsVerified(true);
-        $this->entityManager->persist($child1);
+        // 3. Children - sprawdź czy już istnieją (po imieniu i orphanage)
+        $childRepo = $this->entityManager->getRepository(Child::class);
+        $child1 = $childRepo->findOneBy(['firstName' => 'Jan', 'orphanage' => $orphanage]);
+        if (!$child1) {
+            $child1 = new Child();
+            $child1->setFirstName('Jan');
+            $child1->setAge(10);
+            $child1->setDescription('Jan marzy o nowym rowerze, aby jeździć ze znajomymi.');
+            $child1->setOrphanage($orphanage);
+            $child1->setIsVerified(true);
+            $this->entityManager->persist($child1);
+        }
 
-        $child2 = new Child();
-        $child2->setFirstName('Anna');
-        $child2->setAge(14);
-        $child2->setDescription('Anna chce zestaw artystyczny do malowania.');
-        $child2->setOrphanage($orphanage);
-        $child2->setIsVerified(true);
-        $this->entityManager->persist($child2);
+        $child2 = $childRepo->findOneBy(['firstName' => 'Anna', 'orphanage' => $orphanage]);
+        if (!$child2) {
+            $child2 = new Child();
+            $child2->setFirstName('Anna');
+            $child2->setAge(14);
+            $child2->setDescription('Anna chce zestaw artystyczny do malowania.');
+            $child2->setOrphanage($orphanage);
+            $child2->setIsVerified(true);
+            $this->entityManager->persist($child2);
+        }
 
-        $child3 = new Child();
-        $child3->setFirstName('Piotr');
-        $child3->setAge(12);
-        $child3->setDescription('Piotr lubi grać w piłkę nożną.');
-        $child3->setOrphanage($orphanage2);
-        $child3->setIsVerified(true);
-        $this->entityManager->persist($child3);
+        $child3 = $childRepo->findOneBy(['firstName' => 'Piotr', 'orphanage' => $orphanage2]);
+        if (!$child3) {
+            $child3 = new Child();
+            $child3->setFirstName('Piotr');
+            $child3->setAge(12);
+            $child3->setDescription('Piotr lubi grać w piłkę nożną.');
+            $child3->setOrphanage($orphanage2);
+            $child3->setIsVerified(true);
+            $this->entityManager->persist($child3);
+        }
 
-        $child4 = new Child();
-        $child4->setFirstName('Kasia');
-        $child4->setAge(9);
-        $child4->setDescription('Kasia uwielbia czytać książki przygodowe.');
-        $child4->setOrphanage($orphanage2);
-        $child4->setIsVerified(true);
-        $this->entityManager->persist($child4);
+        $child4 = $childRepo->findOneBy(['firstName' => 'Kasia', 'orphanage' => $orphanage2]);
+        if (!$child4) {
+            $child4 = new Child();
+            $child4->setFirstName('Kasia');
+            $child4->setAge(9);
+            $child4->setDescription('Kasia uwielbia czytać książki przygodowe.');
+            $child4->setOrphanage($orphanage2);
+            $child4->setIsVerified(true);
+            $this->entityManager->persist($child4);
+        }
 
-        // 3. Categories
-        $categorySport = new \App\Entity\Category();
-        $categorySport->setName('Sport');
-        $categorySport->setIsActive(true);
-        $this->entityManager->persist($categorySport);
+        // 3. Categories - znajdź istniejące lub utwórz
+        $categorySport = $repoCategory->findOneBy(['name' => 'Sport']);
+        if (!$categorySport) {
+            $categorySport = new \App\Entity\Category();
+            $categorySport->setName('Sport');
+            $categorySport->setIsActive(true);
+            $this->entityManager->persist($categorySport);
+        }
 
-        $categoryToys = new \App\Entity\Category();
-        $categoryToys->setName('Zabawki i gry');
-        $categoryToys->setIsActive(true);
-        $this->entityManager->persist($categoryToys);
+        $categoryToys = $repoCategory->findOneBy(['name' => 'Zabawki i gry']);
+        if (!$categoryToys) {
+            $categoryToys = new \App\Entity\Category();
+            $categoryToys->setName('Zabawki i gry');
+            $categoryToys->setIsActive(true);
+            $this->entityManager->persist($categoryToys);
+        }
 
-        $categoryBooks = new \App\Entity\Category();
-        $categoryBooks->setName('Książki');
-        $categoryBooks->setIsActive(true);
-        $this->entityManager->persist($categoryBooks);
+        $categoryBooks = $repoCategory->findOneBy(['name' => 'Książki']);
+        if (!$categoryBooks) {
+            $categoryBooks = new \App\Entity\Category();
+            $categoryBooks->setName('Książki');
+            $categoryBooks->setIsActive(true);
+            $this->entityManager->persist($categoryBooks);
+        }
 
-        // 4. Dreams
-        $dream1 = new Dream();
-        $dream1->setChild($child1);
-        $dream1->setOrphanage($orphanage);
-        $dream1->setProductUrl('https://example.com/rower');
-        $dream1->setProductTitle('Rower górski 24 cale');
-        $dream1->setProductPrice('599.99');
-        $dream1->setDescription('Rower pomógłby Janowi w codziennych dojazdach do szkoły i rekreacji.');
-        $dream1->setCategory($categorySport); // Sport
-        // set status bypassing validation
-        (function() use ($dream1) {
-            $reflection = new \ReflectionClass($dream1);
-            $property = $reflection->getProperty('status');
-            $property->setAccessible(true);
-            $property->setValue($dream1, DreamStatus::VERIFIED);
-        })();
-        $dream1->setQuantityNeeded(1);
-        $dream1->setQuantityFulfilled(0);
-        $dream1->setIsUrgent(false);
-        $this->entityManager->persist($dream1);
+        // 4. Dreams - sprawdź czy już istnieje (po productTitle i child)
+        $dreamRepo = $this->entityManager->getRepository(Dream::class);
+        $dream1 = $dreamRepo->findOneBy(['productTitle' => 'Rower górski 24 cale', 'child' => $child1]);
+        if (!$dream1) {
+            $dream1 = new Dream();
+            $dream1->setChild($child1);
+            $dream1->setOrphanage($orphanage);
+            $dream1->setProductUrl('https://example.com/rower');
+            $dream1->setProductTitle('Rower górski 24 cale');
+            $dream1->setProductPrice('599.99');
+            $dream1->setDescription('Rower pomógłby Janowi w codziennych dojazdach do szkoły i rekreacji.');
+            $dream1->setCategory($categorySport); // Sport
+            // set status bypassing validation
+            (function() use ($dream1) {
+                $reflection = new \ReflectionClass($dream1);
+                $property = $reflection->getProperty('status');
+                $property->setAccessible(true);
+                $property->setValue($dream1, DreamStatus::VERIFIED);
+            })();
+            $dream1->setQuantityNeeded(1);
+            $dream1->setQuantityFulfilled(0);
+            $dream1->setIsUrgent(false);
+            $this->entityManager->persist($dream1);
+        }
 
-        $dream2 = new Dream();
-        $dream2->setChild($child2);
-        $dream2->setOrphanage($orphanage);
-        $dream2->setProductUrl('https://example.com/zestaw-malarski');
-        $dream2->setProductTitle('Zestaw malarski 100 elementów');
-        $dream2->setProductPrice('129.50');
-        $dream2->setDescription('Anna chce rozwijać talent plastyczny.');
-        $dream2->setCategory($categoryToys); // Zabawki i gry
-        // set status bypassing validation
-        (function() use ($dream2) {
-            $reflection = new \ReflectionClass($dream2);
-            $property = $reflection->getProperty('status');
-            $property->setAccessible(true);
-            $property->setValue($dream2, DreamStatus::PENDING);
-        })();
-        $dream2->setQuantityNeeded(1);
-        $dream2->setQuantityFulfilled(0);
-        $dream2->setIsUrgent(true);
-        $this->entityManager->persist($dream2);
+        $dream2 = $dreamRepo->findOneBy(['productTitle' => 'Zestaw malarski 100 elementów', 'child' => $child2]);
+        if (!$dream2) {
+            $dream2 = new Dream();
+            $dream2->setChild($child2);
+            $dream2->setOrphanage($orphanage);
+            $dream2->setProductUrl('https://example.com/zestaw-malarski');
+            $dream2->setProductTitle('Zestaw malarski 100 elementów');
+            $dream2->setProductPrice('129.50');
+            $dream2->setDescription('Anna chce rozwijać talent plastyczny.');
+            $dream2->setCategory($categoryToys); // Zabawki i gry
+            // set status bypassing validation
+            (function() use ($dream2) {
+                $reflection = new \ReflectionClass($dream2);
+                $property = $reflection->getProperty('status');
+                $property->setAccessible(true);
+                $property->setValue($dream2, DreamStatus::PENDING);
+            })();
+            $dream2->setQuantityNeeded(1);
+            $dream2->setQuantityFulfilled(0);
+            $dream2->setIsUrgent(true);
+            $this->entityManager->persist($dream2);
+        }
 
-        $dream3 = new Dream();
-        $dream3->setChild($child1);
-        $dream3->setOrphanage($orphanage);
-        $dream3->setProductUrl('https://example.com/ksiazki');
-        $dream3->setProductTitle('Komiksy przygodowe');
-        $dream3->setProductPrice('89.00');
-        $dream3->setDescription('Jan lubi czytać komiksy.');
-        $dream3->setCategory($categoryBooks); // Książki
-        // set status bypassing validation
-        (function() use ($dream3) {
-            $reflection = new \ReflectionClass($dream3);
-            $property = $reflection->getProperty('status');
-            $property->setAccessible(true);
-            $property->setValue($dream3, DreamStatus::VERIFIED);
-        })();
-        $dream3->setQuantityNeeded(5);
-        $dream3->setQuantityFulfilled(2);
-        $dream3->setIsUrgent(false);
-        $this->entityManager->persist($dream3);
+        $dream3 = $dreamRepo->findOneBy(['productTitle' => 'Komiksy przygodowe', 'child' => $child1]);
+        if (!$dream3) {
+            $dream3 = new Dream();
+            $dream3->setChild($child1);
+            $dream3->setOrphanage($orphanage);
+            $dream3->setProductUrl('https://example.com/ksiazki');
+            $dream3->setProductTitle('Komiksy przygodowe');
+            $dream3->setProductPrice('89.00');
+            $dream3->setDescription('Jan lubi czytać komiksy.');
+            $dream3->setCategory($categoryBooks); // Książki
+            // set status bypassing validation
+            (function() use ($dream3) {
+                $reflection = new \ReflectionClass($dream3);
+                $property = $reflection->getProperty('status');
+                $property->setAccessible(true);
+                $property->setValue($dream3, DreamStatus::VERIFIED);
+            })();
+            $dream3->setQuantityNeeded(5);
+            $dream3->setQuantityFulfilled(2);
+            $dream3->setIsUrgent(false);
+            $this->entityManager->persist($dream3);
+        }
 
-        $dream4 = new Dream();
-        $dream4->setChild($child3);
-        $dream4->setOrphanage($orphanage2);
-        $dream4->setProductUrl('https://example.com/pilka');
-        $dream4->setProductTitle('Piłka nożna profesjonalna');
-        $dream4->setProductPrice('199.00');
-        $dream4->setDescription('Piotr marzy o profesjonalnej piłce do treningów.');
-        $dream4->setCategory($categorySport); // Sport
-        // set status bypassing validation
-        (function() use ($dream4) {
-            $reflection = new \ReflectionClass($dream4);
-            $property = $reflection->getProperty('status');
-            $property->setAccessible(true);
-            $property->setValue($dream4, DreamStatus::VERIFIED);
-        })();
-        $dream4->setQuantityNeeded(1);
-        $dream4->setQuantityFulfilled(1);
-        $dream4->setIsUrgent(false);
-        $this->entityManager->persist($dream4);
+        $dream4 = $dreamRepo->findOneBy(['productTitle' => 'Piłka nożna profesjonalna', 'child' => $child3]);
+        if (!$dream4) {
+            $dream4 = new Dream();
+            $dream4->setChild($child3);
+            $dream4->setOrphanage($orphanage2);
+            $dream4->setProductUrl('https://example.com/pilka');
+            $dream4->setProductTitle('Piłka nożna profesjonalna');
+            $dream4->setProductPrice('199.00');
+            $dream4->setDescription('Piotr marzy o profesjonalnej piłce do treningów.');
+            $dream4->setCategory($categorySport); // Sport
+            // set status bypassing validation
+            (function() use ($dream4) {
+                $reflection = new \ReflectionClass($dream4);
+                $property = $reflection->getProperty('status');
+                $property->setAccessible(true);
+                $property->setValue($dream4, DreamStatus::VERIFIED);
+            })();
+            $dream4->setQuantityNeeded(1);
+            $dream4->setQuantityFulfilled(1);
+            $dream4->setIsUrgent(false);
+            $this->entityManager->persist($dream4);
+        }
 
-        $dream5 = new Dream();
-        $dream5->setChild($child4);
-        $dream5->setOrphanage($orphanage2);
-        $dream5->setProductUrl('https://example.com/ksiazka');
-        $dream5->setProductTitle('Seria książek "Harry Potter"');
-        $dream5->setProductPrice('350.00');
-        $dream5->setDescription('Kasia chciałaby przeczytać całą serię Harry\'ego Pottera.');
-        $dream5->setCategory($categoryBooks); // Książki
-        // set status bypassing validation
-        (function() use ($dream5) {
-            $reflection = new \ReflectionClass($dream5);
-            $property = $reflection->getProperty('status');
-            $property->setAccessible(true);
-            $property->setValue($dream5, DreamStatus::FULFILLED);
-        })();
-        $dream5->setQuantityNeeded(1);
-        $dream5->setQuantityFulfilled(1);
-        $dream5->setIsUrgent(false);
-        $this->entityManager->persist($dream5);
+        $dream5 = $dreamRepo->findOneBy(['productTitle' => 'Seria książek "Harry Potter"', 'child' => $child4]);
+        if (!$dream5) {
+            $dream5 = new Dream();
+            $dream5->setChild($child4);
+            $dream5->setOrphanage($orphanage2);
+            $dream5->setProductUrl('https://example.com/ksiazka');
+            $dream5->setProductTitle('Seria książek "Harry Potter"');
+            $dream5->setProductPrice('350.00');
+            $dream5->setDescription('Kasia chciałaby przeczytać całą serię Harry\'ego Pottera.');
+            $dream5->setCategory($categoryBooks); // Książki
+            // set status bypassing validation
+            (function() use ($dream5) {
+                $reflection = new \ReflectionClass($dream5);
+                $property = $reflection->getProperty('status');
+                $property->setAccessible(true);
+                $property->setValue($dream5, DreamStatus::FULFILLED);
+            })();
+            $dream5->setQuantityNeeded(1);
+            $dream5->setQuantityFulfilled(1);
+            $dream5->setIsUrgent(false);
+            $this->entityManager->persist($dream5);
+        }
 
-        // 6. DreamFulfillment
+        // 6. DreamFulfillment - nie sprawdzamy duplikatów, bo to tylko dane testowe
         $fulfillment1 = new DreamFulfillment();
         $fulfillment1->setDream($dream3);
         $fulfillment1->setDonorName('Anonimowy Darczyńca');
