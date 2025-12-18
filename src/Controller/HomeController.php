@@ -17,6 +17,18 @@ class HomeController extends AbstractController
         OrphanageRepository $orphanageRepository,
         AffiliateConversionRepository $affiliateConversionRepository
     ): Response {
+        // Jeśli użytkownik jest zalogowany, przekieruj na odpowiedni panel
+        $user = $this->getUser();
+        if ($user) {
+            $roles = $user->getRoles();
+            if (in_array('ROLE_ADMIN', $roles)) {
+                return $this->redirectToRoute('admin_dashboard');
+            }
+            if (in_array('ROLE_DIRECTOR', $roles)) {
+                return $this->redirectToRoute('director_dream_list');
+            }
+        }
+
         // Pobierz statystyki
         $stats = [
             'dreams' => $dreamRepository->count([]),
