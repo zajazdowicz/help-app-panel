@@ -179,7 +179,7 @@ class DevController extends AbstractController
             $reflection = new \ReflectionClass($dream1);
             $property = $reflection->getProperty('status');
             $property->setAccessible(true);
-            $property->setValue($dream1, 'approved');
+            $property->setValue($dream1, Dream::STATUS_VERIFIED);
         })();
         $dream1->setQuantityNeeded(1);
         $dream1->setQuantityFulfilled(0);
@@ -193,7 +193,13 @@ class DevController extends AbstractController
         $dream2->setProductTitle('Zestaw malarski 100 elementów');
         $dream2->setProductPrice('129.50');
         $dream2->setDescription('Anna chce rozwijać talent plastyczny.');
-        $dream2->setStatus('pending');
+        // set status bypassing validation
+        (function() use ($dream2) {
+            $reflection = new \ReflectionClass($dream2);
+            $property = $reflection->getProperty('status');
+            $property->setAccessible(true);
+            $property->setValue($dream2, Dream::STATUS_PENDING);
+        })();
         $dream2->setQuantityNeeded(1);
         $dream2->setQuantityFulfilled(0);
         $dream2->setIsUrgent(true);
@@ -211,7 +217,7 @@ class DevController extends AbstractController
             $reflection = new \ReflectionClass($dream3);
             $property = $reflection->getProperty('status');
             $property->setAccessible(true);
-            $property->setValue($dream3, 'approved');
+            $property->setValue($dream3, Dream::STATUS_VERIFIED);
         })();
         $dream3->setQuantityNeeded(5);
         $dream3->setQuantityFulfilled(2);
@@ -225,7 +231,13 @@ class DevController extends AbstractController
         $dream4->setProductTitle('Piłka nożna profesjonalna');
         $dream4->setProductPrice('199.00');
         $dream4->setDescription('Piotr marzy o profesjonalnej piłce do treningów.');
-        $dream4->setStatus('approved');
+        // set status bypassing validation
+        (function() use ($dream4) {
+            $reflection = new \ReflectionClass($dream4);
+            $property = $reflection->getProperty('status');
+            $property->setAccessible(true);
+            $property->setValue($dream4, Dream::STATUS_VERIFIED);
+        })();
         $dream4->setQuantityNeeded(1);
         $dream4->setQuantityFulfilled(1);
         $dream4->setIsUrgent(false);
@@ -238,7 +250,13 @@ class DevController extends AbstractController
         $dream5->setProductTitle('Seria książek "Harry Potter"');
         $dream5->setProductPrice('350.00');
         $dream5->setDescription('Kasia chciałaby przeczytać całą serię Harry\'ego Pottera.');
-        $dream5->setStatus('completed');
+        // set status bypassing validation
+        (function() use ($dream5) {
+            $reflection = new \ReflectionClass($dream5);
+            $property = $reflection->getProperty('status');
+            $property->setAccessible(true);
+            $property->setValue($dream5, Dream::STATUS_FULFILLED);
+        })();
         $dream5->setQuantityNeeded(1);
         $dream5->setQuantityFulfilled(1);
         $dream5->setIsUrgent(false);
@@ -256,7 +274,7 @@ class DevController extends AbstractController
             $reflection = new \ReflectionClass($fulfillment1);
             $property = $reflection->getProperty('status');
             $property->setAccessible(true);
-            $property->setValue($fulfillment1, 'completed');
+            $property->setValue($fulfillment1, DreamFulfillment::STATUS_CONFIRMED);
         })();
         $fulfillment1->setQuantityFulfilled(2);
         $this->entityManager->persist($fulfillment1);
@@ -272,7 +290,7 @@ class DevController extends AbstractController
             $reflection = new \ReflectionClass($fulfillment2);
             $property = $reflection->getProperty('status');
             $property->setAccessible(true);
-            $property->setValue($fulfillment2, 'pending');
+            $property->setValue($fulfillment2, DreamFulfillment::STATUS_PENDING);
         })();
         $fulfillment2->setQuantityFulfilled(1);
         $this->entityManager->persist($fulfillment2);
@@ -283,7 +301,13 @@ class DevController extends AbstractController
         $fulfillment3->setDonorEmail('maria.nowak@example.com');
         $fulfillment3->setDonorNickname('Maria');
         $fulfillment3->setIsAnonymous(false);
-        $fulfillment3->setStatus('completed');
+        // set status bypassing validation
+        (function() use ($fulfillment3) {
+            $reflection = new \ReflectionClass($fulfillment3);
+            $property = $reflection->getProperty('status');
+            $property->setAccessible(true);
+            $property->setValue($fulfillment3, DreamFulfillment::STATUS_CONFIRMED);
+        })();
         $fulfillment3->setQuantityFulfilled(1);
         $fulfillment3->setChildPhotoUrl('https://example.com/photo.jpg');
         $fulfillment3->setChildMessage('Dziękuję za piłkę! Piotr');
@@ -295,7 +319,13 @@ class DevController extends AbstractController
         $fulfillment4->setDonorEmail('fundacja@example.com');
         $fulfillment4->setDonorNickname('Fundacja');
         $fulfillment4->setIsAnonymous(false);
-        $fulfillment4->setStatus('completed');
+        // set status bypassing validation
+        (function() use ($fulfillment4) {
+            $reflection = new \ReflectionClass($fulfillment4);
+            $property = $reflection->getProperty('status');
+            $property->setAccessible(true);
+            $property->setValue($fulfillment4, DreamFulfillment::STATUS_CONFIRMED);
+        })();
         $fulfillment4->setQuantityFulfilled(1);
         $fulfillment4->setChildPhotoUrl('https://example.com/kasia.jpg');
         $fulfillment4->setChildMessage('Kasia jest bardzo szczęśliwa z nowych książek!');
