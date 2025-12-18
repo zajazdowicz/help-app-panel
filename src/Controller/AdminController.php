@@ -9,7 +9,7 @@ use App\Entity\DreamFulfillment;
 use App\Repository\UserRepository;
 use App\Repository\OrphanageRepository;
 use App\Repository\DreamRepository;
-use App\Repository\DreamFulfillmentRepository;
+// DreamFulfillmentRepository is no longer used because the donation system has been removed.
 use App\Repository\CategoryRepository;
 use App\Entity\Category;
 use Doctrine\ORM\EntityManagerInterface;
@@ -28,7 +28,6 @@ class AdminController extends AbstractController
         UserRepository $userRepository,
         OrphanageRepository $orphanageRepository,
         DreamRepository $dreamRepository,
-        DreamFulfillmentRepository $fulfillmentRepository,
         CategoryRepository $categoryRepository
     ): Response {
         $stats = [
@@ -37,7 +36,7 @@ class AdminController extends AbstractController
             'orphanages_pending' => $orphanageRepository->count(['isVerified' => false]),
             'dreams' => $dreamRepository->count([]),
             'dreams_pending' => $dreamRepository->count(['status' => 'pending']),
-            'fulfillments' => $fulfillmentRepository->count([]),
+            'fulfillments' => 0, // Darowizny są wyłączone
             'categories' => $categoryRepository->count([]),
         ];
         
@@ -143,12 +142,11 @@ class AdminController extends AbstractController
     }
 
     #[Route('/fulfillments', name: 'admin_fulfillments')]
-    public function fulfillments(DreamFulfillmentRepository $fulfillmentRepository): Response
+    public function fulfillments(): Response
     {
-        $fulfillments = $fulfillmentRepository->findAll();
-        
+        // Darowizny są wyłączone, zwracamy pustą listę
         return $this->render('admin/fulfillments.html.twig', [
-            'fulfillments' => $fulfillments,
+            'fulfillments' => [],
         ]);
     }
 
