@@ -168,6 +168,22 @@ class DevController extends AbstractController
         $child4->setIsVerified(true);
         $this->entityManager->persist($child4);
 
+        // 3. Categories
+        $categorySport = new \App\Entity\Category();
+        $categorySport->setName('Sport');
+        $categorySport->setIsActive(true);
+        $this->entityManager->persist($categorySport);
+
+        $categoryToys = new \App\Entity\Category();
+        $categoryToys->setName('Zabawki i gry');
+        $categoryToys->setIsActive(true);
+        $this->entityManager->persist($categoryToys);
+
+        $categoryBooks = new \App\Entity\Category();
+        $categoryBooks->setName('Książki');
+        $categoryBooks->setIsActive(true);
+        $this->entityManager->persist($categoryBooks);
+
         // 4. Dreams
         $dream1 = new Dream();
         $dream1->setChild($child1);
@@ -176,6 +192,7 @@ class DevController extends AbstractController
         $dream1->setProductTitle('Rower górski 24 cale');
         $dream1->setProductPrice('599.99');
         $dream1->setDescription('Rower pomógłby Janowi w codziennych dojazdach do szkoły i rekreacji.');
+        $dream1->setCategory($categorySport); // Sport
         // set status bypassing validation
         (function() use ($dream1) {
             $reflection = new \ReflectionClass($dream1);
@@ -195,6 +212,7 @@ class DevController extends AbstractController
         $dream2->setProductTitle('Zestaw malarski 100 elementów');
         $dream2->setProductPrice('129.50');
         $dream2->setDescription('Anna chce rozwijać talent plastyczny.');
+        $dream2->setCategory($categoryToys); // Zabawki i gry
         // set status bypassing validation
         (function() use ($dream2) {
             $reflection = new \ReflectionClass($dream2);
@@ -214,6 +232,7 @@ class DevController extends AbstractController
         $dream3->setProductTitle('Komiksy przygodowe');
         $dream3->setProductPrice('89.00');
         $dream3->setDescription('Jan lubi czytać komiksy.');
+        $dream3->setCategory($categoryBooks); // Książki
         // set status bypassing validation
         (function() use ($dream3) {
             $reflection = new \ReflectionClass($dream3);
@@ -233,6 +252,7 @@ class DevController extends AbstractController
         $dream4->setProductTitle('Piłka nożna profesjonalna');
         $dream4->setProductPrice('199.00');
         $dream4->setDescription('Piotr marzy o profesjonalnej piłce do treningów.');
+        $dream4->setCategory($categorySport); // Sport
         // set status bypassing validation
         (function() use ($dream4) {
             $reflection = new \ReflectionClass($dream4);
@@ -252,6 +272,7 @@ class DevController extends AbstractController
         $dream5->setProductTitle('Seria książek "Harry Potter"');
         $dream5->setProductPrice('350.00');
         $dream5->setDescription('Kasia chciałaby przeczytać całą serię Harry\'ego Pottera.');
+        $dream5->setCategory($categoryBooks); // Książki
         // set status bypassing validation
         (function() use ($dream5) {
             $reflection = new \ReflectionClass($dream5);
@@ -264,7 +285,7 @@ class DevController extends AbstractController
         $dream5->setIsUrgent(false);
         $this->entityManager->persist($dream5);
 
-        // 5. DreamFulfillment
+        // 6. DreamFulfillment
         $fulfillment1 = new DreamFulfillment();
         $fulfillment1->setDream($dream3);
         $fulfillment1->setDonorName('Anonimowy Darczyńca');
@@ -335,6 +356,6 @@ class DevController extends AbstractController
 
         $this->entityManager->flush();
 
-        return new Response('Dane testowe zostały dodane pomyślnie. Utworzono: 5 użytkowników, 2 domy dziecka, 4 dzieci, 5 marzeń, 4 darowizny.');
+        return new Response('Dane testowe zostały dodane pomyślnie. Utworzono: 5 użytkowników, 2 domy dziecka, 4 dzieci, 3 kategorie, 5 marzeń, 4 darowizny.');
     }
 }
