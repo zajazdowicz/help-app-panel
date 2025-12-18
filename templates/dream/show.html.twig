@@ -12,7 +12,7 @@
                     <h5 class="card-title">Szczegóły marzenia</h5>
                     <ul class="list-unstyled">
                         <li><strong>Dziecko:</strong> {{ dream.child ? dream.child.firstName : 'Nieznane' }}</li>
-                        <li><strong>Status:</strong> {{ dream.status }}</li>
+                        <li><strong>Status:</strong> {{ dream.status.label() }}</li>
                         <li><strong>Cena produktu:</strong> {{ dream.productPrice }} zł</li>
                         <li><strong>Kategoria:</strong> {{ dream.category.name }}</li>
                         <li><strong>Potrzebna ilość:</strong> {{ dream.quantityNeeded }}</li>
