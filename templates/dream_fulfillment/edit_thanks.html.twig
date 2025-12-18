@@ -20,7 +20,7 @@
                 {% else %}
                     {{ fulfillment.donorName|default(fulfillment.user ? fulfillment.user.email : 'Darczyńca') }}
                 {% endif %}
-                ({{ fulfillment.quantityFulfilled }} szt.)
+                (— szt.)
             </p>
 
             {{ form_start(form) }}
