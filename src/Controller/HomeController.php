@@ -4,7 +4,7 @@ namespace App\Controller;
 
 use App\Repository\DreamRepository;
 use App\Repository\OrphanageRepository;
-use App\Repository\DreamFulfillmentRepository;
+use App\Repository\AffiliateConversionRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -15,13 +15,14 @@ class HomeController extends AbstractController
     public function index(
         DreamRepository $dreamRepository,
         OrphanageRepository $orphanageRepository,
-        DreamFulfillmentRepository $fulfillmentRepository
+        AffiliateConversionRepository $affiliateConversionRepository
     ): Response {
         // Pobierz statystyki
         $stats = [
             'dreams' => $dreamRepository->count([]),
             'orphanages' => $orphanageRepository->count([]),
-            'fulfillments' => $fulfillmentRepository->count([]),
+            'fulfillments' => 0, // Darowizny są wyłączone, więc 0
+            'affiliatePurchases' => $affiliateConversionRepository->count([]),
         ];
 
         // Pobierz 3 najnowsze marzenia (status pending lub verified)
