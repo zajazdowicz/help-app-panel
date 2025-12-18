@@ -61,10 +61,6 @@ class Dream
     #[Assert\Positive]
     private int $quantityNeeded = 1;
 
-    #[ORM\Column]
-    #[Assert\PositiveOrZero]
-    private int $quantityFulfilled = 0;
-
     #[ORM\Column(length: 50, nullable: true)]
     private ?string $affiliatePartner = null;
 
@@ -83,8 +79,8 @@ class Dream
     #[ORM\Column]
     private bool $isUrgent = false;
 
-    #[ORM\OneToMany(mappedBy: 'dream', targetEntity: DreamFulfillment::class, orphanRemoval: true)]
-    private Collection $fulfillments;
+    #[ORM\OneToMany(mappedBy: 'dream', targetEntity: AffiliateClick::class, orphanRemoval: true)]
+    private Collection $affiliateClicks;
 
     #[ORM\OneToMany(mappedBy: 'dream', targetEntity: AffiliateClick::class, orphanRemoval: true)]
     private Collection $affiliateClicks;
