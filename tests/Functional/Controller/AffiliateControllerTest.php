@@ -7,12 +7,14 @@ use App\Entity\Orphanage;
 use App\Entity\Child;
 use App\Entity\Category;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Tools\SchemaTool;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class AffiliateControllerTest extends WebTestCase
 {
     private $client;
     private $entityManager;
+    private static $schemaCreated = false;
 
     protected function setUp(): void
     {
@@ -21,6 +23,14 @@ class AffiliateControllerTest extends WebTestCase
         $this->entityManager = self::$kernel->getContainer()
             ->get('doctrine')
             ->getManager();
+
+        if (!self::$schemaCreated) {
+            $schemaTool = new SchemaTool($this->entityManager);
+            $metadata = $this->entityManager->getMetadataFactory()->getAllMetadata();
+            $schemaTool->dropSchema($metadata);
+            $schemaTool->createSchema($metadata);
+            self::$schemaCreated = true;
+        }
     }
 
     public function testGoRedirectsToAffiliateUrl(): void
@@ -28,7 +38,11 @@ class AffiliateControllerTest extends WebTestCase
         // Create necessary entities
         $orphanage = new Orphanage();
         $orphanage->setName('Test Orphanage');
+        $orphanage->setAddress('Test Address');
         $orphanage->setCity('Warsaw');
+        $orphanage->setRegion('Mazowieckie');
+        $orphanage->setPostalCode('00-001');
+        $orphanage->setContactPhone('+48123456789');
         $orphanage->setIsVerified(true);
         $this->entityManager->persist($orphanage);
 

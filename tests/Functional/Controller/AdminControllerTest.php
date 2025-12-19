@@ -3,10 +3,26 @@
 namespace App\Tests\Functional\Controller;
 
 use App\Entity\User;
+use Doctrine\ORM\Tools\SchemaTool;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class AdminControllerTest extends WebTestCase
 {
+    private static $schemaCreated = false;
+
+    public static function setUpBeforeClass(): void
+    {
+        self::bootKernel();
+        $entityManager = self::$kernel->getContainer()
+            ->get('doctrine')
+            ->getManager();
+        $schemaTool = new SchemaTool($entityManager);
+        $metadata = $entityManager->getMetadataFactory()->getAllMetadata();
+        $schemaTool->dropSchema($metadata);
+        $schemaTool->createSchema($metadata);
+        self::$schemaCreated = true;
+    }
+
     public function testAdminDashboardRequiresLogin(): void
     {
         $client = static::createClient(['environment' => 'test']);

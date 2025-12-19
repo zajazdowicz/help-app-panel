@@ -2,13 +2,28 @@
 
 namespace App\Tests\Functional\Controller;
 
+use Doctrine\ORM\Tools\SchemaTool;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class RegistrationControllerTest extends WebTestCase
 {
+    private static $schemaCreated = false;
+
+    public static function setUpBeforeClass(): void
+    {
+        self::bootKernel();
+        $entityManager = self::$kernel->getContainer()
+            ->get('doctrine')
+            ->getManager();
+        $schemaTool = new SchemaTool($entityManager);
+        $metadata = $entityManager->getMetadataFactory()->getAllMetadata();
+        $schemaTool->dropSchema($metadata);
+        $schemaTool->createSchema($metadata);
+        self::$schemaCreated = true;
+    }
     public function testRegisterUser(): void
     {
-        $client = static::createClient();
+        $client = static::createClient(['environment' => 'test']);
         $crawler = $client->request('GET', '/register');
 
         $this->assertResponseIsSuccessful();
@@ -30,7 +45,7 @@ class RegistrationControllerTest extends WebTestCase
 
     public function testRegisterDirector(): void
     {
-        $client = static::createClient();
+        $client = static::createClient(['environment' => 'test']);
         $crawler = $client->request('GET', '/register');
 
         $form = $crawler->selectButton('Zarejestruj się')->form();
