@@ -46,6 +46,14 @@
                     </select>
                 </div>
                 <div class="col-md-3">
+                    <label for="fundingType" class="form-label">Typ finansowania</label>
+                    <select class="form-select" id="fundingType" name="fundingType">
+                        <option value="">Wszystkie</option>
+                        <option value="affiliate" {% if fundingType == 'affiliate' %}selected{% endif %}>Afiliacyjne</option>
+                        <option value="donation" {% if fundingType == 'donation' %}selected{% endif %}>Darowizny</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
                     <label for="minPrice" class="form-label">Cena minimalna (zł)</label>
                     <input type="number" class="form-control" id="minPrice" name="minPrice" value="{{ minPrice }}" step="0.01" min="0">
                 </div>

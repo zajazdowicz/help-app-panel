@@ -7,56 +7,21 @@
     <h1>Darowizny</h1>
     <a href="{{ path('admin_dashboard') }}" class="btn btn-secondary mb-3">Powrót do panelu</a>
     
+    <div class="alert alert-info">
+        <h4 class="alert-heading">System darowizn został zastąpiony</h4>
+        <p>
+            System bezpośrednich darowizn został zastąpiony systemem afiliacyjnym. 
+            Aby pomóc w spełnianiu marzeń, użytkownicy mogą korzystać z linków afiliacyjnych w szczegółach marzeń.
+        </p>
+        <p>
+            Zakupy dokonane przez linki afiliacyjne są automatycznie śledzone w systemie.
+            Aby zarządzać konwersjami afiliacyjnymi, skontaktuj się z administratorem.
+        </p>
+    </div>
+    
     <div class="card">
         <div class="card-body">
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Marzenie</th>
-                        <th>Darczyńca</th>
-                        <th>Email</th>
-                        <th>Ilość</th>
-                        <th>Status</th>
-                        <th>Data</th>
-                        <th>Użytkownik</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for fulfillment in fulfillments %}
-                        <tr>
-                            <td>{{ fulfillment.id }}</td>
-                            <td>{{ fulfillment.dream.productTitle|slice(0, 20) }}{% if fulfillment.dream.productTitle|length > 20 %}...{% endif %}</td>
-                            <td>
-                                {% if fulfillment.isAnonymous %}
-                                    Anonimowy
-                                {% else %}
-                                    {{ fulfillment.donorName|default(fulfillment.user ? fulfillment.user.email : 'Brak') }}
-                                {% endif %}
-                            </td>
-                            <td>{{ fulfillment.donorEmail|default('Brak') }}</td>
-                            <td>—</td>
-                            <td>
-                                {% if fulfillment.status == 'pending' %}
-                                    <span class="badge bg-secondary">Oczekujące</span>
-                                {% elseif fulfillment.status == 'reserved' %}
-                                    <span class="badge bg-warning">Zarezerwowane</span>
-                                {% elseif fulfillment.status == 'ordered' %}
-                                    <span class="badge bg-info">Zamówione</span>
-                                {% elseif fulfillment.status == 'delivered' %}
-                                    <span class="badge bg-primary">Dostarczone</span>
-                                {% elseif fulfillment.status == 'confirmed' %}
-                                    <span class="badge bg-success">Potwierdzone</span>
-                                {% elseif fulfillment.status == 'cancelled' %}
-                                    <span class="badge bg-danger">Anulowane</span>
-                                {% endif %}
-                            </td>
-                            <td>{{ fulfillment.createdAt|date('d.m.Y H:i') }}</td>
-                            <td>{{ fulfillment.user ? fulfillment.user.email : 'Anonim' }}</td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+            <p class="text-muted">Brak danych do wyświetlenia.</p>
         </div>
     </div>
 </div>

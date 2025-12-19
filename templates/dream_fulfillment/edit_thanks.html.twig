@@ -3,35 +3,17 @@
 {% block title %}Edytuj podziękowanie - Panel dyrektora{% endblock %}
 
 {% block director_body %}
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="h3 mb-0">Edytuj podziękowanie dla darowizny</h1>
-        <a href="{{ path('app_dream_show', {id: dream.id}) }}" class="btn btn-outline-secondary">
-            <i class="bi bi-arrow-left"></i> Powrót do marzenia
-        </a>
-    </div>
-
-    <div class="card shadow-sm">
-        <div class="card-body">
-            <p class="text-muted mb-4">
-                Marzenie: <strong>{{ dream.productTitle }}</strong><br>
-                Darczyńca: 
-                {% if fulfillment.isAnonymous %}
-                    Anonimowy
-                {% else %}
-                    {{ fulfillment.donorName|default(fulfillment.user ? fulfillment.user.email : 'Darczyńca') }}
-                {% endif %}
-                (— szt.)
+    <div class="container mt-4">
+        <div class="alert alert-info">
+            <h4 class="alert-heading">System darowizn został zastąpiony</h4>
+            <p>
+                System bezpośrednich darowizn został zastąpiony systemem afiliacyjnym. 
+                Edycja podziękowań nie jest już dostępna.
             </p>
-
-            {{ form_start(form) }}
-                {{ form_row(form.childPhotoUrl) }}
-                {{ form_row(form.childMessage) }}
-                <div class="d-flex justify-content-end mt-4">
-                    <button type="submit" class="btn btn-primary">
-                        <i class="bi bi-check-lg"></i> Zapisz zmiany
-                    </button>
-                </div>
-            {{ form_end(form) }}
+            <p>
+                Aby zarządzać marzeniami, przejdź do <a href="{{ path('director_dream_list') }}">listy marzeń</a>.
+            </p>
         </div>
+        <a href="{{ path('app_home') }}" class="btn btn-primary">Powrót do strony głównej</a>
     </div>
 {% endblock %}
