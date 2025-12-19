@@ -8,6 +8,7 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 class RegistrationControllerTest extends WebTestCase
 {
     private static $schemaCreated = false;
+    private $entityManager;
 
     public static function setUpBeforeClass(): void
     {
@@ -21,6 +22,29 @@ class RegistrationControllerTest extends WebTestCase
         $schemaTool->createSchema($metadata);
         self::$schemaCreated = true;
     }
+
+    protected function setUp(): void
+    {
+        $this->client = static::createClient(['environment' => 'test']);
+        self::bootKernel();
+        $this->entityManager = self::$kernel->getContainer()
+            ->get('doctrine')
+            ->getManager();
+
+        // Begin a transaction for each test
+        $this->entityManager->getConnection()->beginTransaction();
+    }
+
+    protected function tearDown(): void
+    {
+        // Rollback the transaction to clean up the database
+        if ($this->entityManager->getConnection()->isTransactionActive()) {
+            $this->entityManager->getConnection()->rollBack();
+        }
+        $this->entityManager->close();
+        parent::tearDown();
+    }
+
     public function testRegisterUser(): void
     {
         $client = static::createClient(['environment' => 'test']);

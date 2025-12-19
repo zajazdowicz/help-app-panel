@@ -24,6 +24,7 @@ class AffiliateControllerTest extends WebTestCase
             ->get('doctrine')
             ->getManager();
 
+        // Create schema only once per test class
         if (!self::$schemaCreated) {
             $schemaTool = new SchemaTool($this->entityManager);
             $metadata = $this->entityManager->getMetadataFactory()->getAllMetadata();
@@ -31,6 +32,19 @@ class AffiliateControllerTest extends WebTestCase
             $schemaTool->createSchema($metadata);
             self::$schemaCreated = true;
         }
+
+        // Begin a transaction for each test
+        $this->entityManager->getConnection()->beginTransaction();
+    }
+
+    protected function tearDown(): void
+    {
+        // Rollback the transaction to clean up the database
+        if ($this->entityManager->getConnection()->isTransactionActive()) {
+            $this->entityManager->getConnection()->rollBack();
+        }
+        $this->entityManager->close();
+        parent::tearDown();
     }
 
     public function testGoRedirectsToAffiliateUrl(): void
