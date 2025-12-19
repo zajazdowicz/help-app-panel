@@ -18,7 +18,9 @@
                         <th>Dom dziecka</th>
                         <th>Status</th>
                         <th>Cena</th>
-                        <th>Zebrano</th>
+                        <th>Zakupione (afiliacja)</th>
+                        <th>Potrzebne</th>
+                        <th>Pozostało</th>
                         <th>Pilne</th>
                         <th>Kategoria</th>
                         <th>Akcje</th>
@@ -32,35 +34,39 @@
                             <td>{{ dream.child ? dream.child.firstName : 'Brak' }}</td>
                             <td>{{ dream.orphanage.name }}</td>
                             <td>
-                                {% if dream.status == 'pending' %}
-                                    <span class="badge bg-secondary">Oczekujące</span>
-                                {% elseif dream.status == 'verified' %}
-                                    <span class="badge bg-primary">Zweryfikowane</span>
-                                {% elseif dream.status == 'in_progress' %}
-                                    <span class="badge bg-warning">W realizacji</span>
-                                {% elseif dream.status == 'fulfilled' %}
-                                    <span class="badge bg-success">Zrealizowane</span>
-                                {% elseif dream.status == 'cancelled' %}
-                                    <span class="badge bg-danger">Anulowane</span>
-                                {% endif %}
+                                <span class="badge bg-{{ 
+                                    dream.status.value == 'pending' ? 'secondary' :
+                                    dream.status.value == 'verified' ? 'primary' :
+                                    dream.status.value == 'in_progress' ? 'warning' :
+                                    dream.status.value == 'fulfilled' ? 'success' :
+                                    'danger'
+                                }}">
+                                    {{ dream.status.label() }}
+                                </span>
                             </td>
                             <td>{{ dream.productPrice }} zł</td>
-                            <td>{{ dream.purchasedQuantity }} / {{ dream.quantityNeeded }} (zakupione / potrzebne)</td>
+                            <td>{{ dream.purchasedQuantity }}</td>
+                            <td>{{ dream.quantityNeeded }}</td>
+                            <td>{{ dream.remainingQuantity }}</td>
                             <td>{{ dream.isUrgent ? 'Tak' : 'Nie' }}</td>
                             <td>{{ dream.category.name }}</td>
                             <td>
-                                <a href="{{ path('app_dream_show', {id: dream.id}) }}" class="btn btn-sm btn-info">Szczegóły</a>
+                                <a href="{{ path('app_dream_show', {id: dream.id}) }}" class="btn btn-sm btn-info mb-1">Szczegóły</a>
                                 <form method="post" action="{{ path('admin_dream_toggle_status', {id: dream.id}) }}" class="d-inline">
                                     <input type="hidden" name="_token" value="{{ csrf_token('toggle_status' ~ dream.id) }}">
                                     <select name="status" class="form-select form-select-sm d-inline w-auto" onchange="this.form.submit()">
-                                        <option value="pending" {% if dream.status == 'pending' %}selected{% endif %}>Oczekujące</option>
-                                        <option value="verified" {% if dream.status == 'verified' %}selected{% endif %}>Zweryfikowane</option>
-                                        <option value="in_progress" {% if dream.status == 'in_progress' %}selected{% endif %}>W realizacji</option>
-                                        <option value="fulfilled" {% if dream.status == 'fulfilled' %}selected{% endif %}>Zrealizowane</option>
-                                        <option value="cancelled" {% if dream.status == 'cancelled' %}selected{% endif %}>Anulowane</option>
+                                        <option value="pending" {% if dream.status.value == 'pending' %}selected{% endif %}>Oczekujące</option>
+                                        <option value="verified" {% if dream.status.value == 'verified' %}selected{% endif %}>Zweryfikowane</option>
+                                        <option value="in_progress" {% if dream.status.value == 'in_progress' %}selected{% endif %}>W realizacji</option>
+                                        <option value="fulfilled" {% if dream.status.value == 'fulfilled' %}selected{% endif %}>Zrealizowane</option>
+                                        <option value="cancelled" {% if dream.status.value == 'cancelled' %}selected{% endif %}>Anulowane</option>
                                     </select>
                                 </form>
                             </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="12" class="text-center">Brak marzeń</td>
                         </tr>
                     {% endfor %}
                 </tbody>

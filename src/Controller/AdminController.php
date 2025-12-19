@@ -126,6 +126,12 @@ class AdminController extends AbstractController
     #[Route('/dreams/{id}/toggle-status', name: 'admin_dream_toggle_status', methods: ['POST'])]
     public function toggleDreamStatus(Request $request, Dream $dream, EntityManagerInterface $entityManager): Response
     {
+        $token = $request->request->get('_token');
+        if (!$this->isCsrfTokenValid('toggle_status' . $dream->getId(), $token)) {
+            $this->addFlash('error', 'Nieprawidłowy token CSRF.');
+            return $this->redirectToRoute('admin_dreams');
+        }
+        
         $status = $request->request->get('status');
         $validStatuses = ['pending', 'verified', 'in_progress', 'fulfilled', 'cancelled'];
         
