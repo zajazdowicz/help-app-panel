@@ -20,7 +20,7 @@
             <h2>Witaj {{ user.username }}!</h2>
             <p>Dziękujemy za rejestrację w serwisie HelpDreams.</p>
             
-            {% if accountType == 'director' %}
+            {% if isDirector %}
                 <p>Twoje konto zostało utworzone z rolą <strong>Dyrektora domu dziecka</strong>.</p>
                 <p>Aby móc dodawać dzieci i marzenia, musisz:</p>
                 <ol>
