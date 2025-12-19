@@ -15,11 +15,33 @@ class RegistrationControllerTest extends WebTestCase
         $container = $this->client->getContainer();
         $this->entityManager = $container->get('doctrine')->getManager();
 
+        // Ensure all entity classes are loaded
+        $classes = [
+            \App\Entity\User::class,
+            \App\Entity\Orphanage::class,
+            \App\Entity\Child::class,
+            \App\Entity\Dream::class,
+            \App\Entity\Category::class,
+            \App\Entity\AffiliateClick::class,
+            \App\Entity\AffiliateConversion::class,
+            \App\Entity\DreamFulfillment::class,
+        ];
+        foreach ($classes as $class) {
+            class_exists($class);
+        }
+
         // Create schema for each test (SQLite in-memory is fast)
         $schemaTool = new SchemaTool($this->entityManager);
         $metadata = $this->entityManager->getMetadataFactory()->getAllMetadata();
         $schemaTool->dropSchema($metadata);
         $schemaTool->createSchema($metadata);
+
+        // Verify that the users table was created
+        $schemaManager = $this->entityManager->getConnection()->createSchemaManager();
+        $tableNames = $schemaManager->listTableNames();
+        if (!in_array('users', $tableNames, true)) {
+            throw new \RuntimeException('Table "users" was not created. Available tables: ' . implode(', ', $tableNames));
+        }
 
         // Begin a transaction for each test
         $this->entityManager->getConnection()->beginTransaction();
