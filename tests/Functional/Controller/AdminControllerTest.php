@@ -9,7 +9,7 @@ class AdminControllerTest extends WebTestCase
 {
     public function testAdminDashboardRequiresLogin(): void
     {
-        $client = static::createClient();
+        $client = static::createClient(['environment' => 'test']);
         $client->request('GET', '/admin/');
 
         // Should redirect to login
@@ -18,7 +18,7 @@ class AdminControllerTest extends WebTestCase
 
     public function testAdminDashboardAccessWithAdminRole(): void
     {
-        $client = static::createClient();
+        $client = static::createClient(['environment' => 'test']);
 
         // Create an admin user
         $entityManager = self::$kernel->getContainer()

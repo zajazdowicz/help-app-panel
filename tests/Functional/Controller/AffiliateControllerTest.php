@@ -16,7 +16,7 @@ class AffiliateControllerTest extends WebTestCase
 
     protected function setUp(): void
     {
-        $this->client = static::createClient();
+        $this->client = static::createClient(['environment' => 'test']);
         self::bootKernel();
         $this->entityManager = self::$kernel->getContainer()
             ->get('doctrine')
