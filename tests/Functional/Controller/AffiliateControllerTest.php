@@ -14,22 +14,17 @@ class AffiliateControllerTest extends WebTestCase
 {
     private $client;
     private $entityManager;
-    private static $schemaCreated = false;
-
     protected function setUp(): void
     {
         $this->client = static::createClient(['environment' => 'test']);
         $container = $this->client->getContainer();
         $this->entityManager = $container->get('doctrine')->getManager();
 
-        // Create schema only once per test class
-        if (!self::$schemaCreated) {
-            $schemaTool = new SchemaTool($this->entityManager);
-            $metadata = $this->entityManager->getMetadataFactory()->getAllMetadata();
-            $schemaTool->dropSchema($metadata);
-            $schemaTool->createSchema($metadata);
-            self::$schemaCreated = true;
-        }
+        // Create schema for each test (SQLite in-memory is fast)
+        $schemaTool = new SchemaTool($this->entityManager);
+        $metadata = $this->entityManager->getMetadataFactory()->getAllMetadata();
+        $schemaTool->dropSchema($metadata);
+        $schemaTool->createSchema($metadata);
 
         // Begin a transaction for each test
         $this->entityManager->getConnection()->beginTransaction();
@@ -63,7 +58,9 @@ class AffiliateControllerTest extends WebTestCase
         $child = new Child();
         $child->setFirstName('Test');
         $child->setAge(10);
+        $child->setDescription('Test child description');
         $child->setOrphanage($orphanage);
+        $child->setIsVerified(true);
         $this->entityManager->persist($child);
 
         $category = new Category();
@@ -116,7 +113,9 @@ class AffiliateControllerTest extends WebTestCase
         $child = new Child();
         $child->setFirstName('Test2');
         $child->setAge(12);
+        $child->setDescription('Test child description 2');
         $child->setOrphanage($orphanage);
+        $child->setIsVerified(true);
         $this->entityManager->persist($child);
 
         $category = new Category();

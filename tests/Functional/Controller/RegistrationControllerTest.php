@@ -7,27 +7,19 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class RegistrationControllerTest extends WebTestCase
 {
-    private static $schemaCreated = false;
     private $entityManager;
-
-    public static function setUpBeforeClass(): void
-    {
-        self::bootKernel();
-        $entityManager = self::$kernel->getContainer()
-            ->get('doctrine')
-            ->getManager();
-        $schemaTool = new SchemaTool($entityManager);
-        $metadata = $entityManager->getMetadataFactory()->getAllMetadata();
-        $schemaTool->dropSchema($metadata);
-        $schemaTool->createSchema($metadata);
-        self::$schemaCreated = true;
-    }
 
     protected function setUp(): void
     {
         $this->client = static::createClient(['environment' => 'test']);
         $container = $this->client->getContainer();
         $this->entityManager = $container->get('doctrine')->getManager();
+
+        // Create schema for each test (SQLite in-memory is fast)
+        $schemaTool = new SchemaTool($this->entityManager);
+        $metadata = $this->entityManager->getMetadataFactory()->getAllMetadata();
+        $schemaTool->dropSchema($metadata);
+        $schemaTool->createSchema($metadata);
 
         // Begin a transaction for each test
         $this->entityManager->getConnection()->beginTransaction();
