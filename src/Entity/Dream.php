@@ -45,7 +45,7 @@ class Dream
     #[Assert\PositiveOrZero]
     private ?string $productPrice = null;
 
-    #[ORM\ManyToOne]
+    #[ORM\ManyToOne(inversedBy: 'dreams')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Category $category = null;
 
