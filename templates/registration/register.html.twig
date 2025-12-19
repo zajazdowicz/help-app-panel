@@ -12,14 +12,17 @@
                     {{ form_row(registrationForm.email, {'attr': {'class': 'form-control'}}) }}
                     {{ form_row(registrationForm.username, {'attr': {'class': 'form-control'}}) }}
                     {{ form_row(registrationForm.plainPassword, {'attr': {'class': 'form-control'}}) }}
-                    <div class="form-check mb-3">
-                        {{ form_widget(registrationForm.isDirector, {'attr': {'class': 'form-check-input'}}) }}
-                        {{ form_label(registrationForm.isDirector, null, {'label_attr': {'class': 'form-check-label'}}) }}
-                    </div>
+                    
+                    {{ form_row(registrationForm.accountType, {
+                        'attr': {'class': 'form-control'},
+                        'label': 'Typ konta',
+                        'help': 'Wybierz, czy rejestrujesz się jako zwykły użytkownik, czy jako dyrektor domu dziecka. Dyrektorzy mogą dodawać dzieci i marzenia po weryfikacji domu dziecka przez administratora.'
+                    }) }}
+                    
                     {{ form_row(registrationForm.agreeTerms) }}
 
                     <div class="alert alert-info mt-3">
-                        <strong>Uwaga:</strong> Jeśli wybierzesz rolę "Dyrektor domu dziecka", po rejestracji będziesz musiał uzupełnić dane swojego domu dziecka i oczekiwać na weryfikację przez administratora.
+                        <strong>Uwaga:</strong> Jeśli wybierzesz rolę "Dyrektor domu dziecka", po rejestracji zostanie dla Ciebie automatycznie utworzony niezweryfikowany dom dziecka. Będziesz mógł dodawać dzieci i marzenia dopiero po weryfikacji przez administratora.
                     </div>
 
                     <button type="submit" class="btn btn-primary btn-lg w-100 mt-3">Zarejestruj się</button>
