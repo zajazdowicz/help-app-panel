@@ -58,6 +58,7 @@ class AffiliateControllerTest extends WebTestCase
         $orphanage->setPostalCode('00-001');
         $orphanage->setContactPhone('+48123456789');
         $orphanage->setIsVerified(true);
+        $orphanage->setDirector($directorUser);
         $this->entityManager->persist($orphanage);
 
         $child = new Child();
