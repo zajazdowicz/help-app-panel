@@ -19,10 +19,8 @@ class AffiliateControllerTest extends WebTestCase
     protected function setUp(): void
     {
         $this->client = static::createClient(['environment' => 'test']);
-        self::bootKernel();
-        $this->entityManager = self::$kernel->getContainer()
-            ->get('doctrine')
-            ->getManager();
+        $container = $this->client->getContainer();
+        $this->entityManager = $container->get('doctrine')->getManager();
 
         // Create schema only once per test class
         if (!self::$schemaCreated) {
@@ -56,9 +54,10 @@ class AffiliateControllerTest extends WebTestCase
         $orphanage->setCity('Warsaw');
         $orphanage->setRegion('Mazowieckie');
         $orphanage->setPostalCode('00-001');
+        $orphanage->setContactEmail('test@example.com');
         $orphanage->setContactPhone('+48123456789');
         $orphanage->setIsVerified(true);
-        $orphanage->setDirector($directorUser);
+        // Nie ustawiamy director, bo nie jest potrzebny w teście
         $this->entityManager->persist($orphanage);
 
         $child = new Child();
@@ -105,7 +104,12 @@ class AffiliateControllerTest extends WebTestCase
     {
         $orphanage = new Orphanage();
         $orphanage->setName('Test Orphanage 2');
+        $orphanage->setAddress('Test Address 2');
         $orphanage->setCity('Krakow');
+        $orphanage->setRegion('Malopolskie');
+        $orphanage->setPostalCode('30-001');
+        $orphanage->setContactEmail('test2@example.com');
+        $orphanage->setContactPhone('+48123456780');
         $orphanage->setIsVerified(true);
         $this->entityManager->persist($orphanage);
 

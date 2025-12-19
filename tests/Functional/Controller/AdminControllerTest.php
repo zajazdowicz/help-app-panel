@@ -27,10 +27,8 @@ class AdminControllerTest extends WebTestCase
     protected function setUp(): void
     {
         $this->client = static::createClient(['environment' => 'test']);
-        self::bootKernel();
-        $this->entityManager = self::$kernel->getContainer()
-            ->get('doctrine')
-            ->getManager();
+        $container = $this->client->getContainer();
+        $this->entityManager = $container->get('doctrine')->getManager();
 
         // Begin a transaction for each test
         $this->entityManager->getConnection()->beginTransaction();
@@ -48,7 +46,7 @@ class AdminControllerTest extends WebTestCase
 
     public function testAdminDashboardRequiresLogin(): void
     {
-        $client = static::createClient(['environment' => 'test']);
+        $client = $this->client;
         $client->request('GET', '/admin/');
 
         // Should redirect to login
@@ -57,20 +55,17 @@ class AdminControllerTest extends WebTestCase
 
     public function testAdminDashboardAccessWithAdminRole(): void
     {
-        $client = static::createClient(['environment' => 'test']);
+        $client = $this->client;
 
         // Create an admin user
-        $entityManager = self::$kernel->getContainer()
-            ->get('doctrine')
-            ->getManager();
         $user = new User();
         $user->setEmail('admin@test.com');
         $user->setUsername('admin');
         $user->setPassword('$2y$13$...'); // dummy hash
         $user->setRoles(['ROLE_ADMIN']);
         $user->setIsVerified(true);
-        $entityManager->persist($user);
-        $entityManager->flush();
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
 
         // Simulate login
         $client->loginUser($user);

@@ -251,7 +251,7 @@ class DevController extends AbstractController
                 $property->setValue($dream1, DreamStatus::VERIFIED);
             })();
             $dream1->setQuantityNeeded(1);
-            $dream1->setQuantityFulfilled(0);
+            $dream1->setPurchasedQuantity(0);
             $dream1->setIsUrgent(false);
             $this->entityManager->persist($dream1);
         }
@@ -274,7 +274,7 @@ class DevController extends AbstractController
                 $property->setValue($dream2, DreamStatus::PENDING);
             })();
             $dream2->setQuantityNeeded(1);
-            $dream2->setQuantityFulfilled(0);
+            $dream2->setPurchasedQuantity(0);
             $dream2->setIsUrgent(true);
             $this->entityManager->persist($dream2);
         }
@@ -297,7 +297,7 @@ class DevController extends AbstractController
                 $property->setValue($dream3, DreamStatus::VERIFIED);
             })();
             $dream3->setQuantityNeeded(5);
-            $dream3->setQuantityFulfilled(2);
+            $dream3->setPurchasedQuantity(2);
             $dream3->setIsUrgent(false);
             $this->entityManager->persist($dream3);
         }
@@ -320,7 +320,7 @@ class DevController extends AbstractController
                 $property->setValue($dream4, DreamStatus::VERIFIED);
             })();
             $dream4->setQuantityNeeded(1);
-            $dream4->setQuantityFulfilled(1);
+            $dream4->setPurchasedQuantity(1);
             $dream4->setIsUrgent(false);
             $this->entityManager->persist($dream4);
         }
@@ -343,7 +343,7 @@ class DevController extends AbstractController
                 $property->setValue($dream5, DreamStatus::FULFILLED);
             })();
             $dream5->setQuantityNeeded(1);
-            $dream5->setQuantityFulfilled(1);
+            $dream5->setPurchasedQuantity(1);
             $dream5->setIsUrgent(false);
             $this->entityManager->persist($dream5);
         }

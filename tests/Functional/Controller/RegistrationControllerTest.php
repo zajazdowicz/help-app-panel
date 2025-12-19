@@ -26,10 +26,8 @@ class RegistrationControllerTest extends WebTestCase
     protected function setUp(): void
     {
         $this->client = static::createClient(['environment' => 'test']);
-        self::bootKernel();
-        $this->entityManager = self::$kernel->getContainer()
-            ->get('doctrine')
-            ->getManager();
+        $container = $this->client->getContainer();
+        $this->entityManager = $container->get('doctrine')->getManager();
 
         // Begin a transaction for each test
         $this->entityManager->getConnection()->beginTransaction();
@@ -47,7 +45,7 @@ class RegistrationControllerTest extends WebTestCase
 
     public function testRegisterUser(): void
     {
-        $client = static::createClient(['environment' => 'test']);
+        $client = $this->client;
         $crawler = $client->request('GET', '/register');
 
         $this->assertResponseIsSuccessful();
@@ -69,7 +67,7 @@ class RegistrationControllerTest extends WebTestCase
 
     public function testRegisterDirector(): void
     {
-        $client = static::createClient(['environment' => 'test']);
+        $client = $this->client;
         $crawler = $client->request('GET', '/register');
 
         $form = $crawler->selectButton('Zarejestruj się')->form();
@@ -86,15 +84,12 @@ class RegistrationControllerTest extends WebTestCase
         $this->assertSelectorExists('.alert-success');
 
         // Check that Orphanage was created
-        $entityManager = self::$kernel->getContainer()
-            ->get('doctrine')
-            ->getManager();
-        $userRepo = $entityManager->getRepository(\App\Entity\User::class);
+        $userRepo = $this->entityManager->getRepository(\App\Entity\User::class);
         $user = $userRepo->findOneBy(['email' => 'director@example.com']);
         $this->assertNotNull($user);
         $this->assertContains('ROLE_DIRECTOR', $user->getRoles());
 
-        $orphanageRepo = $entityManager->getRepository(\App\Entity\Orphanage::class);
+        $orphanageRepo = $this->entityManager->getRepository(\App\Entity\Orphanage::class);
         $orphanage = $orphanageRepo->findOneBy(['contactEmail' => 'director@example.com']);
         $this->assertNotNull($orphanage);
         $this->assertFalse($orphanage->isVerified());
