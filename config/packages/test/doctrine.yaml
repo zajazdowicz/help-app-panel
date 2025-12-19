@@ -1,0 +1,10 @@
+doctrine:
+    dbal:
+        driver: 'pdo_sqlite'
+        path: ':memory:'
+        url: null
+doctrine:
+    dbal:
+        driver: 'pdo_sqlite'
+        path: ':memory:'
+        url: null

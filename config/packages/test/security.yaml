@@ -1,0 +1,12 @@
+security:
+    password_hashers:
+        # Use a low cost hasher in test environment for faster tests
+        Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface:
+            algorithm: auto
+            cost: 4 # Lowest possible value for bcrypt
+security:
+    password_hashers:
+        # Use a low cost hasher in test environment for faster tests
+        Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface:
+            algorithm: auto
+            cost: 4 # Lowest possible value for bcrypt
